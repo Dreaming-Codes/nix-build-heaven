@@ -29,6 +29,7 @@ type Options struct {
 	Fleet          fleet.Config
 	Tick           time.Duration
 	ReconcileEvery time.Duration
+	BootPoll       time.Duration // reconcile cadence while a launch is pending
 	CallTimeout    time.Duration
 	Log            *log.Logger
 }
@@ -70,7 +71,7 @@ func (g *Gate) Run(ctx context.Context) error {
 	defer g.ln.Close()
 	go g.accept(ctx)
 	go g.every(ctx, g.opt.Tick, func() { g.post(fleet.Tick{}) })
-	go g.every(ctx, g.opt.ReconcileEvery, g.reconcile)
+	go g.every(ctx, g.opt.ReconcileEvery, func() { g.reconcile() })
 	st := fleet.New(g.opt.Fleet)
 	for {
 		select {
@@ -108,15 +109,35 @@ func (g *Gate) every(ctx context.Context, d time.Duration, f func()) {
 	}
 }
 
-func (g *Gate) reconcile() {
+func (g *Gate) reconcile() []fleet.Seen {
 	ctx, cancel := context.WithTimeout(context.Background(), g.opt.CallTimeout)
 	defer cancel()
 	seen, err := g.cloud.List(ctx)
 	if err != nil {
 		g.post(fleet.ReconcileFailed{Err: err.Error()})
-		return
+		return nil
 	}
 	g.post(fleet.Observed{Instances: seen})
+	return seen
+}
+
+// awaitRunning reconciles every BootPoll until key is running, so a cold
+// start learns the address within seconds rather than at the next periodic
+// reconcile (up to ReconcileEvery late, measured 30 s in Phase 3).
+func (g *Gate) awaitRunning(ctx context.Context, key fleet.Key) {
+	deadline := time.Now().Add(g.opt.Fleet.BootTimeout)
+	for time.Now().Before(deadline) {
+		for _, s := range g.reconcile() {
+			if s.Key == key && s.State != fleet.Pending {
+				return
+			}
+		}
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(g.opt.BootPoll):
+		}
+	}
 }
 
 func (g *Gate) exec(ctx context.Context, f fleet.Effect) {
@@ -135,7 +156,7 @@ func (g *Gate) exec(ctx context.Context, f fleet.Effect) {
 			}
 			l.Printf("launched %s as %s", e.Key, id)
 			g.post(fleet.Launched{Key: e.Key, InstanceID: id})
-			g.reconcile()
+			g.awaitRunning(ctx, e.Key)
 		}()
 	case fleet.Terminate:
 		l.Printf("terminate %s (%s)", e.Key, e.InstanceID)

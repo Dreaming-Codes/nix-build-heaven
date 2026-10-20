@@ -1,9 +1,164 @@
+=== RUN   TestMutualTLSWithMintedUserData
+--- PASS: TestMutualTLSWithMintedUserData (0.03s)
+=== RUN   TestInitKeepsExistingCA
+--- PASS: TestInitKeepsExistingCA (0.00s)
+PASS
+ok  	nix-build-heaven/gate/certs	1.044s
+?   	nix-build-heaven/gate/cloud	[no test files]
 ?   	nix-build-heaven/gate/cmd/nbh-gate	[no test files]
-ok  	nix-build-heaven/gate/fleet	1.014s
-ok  	nix-build-heaven/gate/gate	10.958s
-?   	nix-build-heaven/gate/cmd/nbh-gate	[no test files]
-ok  	nix-build-heaven/gate/fleet	1.020s
-ok  	nix-build-heaven/gate/gate	10.958s
-?   	nix-build-heaven/gate/cmd/nbh-gate	[no test files]
-ok  	nix-build-heaven/gate/fleet	1.012s
-ok  	nix-build-heaven/gate/gate	10.469s
+=== RUN   TestTransitions
+=== RUN   TestTransitions/Gone,_demand:_launch_and_refuse
+=== RUN   TestTransitions/Gone,_demand_while_unavailable:_release,_no_launch
+=== RUN   TestTransitions/Gone,_demand_at_capacity_(previous_still_terminating):_refuse,_no_launch
+=== RUN   TestTransitions/Requested,_second_demand:_refuse,_no_second_launch
+=== RUN   TestTransitions/Booting,_demand:_refuse,_no_second_launch
+=== RUN   TestTransitions/Requested,_fleet_returned_instance:_Booting
+=== RUN   TestTransitions/Requested,_fleet_error:_Gone,_unavailable,_machines_off
+=== RUN   TestTransitions/Booting,_address_known:_probe
+=== RUN   TestTransitions/Booting,_probe_ok:_Serving
+=== RUN   TestTransitions/Booting,_150_s:_Terminating,_unavailable
+=== RUN   TestTransitions/Serving,_new_connection:_splice_at_once
+=== RUN   TestTransitions/Serving,_idle_for_idleGrace:_Draining
+=== RUN   TestTransitions/Serving,_idle_just_under_idleGrace:_poll_load
+=== RUN   TestTransitions/Serving_with_a_live_connection_never_drains
+=== RUN   TestTransitions/Serving,_builder_reports_load:_stays_Serving
+=== RUN   TestTransitions/Serving,_instance_shutting_down_(spot_interruption):_Terminating
+=== RUN   TestTransitions/Serving,_instance_terminated:_Gone,_session_logged
+=== RUN   TestTransitions/Draining,_new_connection:_Serving,_splice
+=== RUN   TestTransitions/Draining,_builder_reports_load:_Serving
+=== RUN   TestTransitions/Draining,_idle_load_report:_stays_Draining
+=== RUN   TestTransitions/Draining,_still_idle_after_recheck:_Terminating
+=== RUN   TestTransitions/Terminating,_still_running_after_retry_interval:_terminate_again
+=== RUN   TestTransitions/Terminating,_describe_shows_terminated:_Gone
+=== RUN   TestTransitions/Terminating,_vanished_from_describe:_Gone
+=== RUN   TestTransitions/any_phase,_max_session:_Terminating
+=== RUN   TestTransitions/Requested,_tagged_instance_seen_before_Launched_returns:_Booting
+=== RUN   TestTransitions/connection_closed:_live_count_drops,_instance_marked_busy_now
+=== RUN   TestTransitions/reconcile_fails_with_nothing_running:_unavailable,_machines_off
+=== RUN   TestTransitions/reconcile_fails_while_serving:_keep_serving_and_machines_on
+=== RUN   TestTransitions/unavailability_expires:_machines_back_on
+=== RUN   TestTransitions/first_event_publishes_machines_file
+--- PASS: TestTransitions (0.00s)
+    --- PASS: TestTransitions/Gone,_demand:_launch_and_refuse (0.00s)
+    --- PASS: TestTransitions/Gone,_demand_while_unavailable:_release,_no_launch (0.00s)
+    --- PASS: TestTransitions/Gone,_demand_at_capacity_(previous_still_terminating):_refuse,_no_launch (0.00s)
+    --- PASS: TestTransitions/Requested,_second_demand:_refuse,_no_second_launch (0.00s)
+    --- PASS: TestTransitions/Booting,_demand:_refuse,_no_second_launch (0.00s)
+    --- PASS: TestTransitions/Requested,_fleet_returned_instance:_Booting (0.00s)
+    --- PASS: TestTransitions/Requested,_fleet_error:_Gone,_unavailable,_machines_off (0.00s)
+    --- PASS: TestTransitions/Booting,_address_known:_probe (0.00s)
+    --- PASS: TestTransitions/Booting,_probe_ok:_Serving (0.00s)
+    --- PASS: TestTransitions/Booting,_150_s:_Terminating,_unavailable (0.00s)
+    --- PASS: TestTransitions/Serving,_new_connection:_splice_at_once (0.00s)
+    --- PASS: TestTransitions/Serving,_idle_for_idleGrace:_Draining (0.00s)
+    --- PASS: TestTransitions/Serving,_idle_just_under_idleGrace:_poll_load (0.00s)
+    --- PASS: TestTransitions/Serving_with_a_live_connection_never_drains (0.00s)
+    --- PASS: TestTransitions/Serving,_builder_reports_load:_stays_Serving (0.00s)
+    --- PASS: TestTransitions/Serving,_instance_shutting_down_(spot_interruption):_Terminating (0.00s)
+    --- PASS: TestTransitions/Serving,_instance_terminated:_Gone,_session_logged (0.00s)
+    --- PASS: TestTransitions/Draining,_new_connection:_Serving,_splice (0.00s)
+    --- PASS: TestTransitions/Draining,_builder_reports_load:_Serving (0.00s)
+    --- PASS: TestTransitions/Draining,_idle_load_report:_stays_Draining (0.00s)
+    --- PASS: TestTransitions/Draining,_still_idle_after_recheck:_Terminating (0.00s)
+    --- PASS: TestTransitions/Terminating,_still_running_after_retry_interval:_terminate_again (0.00s)
+    --- PASS: TestTransitions/Terminating,_describe_shows_terminated:_Gone (0.00s)
+    --- PASS: TestTransitions/Terminating,_vanished_from_describe:_Gone (0.00s)
+    --- PASS: TestTransitions/any_phase,_max_session:_Terminating (0.00s)
+    --- PASS: TestTransitions/Requested,_tagged_instance_seen_before_Launched_returns:_Booting (0.00s)
+    --- PASS: TestTransitions/connection_closed:_live_count_drops,_instance_marked_busy_now (0.00s)
+    --- PASS: TestTransitions/reconcile_fails_with_nothing_running:_unavailable,_machines_off (0.00s)
+    --- PASS: TestTransitions/reconcile_fails_while_serving:_keep_serving_and_machines_on (0.00s)
+    --- PASS: TestTransitions/unavailability_expires:_machines_back_on (0.00s)
+    --- PASS: TestTransitions/first_event_publishes_machines_file (0.00s)
+=== RUN   TestTerminateAfterDrainTiming
+--- PASS: TestTerminateAfterDrainTiming (0.00s)
+=== RUN   TestCrashRecoveryAdoptsRunningInstanceWithoutKillingIt
+--- PASS: TestCrashRecoveryAdoptsRunningInstanceWithoutKillingIt (0.00s)
+=== RUN   TestReconcileIsIdempotent
+--- PASS: TestReconcileIsIdempotent (0.00s)
+=== RUN   TestBootTimeoutCountsFromBootingNotLaunch
+--- PASS: TestBootTimeoutCountsFromBootingNotLaunch (0.00s)
+=== RUN   TestNoLaunchBeforeFirstReconcile
+--- PASS: TestNoLaunchBeforeFirstReconcile (0.00s)
+=== RUN   TestBuilderOutlivesRetryGapAfterRefusal
+--- PASS: TestBuilderOutlivesRetryGapAfterRefusal (0.00s)
+PASS
+ok  	nix-build-heaven/gate/fleet	1.017s
+=== RUN   TestColdStartRefusesUntilBuilderServes
+    gate_test.go:79: 05:52:44.493254 machines file: builder available=true
+    gate_test.go:79: 05:52:44.504132 launch test-1
+    gate_test.go:79: 05:52:44.504293 refuse connection 1 while the builder boots
+    gate_test.go:79: 05:52:44.504358 refuse connection 2 while the builder boots
+    gate_test.go:79: 05:52:44.504349 launched test-1 as i-fake0001
+    gate_test.go:79: 05:52:44.504395 refuse connection 3 while the builder boots
+    gate_test.go:79: 05:52:45.005284 refuse connection 4 while the builder boots
+    gate_test.go:79: 05:52:45.005447 refuse connection 5 while the builder boots
+    gate_test.go:79: 05:52:45.005494 refuse connection 6 while the builder boots
+    gate_test.go:79: 05:52:45.505922 refuse connection 7 while the builder boots
+    gate_test.go:79: 05:52:45.506022 refuse connection 8 while the builder boots
+    gate_test.go:79: 05:52:45.506055 refuse connection 9 while the builder boots
+    gate_test.go:79: 05:52:46.007356 refuse connection 10 while the builder boots
+    gate_test.go:79: 05:52:46.007499 refuse connection 11 while the builder boots
+    gate_test.go:79: 05:52:46.007526 refuse connection 12 while the builder boots
+    gate_test.go:79: 05:52:46.508364 splice connection 13 to 127.0.0.1:37135
+    gate_test.go:79: 05:52:46.508464 splice connection 14 to 127.0.0.1:37135
+    gate_test.go:79: 05:52:46.508497 splice connection 15 to 127.0.0.1:37135
+    gate_test.go:160: spliced after 2.005297081s and 4 resets
+    gate_test.go:160: spliced after 2.00548284s and 4 resets
+    gate_test.go:160: spliced after 2.005368989s and 4 resets
+--- PASS: TestColdStartRefusesUntilBuilderServes (2.02s)
+=== RUN   TestFallbackWhenCloudUnreachable
+    gate_test.go:79: 05:52:46.510278 machines file: builder available=true
+    gate_test.go:79: 05:52:46.711155 machines file: builder available=false
+    gate_test.go:79: 05:52:46.715355 release connection 1, nix builds locally
+    gate_test.go:181: connection closed by the gate after 413.275µs; machines file empty
+--- PASS: TestFallbackWhenCloudUnreachable (0.21s)
+=== RUN   TestFallbackWhenLaunchFails
+    gate_test.go:79: 05:52:46.716692 machines file: builder available=true
+    gate_test.go:79: 05:52:46.726844 refuse connection 1 while the builder boots
+    gate_test.go:79: 05:52:47.118603 machines file: builder available=false
+    gate_test.go:79: 05:52:47.227559 release connection 2, nix builds locally
+    gate_test.go:194: launch failure ended the client's retries after 501.089959ms and 1 resets
+--- PASS: TestFallbackWhenLaunchFails (0.51s)
+=== RUN   TestTerminateAfterDrain
+    gate_test.go:79: 05:52:47.228683 machines file: builder available=true
+    gate_test.go:79: 05:52:47.228783 refuse connection 1 while the builder boots
+    gate_test.go:79: 05:52:47.729731 launch test-1
+    gate_test.go:79: 05:52:47.729806 refuse connection 2 while the builder boots
+    gate_test.go:79: 05:52:47.729883 launched test-1 as i-fake0001
+    gate_test.go:79: 05:52:48.230268 splice connection 3 to 127.0.0.1:38165
+    gate_test.go:79: 05:52:51.079541 terminate test-1 (i-fake0001)
+    gate_test.go:79: 05:52:51.079764 session test-1 i-fake0001 ended, billed 3 s
+    gate_test.go:216: terminated 1.358653013s after the last connection closed (idleGrace 1s + drainRecheck 0.3s)
+--- PASS: TestTerminateAfterDrain (3.86s)
+=== RUN   TestRestartAdoptsRunningBuilder
+    gate_test.go:79: 05:52:51.090896 machines file: builder available=true
+    gate_test.go:79: 05:52:51.090990 refuse connection 1 while the builder boots
+    gate_test.go:79: 05:52:51.592242 splice connection 2 to 127.0.0.1:43757
+    gate_test.go:79: 05:52:53.441813 terminate previous-run-7 (i-fake0001)
+    gate_test.go:79: 05:52:53.442142 session previous-run-7 i-fake0001 ended, billed 1202 s
+--- PASS: TestRestartAdoptsRunningBuilder (2.36s)
+=== RUN   TestBootTimeoutTerminatesAndFallsBack
+    gate_test.go:79: 05:52:53.453459 machines file: builder available=true
+    gate_test.go:79: 05:52:53.453572 launch test-1
+    gate_test.go:79: 05:52:53.453626 refuse connection 1 while the builder boots
+    gate_test.go:79: 05:52:53.453678 launched test-1 as i-fake0001
+    gate_test.go:79: 05:52:53.954390 refuse connection 2 while the builder boots
+    gate_test.go:79: 05:52:54.154194 terminate test-1 (i-fake0001)
+    gate_test.go:79: 05:52:54.154467 machines file: builder available=false
+    gate_test.go:79: 05:52:54.154510 session test-1 i-fake0001 ended, billed 1 s
+    gate_test.go:79: 05:52:54.456003 release connection 3, nix builds locally
+--- PASS: TestBootTimeoutTerminatesAndFallsBack (1.00s)
+=== RUN   TestParseLoad
+--- PASS: TestParseLoad (0.00s)
+=== RUN   TestColdStartDoesNotWaitForPeriodicReconcile
+    gate_test.go:79: 05:52:54.457464 machines file: builder available=true
+    gate_test.go:79: 05:52:54.467794 launch test-1
+    gate_test.go:79: 05:52:54.467857 refuse connection 1 while the builder boots
+    gate_test.go:79: 05:52:54.468000 launched test-1 as i-fake0001
+    gate_test.go:79: 05:52:54.968824 refuse connection 2 while the builder boots
+    gate_test.go:79: 05:52:55.470387 splice connection 3 to 127.0.0.1:36225
+    gate_test.go:281: spliced after 1.003413744s and 2 resets
+--- PASS: TestColdStartDoesNotWaitForPeriodicReconcile (1.01s)
+PASS
+ok  	nix-build-heaven/gate/gate	11.994s

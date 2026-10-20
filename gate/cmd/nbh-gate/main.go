@@ -61,7 +61,7 @@ func main() {
 	}
 	g, err := gate.Listen(gate.Options{
 		Listen: *listen, MachinesFile: *machines, MachinesEntry: *entry, MetricsPort: *metricsPort,
-		Fleet: cfg, Tick: time.Second, ReconcileEvery: 30 * time.Second, CallTimeout: 20 * time.Second,
+		Fleet: cfg, Tick: time.Second, ReconcileEvery: 30 * time.Second, BootPoll: 2 * time.Second, CallTimeout: 20 * time.Second,
 	}, cl)
 	if err != nil {
 		log.Fatal(err)

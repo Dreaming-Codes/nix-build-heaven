@@ -45,6 +45,10 @@ type harness struct {
 }
 
 func start(t *testing.T, fake *cloud.Fake, mut func(*fleet.Config)) *harness {
+	return startWith(t, fake, mut, 200*time.Millisecond)
+}
+
+func startWith(t *testing.T, fake *cloud.Fake, mut func(*fleet.Config), reconcileEvery time.Duration) *harness {
 	cfg := fleet.DefaultConfig("test")
 	cfg.IdleGrace = 1 * time.Second
 	cfg.RetryHold = 2 * time.Second
@@ -57,7 +61,7 @@ func start(t *testing.T, fake *cloud.Fake, mut func(*fleet.Config)) *harness {
 	machines := filepath.Join(t.TempDir(), "machines")
 	g, err := Listen(Options{
 		Listen: "127.0.0.1:0", MachinesFile: machines, MachinesEntry: entry, Fleet: cfg,
-		Tick: 50 * time.Millisecond, ReconcileEvery: 200 * time.Millisecond, CallTimeout: 2 * time.Second,
+		Tick: 50 * time.Millisecond, ReconcileEvery: reconcileEvery, BootPoll: 50 * time.Millisecond, CallTimeout: 2 * time.Second,
 		Log: log.New(testWriter{t}, "", log.Lmicroseconds),
 	}, fake)
 	if err != nil {
@@ -258,4 +262,21 @@ nix_grpc_sched_system{features="",kind="free",system="x86_64-linux"} 4
 	if err != nil || l != (fleet.Load{Clients: 2, Running: 4, Queued: 5}) {
 		t.Fatalf("got %+v, %v", l, err)
 	}
+}
+
+// Phase 3 cold starts took 42 s for a 20 s boot: the gate only learned the
+// address at the next 30 s reconcile. A launch must poll until running.
+func TestColdStartDoesNotWaitForPeriodicReconcile(t *testing.T) {
+	fake := &cloud.Fake{BootDelay: 500 * time.Millisecond, Addr: echoServer(t)}
+	h := startWith(t, fake, nil, time.Hour)
+	waitFor(t, "machines entry published", time.Second, func() bool { return h.machinesContent() == entry+"\n" })
+	c, resets, took, err := h.dial(10 * time.Second)
+	if c == nil {
+		t.Fatalf("client gave up after %v and %d resets: %v", took, resets, err)
+	}
+	c.Close()
+	if took > 2*time.Second {
+		t.Fatalf("spliced after %v for a 500 ms boot, want under 2 s", took)
+	}
+	t.Logf("spliced after %v and %d resets", took, resets)
 }
