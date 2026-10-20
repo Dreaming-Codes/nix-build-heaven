@@ -1,0 +1,13 @@
+/nix/store/1nlf7w5skch6rcn8ya5xzj0vfjw6i5ab-etc-alsa-conf.d-49-pipewire-modules.conf.drv
+/nix/store/21p7ykxch43q7g3ls2zmlr73b4hy73vy-etc-os-release.drv
+/nix/store/3jc2s0d8qd3dhzqpbvnpw1ci5ibb5my5-cachyos-7.2.8-1.tar.gz.drv
+/nix/store/4qk114fqd736hqzk46j0sd6dnyqyk3vn-kernel-intermediate-config.drv
+/nix/store/61g9nhv4i4ywv34w53aw10z3q20rgy6k-linux-cachyos-latest-lto-x86_64-v3-7.2.8.drv
+/nix/store/64782arb4jh8a16x4fsqwdgjpn38djqc-graphics-drivers-32bit.drv
+/nix/store/65anhdni31c0dvljxmjpvffs0p1wsfkx-X-Restart-Triggers-cups-browsed.drv
+/nix/store/9ard0g0klhxj463pzpci83a825pma8hq-config.drv
+/nix/store/di3dqbg5674ivhkmfl3pwc7drhjd6hag-stdenv-linux.drv
+/nix/store/fpmsbcd9w12wxxq239hbg53yl0rjb41q-clang-wrapper-21.1.8.drv
+/nix/store/gb00j0s8ivkh23ri6bnglcyb19b0n3cw-linux-src-patched.drv
+/nix/store/h86mv30kl40x6ls6lfx9zw4q1bzvb6id-cups-browsed.conf.drv
+/nix/store/i1s9sh7pw5s5cj27kj61nsi8hcizv620-linux-config-7.2.8.drv

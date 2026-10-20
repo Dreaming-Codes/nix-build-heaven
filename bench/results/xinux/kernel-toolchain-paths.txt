@@ -1,0 +1,11 @@
+pahole-1.31.drv out /nix/store/kndnrzw57nlwwwl6kskn75x1cgmrcrhv-pahole-1.31
+llvm-21.1.8.drv out /nix/store/iflhifd3p9d04cpvzjw3h9n7r1gj23g4-llvm-21.1.8
+rust-bindgen-unwrapped-0.72.1.drv out /nix/store/riwxq80wy52dmydcfc53kpr8n5x9fqxf-rust-bindgen-unwrapped-0.72.1
+stdenv-linux.drv out /nix/store/cg3rxp3hkn4bjz1ml88hi6zmxa90nk56-stdenv-linux
+clang-wrapper-21.1.8.drv out /nix/store/j0yznxvflkqf8aagbcw6vi7ygcbmb003-clang-wrapper-21.1.8
+llvm-binutils-21.1.8.drv out /nix/store/69rhwgb6lwf75jzgiibd7yd0vh6m3ali-llvm-binutils-21.1.8
+clang-21.1.8.drv lib /nix/store/a3kjvvlm7f8abcmxh6f8dndiwc4vp726-clang-21.1.8-lib
+clang-21.1.8.drv out /nix/store/0skhb15j2szcq05929gs9m1dbpiydhb7-clang-21.1.8
+gcc-wrapper-15.3.0.drv out /nix/store/z4c6k0mrlkwl3s4w9ysxc8vq1wylm3ms-gcc-wrapper-15.3.0
+rustc-1.98.1.drv out /nix/store/xvp6nfxayb07si2jaggqwvx3iykw89g2-rustc-1.98.1
+lld-21.1.8.drv out /nix/store/abkc3qmszv6pks24qyak9mhyk7z6vrz1-lld-21.1.8
