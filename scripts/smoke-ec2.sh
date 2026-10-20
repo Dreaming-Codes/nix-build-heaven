@@ -27,7 +27,7 @@ if [ "$transport" = ssh-ng ]; then
   # Same ssh options as modules/client.nix; no ConnectTimeout so ssh waits
   # for the banner while the gate holds the connection through the boot.
   # The box has no system ssh; NixOS clients get it from programs.ssh.
-  sshbin=$(nix build --no-link --print-out-paths nixpkgs#openssh)/bin
+  sshbin=$(nix build --no-link --print-out-paths nixpkgs#openssh.out)/bin
   nixenv=(PATH="$sshbin:$PATH" NIX_SSHOPTS="-o HostKeyAlias=nbh-builder -o UserKnownHostsFile=$pki/ssh_known_hosts -o StrictHostKeyChecking=yes -o IdentitiesOnly=yes -o ServerAliveInterval=15 -o ServerAliveCountMax=4")
 else
   uri="grpc://nbh-builder:50051?ca-cert=$pki/ca.crt&client-cert=$pki/client.crt&client-key=$pki/client.key&connect-timeout=150"

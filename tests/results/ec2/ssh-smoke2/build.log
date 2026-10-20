@@ -1,0 +1,14 @@
+this derivation will be built:
+  /nix/store/8id3awg532y0byn03zpqxh152v2h9lh8-grpc-probe-ec2-1792529385.drv
+[31;1merror:[0m Could not find executable '[35;1mssh[0m'
+cannot build on 'ssh-ng://nbh@nbh-builder:2222': error: failed to start SSH master connection to 'nbh-builder'
+Failed to find a machine for remote build!
+derivation: 8id3awg532y0byn03zpqxh152v2h9lh8-grpc-probe-ec2-1792529385.drv
+required (system, features): (x86_64-linux, [])
+1 available machines:
+(systems, maxjobs, supportedFeatures, mandatoryFeatures)
+([x86_64-linux], 2, [benchmark, big-parallel], [])
+❌ 
+error: Cannot build '/nix/store/8id3awg532y0byn03zpqxh152v2h9lh8-grpc-probe-ec2-1792529385.drv'.
+       Reason: local builds are disabled (max-jobs = 0)
+       Hint: set 'max-jobs' to a non-zero value to enable local builds, or configure remote builders via 'builders'
