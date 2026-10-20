@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# nbh-bench OUTDIR INSTALLABLE...
+# Builds INSTALLABLEs locally with Lorenzo's public substituters, recording wall
+# time, per-derivation build intervals and CPU use, then the graph parallelism.
+set -euo pipefail
+here=$(cd "$(dirname "$0")" && pwd)
+out=$1; shift
+mkdir -p "$out"
+NIX=${NIX:-/nix/var/nix/profiles/default/bin/nix}
+SUBS="https://install.determinate.systems https://cache.nixos.org https://nix-community.cachix.org https://numtide.cachix.org https://cache.xinux.uz https://cache.nixos-cuda.org"
+KEYS="cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE= cache.xinux.uz:BXCrtqejFjWzWEB9YuGB7X2MV4ttBur1N8BkwQRdH+0= cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
+opts=(--option substituters "$SUBS" --option trusted-public-keys "$KEYS" --option builders "" --max-jobs "${MAX_JOBS:-auto}" --cores "${CORES:-0}")
+sudo -n "$NIX" build --dry-run "${opts[@]}" "$@" 2> "$out/dryrun.txt"
+sed -n '/will be built/,/will be fetched/p' "$out/dryrun.txt" | grep -o '/nix/store/[a-z0-9]\{32\}-.*\.drv' > "$out/tobuild.txt" || true
+"$NIX" derivation show -r "$@" > "$out/closure.json"
+{ nproc; uptime; "$NIX" --version; } > "$out/host.txt"
+start=$(date +%s.%N)
+set +e
+sudo -n "$NIX" build --no-link --keep-going --log-format internal-json "${opts[@]}" "$@" 2>&1 >/dev/null | python3 "$here/record.py" "$out"
+rc=${PIPESTATUS[0]}
+set -e
+end=$(date +%s.%N)
+python3 "$here/graph.py" times "$out/build.jsonl" > "$out/times.json"
+python3 "$here/graph.py" stats "$out/closure.json" --subset "$out/tobuild.txt" --times "$out/times.json" > "$out/stats.json"
+python3 - "$out" "$rc" "$start" "$end" <<'PY'
+import json, sys
+out, rc, s, e = sys.argv[1], int(sys.argv[2]), float(sys.argv[3]), float(sys.argv[4])
+st = json.load(open(f"{out}/stats.json"))
+cpu = [float(l.split()[1]) for l in open(f"{out}/cpu.tsv").readlines()[1:]]
+nbuilt = len(json.load(open(f"{out}/times.json")))
+summary = {
+    "exit_code": rc,
+    "wall_s": round(e - s, 1),
+    "planned_builds": st["derivations"],
+    "builds_seen_in_log": nbuilt,
+    "mean_cpu_busy": round(sum(cpu) / len(cpu), 3) if cpu else None,
+    "share_of_time_cpu_over_90pct": round(sum(c > 0.9 for c in cpu) / len(cpu), 3) if cpu else None,
+    **{k: st[k] for k in ("total_work_s", "critical_path_s", "avg_parallelism", "max_level_width", "observed_max_concurrent_builds", "simulated_makespan_s")},
+}
+json.dump(summary, open(f"{out}/summary.json", "w"), indent=1)
+print(json.dumps(summary, indent=1))
+PY
