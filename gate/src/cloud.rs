@@ -1,5 +1,3 @@
-//! The boundary between the gate and the cloud, and an in-memory cloud for tests.
-
 use std::collections::BTreeMap;
 use std::future::Future;
 use std::net::SocketAddr;
@@ -17,9 +15,6 @@ pub trait Cloud: Send + Sync + 'static {
     fn terminate(&self, id: &InstanceId) -> impl Future<Output = Result<(), Error>> + Send;
 }
 
-/// An in-memory EC2. An instance is pending for `boot_delay`, then running at
-/// `addr`. While down, every call fails after `latency`, like a blocked
-/// network or revoked credentials.
 pub struct Fake {
     pub boot_delay: Duration,
     pub addr: SocketAddr,
@@ -55,7 +50,6 @@ impl Fake {
         if down { Err("fake ec2: dial tcp: network is unreachable".into()) } else { Ok(()) }
     }
 
-    /// Plants an instance as if a previous gate process had launched it.
     pub fn adopt(&self, key: Key, launched_at: SystemTime) -> InstanceId {
         let mut inner = self.inner.lock().unwrap();
         let id = format!("i-fake{:04}", inner.instances.len() + 1);
@@ -68,7 +62,6 @@ impl Fake {
         self.inner.lock().unwrap().launches
     }
 
-    /// Instances not terminated, as a billing check would count them.
     #[cfg(test)]
     pub fn running(&self) -> usize {
         self.inner.lock().unwrap().instances.values().filter(|i| !i.terminated).count()

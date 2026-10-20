@@ -1,7 +1,3 @@
-//! nbh-gate launches an EC2 Spot builder when the nix-daemon first connects,
-//! holds the connection while the builder boots, splices it once the builder
-//! serves, and terminates the builder when idle.
-
 macro_rules! log {
     ($($arg:tt)*) => {
         eprintln!("nbh-gate: {} {}", humantime::format_rfc3339_micros(std::time::SystemTime::now()), format_args!($($arg)*))
@@ -125,7 +121,7 @@ async fn run(a: Box<RunArgs>) -> Result<()> {
         fleet,
         tick: Duration::from_secs(1),
         reconcile_every: Duration::from_secs(30),
-        boot_poll: Duration::from_secs(2),
+        reconcile_while_booting: Duration::from_secs(2),
         call_timeout: Duration::from_secs(20),
     };
     let listener = TcpListener::bind(a.listen).await?;

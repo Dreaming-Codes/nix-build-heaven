@@ -1,7 +1,3 @@
-//! The I/O shell around `fleet`: accepts the nix-daemon's connections,
-//! executes fleet effects against the cloud and the builder, and owns the
-//! machines file.
-
 use std::collections::HashMap;
 use std::fs;
 use std::io;
@@ -25,10 +21,7 @@ pub struct Options {
     pub fleet: crate::fleet::Config,
     pub tick: Duration,
     pub reconcile_every: Duration,
-    /// Reconcile cadence while a launched builder is still pending, so a cold
-    /// start learns the address within seconds rather than at the next
-    /// periodic reconcile.
-    pub boot_poll: Duration,
+    pub reconcile_while_booting: Duration,
     pub call_timeout: Duration,
 }
 
@@ -115,7 +108,7 @@ impl<C: Cloud> Shell<C> {
             if seen.iter().any(|s| &s.key == key && s.state != CloudState::Pending) {
                 return;
             }
-            sleep(self.opt.boot_poll).await;
+            sleep(self.opt.reconcile_while_booting).await;
         }
     }
 
@@ -286,7 +279,7 @@ mod tests {
             fleet,
             tick: Duration::from_millis(50),
             reconcile_every,
-            boot_poll: Duration::from_millis(50),
+            reconcile_while_booting: Duration::from_millis(50),
             call_timeout: Duration::from_secs(2),
         };
         let ln = TcpListener::bind("127.0.0.1:0").await.unwrap();
@@ -311,7 +304,6 @@ mod tests {
             fs::read_to_string(&self.machines).ok()
         }
 
-        /// Connects once and reports whether bytes came back through a builder.
         async fn attempt(&self) -> (Outcome, Duration, Option<TcpStream>) {
             let t0 = Instant::now();
             let mut c = TcpStream::connect(self.addr).await.unwrap();

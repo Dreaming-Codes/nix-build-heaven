@@ -1,12 +1,5 @@
-//! The EC2 backend. One Spot builder per launch from the nbh-builder launch
-//! template, walking instance types in the given order and, within a type,
-//! the tagged subnets from the cheapest current Spot price up. Every instance
-//! carries nbh:managed, nbh:owner and nbh:key, which is all `list` needs to
-//! rebuild the gate's state after a restart.
-//!
-//! The gate needs five EC2 Query API calls, so it signs them itself (SigV4)
-//! instead of compiling the AWS SDK, whose EC2 crate alone needs more than
-//! 3.4 GB of memory to build.
+//! Five EC2 Query API calls, signed here (SigV4) because the AWS SDK's EC2
+//! crate alone needs more than 3.4 GB of memory to build.
 
 use std::collections::HashMap;
 use std::future::Future;
@@ -35,8 +28,6 @@ pub struct Credentials {
 }
 
 impl Credentials {
-    /// AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY, else AWS_PROFILE (default
-    /// "default") from AWS_SHARED_CREDENTIALS_FILE (default ~/.aws/credentials).
     pub fn from_env() -> Result<Self, Error> {
         let env = |k| std::env::var(k).ok().filter(|v: &String| !v.is_empty());
         if let (Some(access_key), Some(secret_key)) = (env("AWS_ACCESS_KEY_ID"), env("AWS_SECRET_ACCESS_KEY")) {
@@ -156,7 +147,6 @@ fn hmac(key: &[u8], data: &str) -> Vec<u8> {
     mac.finalize().into_bytes().to_vec()
 }
 
-/// SigV4 headers for a POST of a form body to the EC2 endpoint `host`.
 fn sign(creds: &Credentials, region: &str, host: &str, body: &str, now: SystemTime) -> Vec<(String, String)> {
     let amz_date: String =
         humantime::format_rfc3339_seconds(now).to_string().chars().filter(|c| *c != '-' && *c != ':').collect();
@@ -215,11 +205,9 @@ fn filters(params: &mut Vec<(String, String)>, filters: &[(&str, &str)]) {
 pub struct Ec2 {
     pub api: Api,
     pub launch_template: String,
-    /// In order of preference.
     pub instance_types: Vec<String>,
     pub owner: String,
     pub port: u16,
-    /// Hourly Spot price cap. None means the on-demand price.
     pub max_price: Option<String>,
     pub authority: Authority,
 }
@@ -232,9 +220,7 @@ struct Placement {
     price: Option<f64>,
 }
 
-/// Orders (type, subnet) pairs: types as given, subnets by the current Spot
-/// price in their AZ. Without prices the subnet order is kept; with them, a
-/// type with no price in an AZ is not offered as Spot there and is skipped.
+/// A type with no Spot price in an AZ is not offered as Spot there.
 fn plan(
     types: &[String],
     subnets: &[(String, String)],
@@ -258,7 +244,6 @@ fn plan(
     out
 }
 
-/// Whether another type or AZ could succeed where this error code failed.
 fn retry_elsewhere(code: Option<&str>) -> bool {
     matches!(
         code,
@@ -275,8 +260,6 @@ fn retry_elsewhere(code: Option<&str>) -> bool {
     )
 }
 
-/// Tries each placement in order until one launches, moving on only for
-/// errors another placement could avoid.
 async fn launch_first<'a, F, Fut>(plan: &'a [Placement], mut run: F) -> Result<InstanceId, Error>
 where
     F: FnMut(&'a Placement) -> Fut,

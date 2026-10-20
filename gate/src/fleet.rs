@@ -1,5 +1,4 @@
-//! The gate's state machine: a pure reducer from events to effects. It does no
-//! I/O and reads no clock; `gate` executes the effects and feeds results back.
+//! A pure reducer from events to effects: no I/O, no clock.
 
 use std::collections::BTreeMap;
 use std::fmt;
@@ -32,9 +31,7 @@ impl fmt::Display for InstanceId {
 #[derive(Clone, Debug)]
 pub struct Config {
     pub key_prefix: String,
-    /// From entering Booting, not from launch: a restarted gate adopts old instances as Booting.
     pub boot_timeout: Duration,
-    /// Time with no open connection before the builder is terminated.
     pub idle_grace: Duration,
     pub max_session: Duration,
     /// How long a failed launch or reconcile keeps the machines file empty.
@@ -67,7 +64,6 @@ pub enum CloudState {
     Terminated,
 }
 
-/// One instance tagged with this gate's owner, as the cloud reports it.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Seen {
     pub key: Key,
@@ -134,15 +130,13 @@ impl Instance {
 pub struct State {
     cfg: Config,
     instances: BTreeMap<Key, Instance>,
-    /// Spliced connections still open.
-    live: usize,
+    spliced: usize,
     /// Connections kept open and silent while a builder boots. ssh-ng waits for
     /// the server banner with no deadline and does not retry a reset or a FIN.
     held: Vec<ConnId>,
     unavailable_until: Option<SystemTime>,
     published: Option<bool>,
-    /// Set by the first reconcile result. Until then a launch could duplicate
-    /// a builder that a previous gate process left running.
+    /// Until the first reconcile, a launch could duplicate a previous gate's builder.
     synced: bool,
     launches: u64,
 }
@@ -156,7 +150,7 @@ impl State {
         State {
             cfg,
             instances: BTreeMap::new(),
-            live: 0,
+            spliced: 0,
             held: Vec::new(),
             unavailable_until: None,
             published: None,
@@ -173,7 +167,6 @@ impl State {
         self.unavailable_until = Some(now + self.cfg.unavailable_for);
     }
 
-    /// Applies one event at `now` and returns the effects to execute, in order.
     pub fn step(&mut self, now: SystemTime, ev: Event) -> Vec<Effect> {
         let mut fx = Vec::new();
         match ev {
@@ -185,7 +178,7 @@ impl State {
             }
             Event::ConnArrived(conn) => self.arrive(now, conn, &mut fx),
             Event::ConnClosed => {
-                self.live = self.live.saturating_sub(1);
+                self.spliced = self.spliced.saturating_sub(1);
                 for inst in self.instances.values_mut() {
                     if let Phase::Serving { last_busy, .. } = &mut inst.phase {
                         *last_busy = now;
@@ -231,7 +224,7 @@ impl State {
 
     fn tick(&mut self, now: SystemTime, key: &Key, fx: &mut Vec<Effect>) {
         let cfg = &self.cfg;
-        let live = self.live;
+        let spliced = self.spliced;
         let inst = self.instances.get_mut(key).expect("tick on a known key");
         let terminating = matches!(inst.phase, Phase::Terminating { .. });
         if !terminating && inst.launched_at.is_some_and(|t| elapsed(now, t) >= cfg.max_session) {
@@ -252,7 +245,7 @@ impl State {
                 }
             }
             Phase::Serving { last_busy, .. } => {
-                if live > 0 {
+                if spliced > 0 {
                     *last_busy = now;
                 }
                 if elapsed(now, *last_busy) >= cfg.idle_grace {
@@ -342,7 +335,7 @@ impl State {
 
     fn arrive(&mut self, now: SystemTime, conn: ConnId, fx: &mut Vec<Effect>) {
         if let Some(addr) = self.use_serving(now) {
-            self.live += 1;
+            self.spliced += 1;
             fx.push(Effect::Splice(conn, addr));
         } else if self.unavailable(now) {
             fx.push(Effect::Release(conn));
@@ -351,17 +344,13 @@ impl State {
         }
     }
 
-    /// Answers held connections once that is possible: splice them when a
-    /// builder serves, release them when the cloud is unavailable, otherwise
-    /// make sure a launch is under way. A launch waits for the first reconcile
-    /// and for a terminating builder to be gone.
     fn settle_held(&mut self, now: SystemTime, fx: &mut Vec<Effect>) {
         if self.held.is_empty() {
             return;
         }
         if let Some(addr) = self.use_serving(now) {
             for conn in self.held.drain(..) {
-                self.live += 1;
+                self.spliced += 1;
                 fx.push(Effect::Splice(conn, addr));
             }
         } else if self.unavailable(now) {
@@ -384,7 +373,6 @@ impl State {
     }
 }
 
-/// Moves an instance with an id to Terminating and asks the cloud to end it.
 fn kill(now: SystemTime, key: &Key, inst: &mut Instance, fx: &mut Vec<Effect>) {
     let id = match &inst.phase {
         Phase::Requested => return,
@@ -454,21 +442,18 @@ mod tests {
     const MACHINES_ON: Effect = PublishMachines { available: true };
     const MACHINES_OFF: Effect = PublishMachines { available: false };
 
-    /// After the first reconcile, with nothing running.
     fn synced() -> State {
         let mut st = State::new(Config::new("desk".into()));
         assert_eq!(st.step(at(0), Event::Observed(vec![])), vec![MACHINES_ON]);
         st
     }
 
-    /// One connection held, desk-1 requested.
     fn requested() -> State {
         let mut st = synced();
         assert_eq!(st.step(at(0), Event::ConnArrived(ConnId(1))), vec![launch("desk-1")]);
         st
     }
 
-    /// desk-1 running at ADDR since t0, not yet probed, nothing held.
     fn booting() -> State {
         let mut st = synced();
         st.step(at(0), Event::Observed(vec![seen("desk-1", "i-1", Running, at(0))]));
@@ -536,7 +521,7 @@ mod tests {
         st.step(at(3), Event::Launched(key("desk-1"), id("i-1")));
         st.step(at(4), Event::Observed(vec![seen("desk-1", "i-1", Running, at(3))]));
         assert_eq!(st.step(at(30), Event::ProbeOk(key("desk-1"))), vec![splice(1), splice(2)]);
-        assert_eq!(st.live, 2);
+        assert_eq!(st.spliced, 2);
         assert_eq!(st.step(at(31), Event::ConnArrived(ConnId(3))), vec![splice(3)]);
     }
 
@@ -560,7 +545,7 @@ mod tests {
     fn serving_splices_new_connections_at_once() {
         let mut st = serving();
         assert_eq!(st.step(at(10), Event::ConnArrived(ConnId(7))), vec![splice(7)]);
-        assert_eq!(st.live, 1);
+        assert_eq!(st.spliced, 1);
     }
 
     #[test]
@@ -583,7 +568,7 @@ mod tests {
         st.step(at(1), Event::ConnArrived(ConnId(1)));
         st.step(at(1), Event::ConnArrived(ConnId(2)));
         st.step(at(20), Event::ConnClosed);
-        assert_eq!(st.live, 1);
+        assert_eq!(st.spliced, 1);
         st.step(at(100), Event::ConnClosed);
         let killed = (101..300).find(|&d| !st.step(at(d), Event::Tick).is_empty());
         assert_eq!(killed, Some(165));

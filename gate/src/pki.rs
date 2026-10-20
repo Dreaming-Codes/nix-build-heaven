@@ -1,6 +1,4 @@
-//! SSH material for the builder. The host CA key stays on the client host.
-//! Every launch gets a fresh host key and a short-lived host certificate in
-//! its user-data, plus the client's public key, so the AMI holds no secret.
+//! Each launch's user-data carries a fresh CA-signed host key, so the AMI holds no secret.
 
 use std::fs;
 use std::io;
@@ -13,10 +11,11 @@ use ssh_key::certificate::{Builder, CertType};
 use ssh_key::rand_core::OsRng;
 use ssh_key::{Algorithm, LineEnding, PrivateKey, PublicKey};
 
-/// The host name the client dials. It resolves to the gate.
 pub const BUILDER_NAME: &str = "nbh-builder";
 
 pub const HOST_CERT_TTL: Duration = Duration::from_secs(3 * 3600);
+
+pub const CLOCK_SKEW: Duration = Duration::from_secs(300);
 
 /// What the builder's nbh-keys unit reads from EC2 user-data.
 #[derive(Serialize)]
@@ -36,7 +35,6 @@ impl Dir {
         self.0.join(name)
     }
 
-    /// Creates ssh_host_ca, ssh_client and ssh_known_hosts unless they exist.
     pub fn init(&self, comment: &str) -> Result<()> {
         if self.path("ssh_host_ca").exists() {
             return Ok(());
@@ -50,7 +48,6 @@ impl Dir {
             files.push((format!("{name}.pub"), key.public_key().to_openssh()? + "\n"));
         }
         let ca_pub = &files[1].1;
-        // The client trusts any host key the CA certified for BUILDER_NAME.
         files.push(("ssh_known_hosts".into(), format!("@cert-authority {BUILDER_NAME} {ca_pub}")));
         for (name, data) in files {
             write_private(&self.path(&name), data.as_bytes())?;
@@ -81,15 +78,13 @@ pub struct HostIdentity {
 }
 
 impl Authority {
-    /// A fresh host key and a host certificate for BUILDER_NAME, valid from
-    /// five minutes before `now` (clock skew) for `ttl`.
     pub fn host(&self, now: SystemTime, ttl: Duration) -> Result<HostIdentity> {
         let key = PrivateKey::random(&mut OsRng, Algorithm::Ed25519)?;
         let unix = now.duration_since(SystemTime::UNIX_EPOCH)?;
         let mut b = Builder::new_with_random_nonce(
             &mut OsRng,
             key.public_key().key_data().clone(),
-            unix.as_secs().saturating_sub(300),
+            unix.saturating_sub(CLOCK_SKEW).as_secs(),
             (unix + ttl).as_secs(),
         )?;
         b.serial(unix.as_nanos() as u64)?
@@ -136,6 +131,7 @@ mod tests {
         let ours = a.ca.public_key().fingerprint(HashAlg::Sha256);
         let host = a.host(SystemTime::now(), HOST_CERT_TTL).unwrap();
         host.cert.validate_at(now(), &[ours]).expect("our CA");
+        assert_eq!(host.cert.valid_after() + CLOCK_SKEW.as_secs(), host.cert.valid_before() - HOST_CERT_TTL.as_secs());
         assert_eq!(host.cert.cert_type(), CertType::Host);
         assert_eq!(host.cert.valid_principals(), [BUILDER_NAME.to_string()]);
         assert_eq!(host.cert.public_key(), host.key.public_key().key_data());
