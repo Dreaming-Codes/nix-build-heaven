@@ -10,7 +10,7 @@
 set -euo pipefail
 transport=grpc
 if [ "${1:-}" = -transport ]; then transport=${2:?}; shift 2; fi
-out=${1:?usage: smoke-ec2.sh [-transport grpc|ssh-ng] OUTDIR [deadman]}
+out=${1:?usage: smoke-ec2.sh [-transport grpc|ssh-ng] OUTDIR [gate|warm|deadman]}
 mode=${2:-gate}
 repo=$(cd "$(dirname "$0")/.." && pwd)
 mkdir -p "$out"
@@ -57,6 +57,15 @@ set -e
 t1=$(ts)
 echo "transport=$transport build exit=$rc wall=$(awk "BEGIN{print $t1-$t0}") s" | tee "$out/summary.txt"
 cat /nix/store/*-grpc-probe-$nonce 2>/dev/null | tee -a "$out/summary.txt" || true
+if [ "$mode" = warm ]; then
+  # A second build while the builder is still serving: no launch, no hold.
+  w0=$(ts)
+  sudo -n env "${nixenv[@]}" "$DET_NIX" build --impure -f /workspace/nbh/proof/tiny.nix \
+    --argstr nonce "$nonce-warm" --no-link --print-out-paths -L --store local --max-jobs 0 --builders-use-substitutes \
+    --builders "$entry" >"$out/build-warm.log" 2>&1 && wrc=0 || wrc=$?
+  t1=$(ts)
+  echo "warm build exit=$wrc wall=$(awk "BEGIN{print $t1-$w0}") s remote=$(grep -c "on '$transport://" "$out/build-warm.log")" | tee -a "$out/summary.txt"
+fi
 id=$(grep -oE 'launched [^ ]+ as i-[0-9a-f]+' "$out/gate.log" | head -1 | awk '{print $4}')
 echo "instance=$id" | tee -a "$out/summary.txt"
 if [ "$mode" = deadman ]; then
