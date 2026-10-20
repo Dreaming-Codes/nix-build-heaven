@@ -1,3 +1,4 @@
 bench/results/*/closure.json
 result
 result-*
+bench/results/*.log
