@@ -189,6 +189,7 @@ func (g *Gate) exec(ctx context.Context, f fleet.Effect) {
 			c, err := net.DialTimeout("tcp", e.Addr, 2*time.Second)
 			if err == nil {
 				c.Close()
+				l.Printf("probe %s ok, %s is listening", e.Key, e.Addr)
 				g.post(fleet.ProbeOK{Key: e.Key})
 			}
 		}()

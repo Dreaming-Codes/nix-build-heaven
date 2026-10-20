@@ -1,0 +1,5 @@
+build exit=0 wall=54.0696 s
+built on localhost nonce=ec2-1792519217 uid=1000
+instance=i-043582d45ff7a25b5
+instance shutting-down 132.354 s after the build ended
+m7a.large	eu-north-1c	2026-10-20T18:00:19+00:00	User initiated (2026-10-20 18:03:20 GMT)	Client.UserInitiatedShutdown: User initiated shutdown
