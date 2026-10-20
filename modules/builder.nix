@@ -41,6 +41,12 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = !lib.elem "kvm" config.nix.settings.system-features;
+        message = "services.nbh.builder: no kvm in nix.settings.system-features. Non-metal EC2 instances have no /dev/kvm, so VM tests must stay local.";
+      }
+    ];
     # nbh runs the client's `nix-daemon --stdio`, so it must be trusted.
     users.users.nbh = {
       isSystemUser = true;
@@ -157,8 +163,7 @@ in
       sandbox = "relaxed";
       max-jobs = "auto";
       cores = 0;
-      # No kvm: non-metal EC2 instances do not expose /dev/kvm, so VM tests stay local.
-      system-features = [ "benchmark" "big-parallel" ];
+      system-features = lib.mkForce [ "benchmark" "big-parallel" ];
       experimental-features = [ "nix-command" "flakes" ];
     };
   };
