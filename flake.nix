@@ -6,6 +6,10 @@
     nixpkgs.url = "github:NixOS/nixpkgs/6aa7ad7f840d5a5bf17020b231d1c8d87a71995b";
     # Lorenzo's locked Determinate 3.23.1 (Nix 2.35.2 base), the version the plugin must load into.
     determinate.url = "https://api.flakehub.com/f/pinned/DeterminateSystems/determinate/3.23.1/01a10edb-9034-7171-81fd-c25275e39c48/source.tar.gz";
+    terranix = {
+      url = "github:terranix/terranix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-grpc-store = {
       url = "github:Mic92/nix-grpc-store/199d78a4a8d45b480acde25f4a191e6034f94c5d";
       flake = false;
@@ -18,6 +22,7 @@
       nixpkgs,
       determinate,
       nix-grpc-store,
+      terranix,
     }:
     let
       system = "x86_64-linux";
@@ -36,6 +41,11 @@
         plugin = pluginFor determinate;
         determinateNix = determinate.inputs.nix.packages.${system}.default;
         ami = self.nixosConfigurations.builder-ami.config.system.build.amazonImage;
+        # OpenTofu JSON for the AWS side; scripts/tofu.sh applies it with local state.
+        infra = terranix.lib.terranixConfiguration {
+          inherit system;
+          modules = [ ./infra ];
+        };
       };
 
       nixosConfigurations.builder-ami = nixpkgs.lib.nixosSystem {
