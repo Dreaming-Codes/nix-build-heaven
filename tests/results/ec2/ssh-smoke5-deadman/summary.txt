@@ -1,0 +1,6 @@
+transport=ssh-ng build exit=0 wall=33.6828 s
+built on localhost nonce=ec2-1792529669 uid=1000
+instance=i-0cf10d51ca32084c8
+gate killed at 2026-10-20T22:55:03+02:00
+instance terminated 626.291 s after the build ended
+m7a.large	eu-north-1c	2026-10-20T20:54:31+00:00	User initiated	Client.InstanceInitiatedShutdown: Instance initiated shutdown
