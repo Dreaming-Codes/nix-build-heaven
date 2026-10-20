@@ -42,7 +42,7 @@ cloud between sessions now. The gate is a local process on the client host.
 | 15 | Small two-step build, no gate, alternating: grpc 13.35, 9.89, 9.74 s; ssh-ng 10.59, 9.78, 9.45 s | measured, TCG | `tests/results/transport-bench.run3-bulk-then-client-vm-died.log` |
 | 16 | 64 MiB fresh input up and 64 MiB output back: grpc 29.75, 30.6, 29.83 s; ssh-ng 50.72, 48.03, 46.94 s, so ssh-ng is about 1.6x slower here | measured, TCG | same |
 | 17 | The 1.6x is mostly emulated crypto and copies, which cost far more under TCG than on hardware; on EC2 and a home link the uplink should dominate both. The kernel-2 run uploaded 1.2 MB and downloaded 826 MB, so the download of outputs is the part that matters | inferred, not measured on EC2 | kernel-2 RESULT.md |
-| 18 | builders-use-substitutes on the builder | see below | `tests/results/transport-subst.log` |
+| 18 | builders-use-substitutes works over both transports: with a 32 MiB input present in an HTTP binary cache the builder fetched its narinfo (200) and NAR from the cache instead of receiving it from the client, for grpc and for ssh-ng | measured, TCG | `tests/results/transport-subst.log` |
 
 ## Designs considered
 
