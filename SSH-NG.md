@@ -63,6 +63,14 @@ cloud between sessions now. The gate is a local process on the client host.
   plugin patch through every Determinate upgrade and the client's reconnect
   backoff on every cold start.
 
+## Status 2026-10-20 23:55
+
+Steps 1 to 4 done: ami-046c3f591eca17088 with both transports and the tcp/22
+rule applied; ssh-ng EC2 smokes pass cold (36.0, 33.7 s), warm (3.3 s),
+terminate (73 s) and dead-man (626 s); kernel-3 over ssh-ng in 1054 s for
+about $0.18 with outputs bit-identical; nixos branch nbh-ssh-ng-client
+(c1f0ebd, local). Step 5 not started. See TRAIL 22:33 to 23:55.
+
 ## Work to finish the switch (estimates, guess)
 
 1. Re-bake the AMI with `transports = [ "grpc" "ssh-ng" ]` (already set in
