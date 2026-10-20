@@ -1,0 +1,226 @@
+{
+ "libinput-1.31.3 v22jrl9q": {
+  "derivations": 50,
+  "edges": 110,
+  "depth_levels": 14,
+  "max_level_width": 10,
+  "total_work_s": 50.0,
+  "critical_path_s": 14.0,
+  "avg_parallelism": 3.57,
+  "simulated_makespan_s": {
+   "8": 14.0,
+   "64": 14.0,
+   "192": 14.0
+  }
+ },
+ "mesa-26.2.4 hb6gmsp8": {
+  "derivations": 28,
+  "edges": 39,
+  "depth_levels": 12,
+  "max_level_width": 5,
+  "total_work_s": 28.0,
+  "critical_path_s": 12.0,
+  "avg_parallelism": 2.33,
+  "simulated_makespan_s": {
+   "8": 12.0,
+   "64": 12.0,
+   "192": 12.0
+  }
+ },
+ "mesa-26.2.4 j95dpnvj": {
+  "derivations": 29,
+  "edges": 42,
+  "depth_levels": 12,
+  "max_level_width": 5,
+  "total_work_s": 29.0,
+  "critical_path_s": 12.0,
+  "avg_parallelism": 2.42,
+  "simulated_makespan_s": {
+   "8": 12.0,
+   "64": 12.0,
+   "192": 12.0
+  }
+ },
+ "qtbase-6.11.2 7y7kr6vw": {
+  "derivations": 380,
+  "edges": 3452,
+  "depth_levels": 38,
+  "max_level_width": 60,
+  "total_work_s": 380.0,
+  "critical_path_s": 38.0,
+  "avg_parallelism": 10.0,
+  "simulated_makespan_s": {
+   "8": 54.0,
+   "64": 38.0,
+   "192": 38.0
+  }
+ },
+ "qtbase-6.11.2-only-plugins-qml ppqawjja": {
+  "derivations": 323,
+  "edges": 2631,
+  "depth_levels": 31,
+  "max_level_width": 61,
+  "total_work_s": 323.0,
+  "critical_path_s": 31.0,
+  "avg_parallelism": 10.42,
+  "simulated_makespan_s": {
+   "8": 45.0,
+   "64": 31.0,
+   "192": 31.0
+  }
+ },
+ "qtbase-6.11.2 x9m4syy7": {
+  "derivations": 377,
+  "edges": 3449,
+  "depth_levels": 35,
+  "max_level_width": 60,
+  "total_work_s": 377.0,
+  "critical_path_s": 35.0,
+  "avg_parallelism": 10.77,
+  "simulated_makespan_s": {
+   "8": 51.0,
+   "64": 35.0,
+   "192": 35.0
+  }
+ },
+ "libdrm-2.4.134 4wkdcw05": {
+  "derivations": 55,
+  "edges": 93,
+  "depth_levels": 18,
+  "max_level_width": 6,
+  "total_work_s": 55.0,
+  "critical_path_s": 18.0,
+  "avg_parallelism": 3.06,
+  "simulated_makespan_s": {
+   "8": 18.0,
+   "64": 18.0,
+   "192": 18.0
+  }
+ },
+ "libdrm-2.4.134 fbr3kgnq": {
+  "derivations": 52,
+  "edges": 80,
+  "depth_levels": 31,
+  "max_level_width": 5,
+  "total_work_s": 52.0,
+  "critical_path_s": 31.0,
+  "avg_parallelism": 1.68,
+  "simulated_makespan_s": {
+   "8": 31.0,
+   "64": 31.0,
+   "192": 31.0
+  }
+ },
+ "libdrm-2.4.134 wc923jpb": {
+  "derivations": 781,
+  "edges": 4951,
+  "depth_levels": 45,
+  "max_level_width": 74,
+  "total_work_s": 781.0,
+  "critical_path_s": 45.0,
+  "avg_parallelism": 17.36,
+  "simulated_makespan_s": {
+   "8": 101.0,
+   "64": 45.0,
+   "192": 45.0
+  }
+ },
+ "wayland-1.26.0 0vahkbip": {
+  "derivations": 49,
+  "edges": 76,
+  "depth_levels": 30,
+  "max_level_width": 5,
+  "total_work_s": 49.0,
+  "critical_path_s": 30.0,
+  "avg_parallelism": 1.63,
+  "simulated_makespan_s": {
+   "8": 30.0,
+   "64": 30.0,
+   "192": 30.0
+  }
+ },
+ "wayland-1.26.0 9bdrmmpn": {
+  "derivations": 756,
+  "edges": 4897,
+  "depth_levels": 43,
+  "max_level_width": 62,
+  "total_work_s": 756.0,
+  "critical_path_s": 43.0,
+  "avg_parallelism": 17.58,
+  "simulated_makespan_s": {
+   "8": 98.0,
+   "64": 43.0,
+   "192": 43.0
+  }
+ },
+ "wayland-1.26.0 vrriizqf": {
+  "derivations": 54,
+  "edges": 97,
+  "depth_levels": 18,
+  "max_level_width": 7,
+  "total_work_s": 54.0,
+  "critical_path_s": 18.0,
+  "avg_parallelism": 3.0,
+  "simulated_makespan_s": {
+   "8": 18.0,
+   "64": 18.0,
+   "192": 18.0
+  }
+ },
+ "pipewire-1.6.9 jkpyh3xy": {
+  "derivations": 5,
+  "edges": 5,
+  "depth_levels": 5,
+  "max_level_width": 1,
+  "total_work_s": 5.0,
+  "critical_path_s": 5.0,
+  "avg_parallelism": 1.0,
+  "simulated_makespan_s": {
+   "8": 5.0,
+   "64": 5.0,
+   "192": 5.0
+  }
+ },
+ "pipewire-1.6.9 v1l604xs": {
+  "derivations": 358,
+  "edges": 1835,
+  "depth_levels": 39,
+  "max_level_width": 28,
+  "total_work_s": 358.0,
+  "critical_path_s": 39.0,
+  "avg_parallelism": 9.18,
+  "simulated_makespan_s": {
+   "8": 49.0,
+   "64": 39.0,
+   "192": 39.0
+  }
+ },
+ "libxkbcommon-1.13.2 2fp05kq9": {
+  "derivations": 610,
+  "edges": 4348,
+  "depth_levels": 40,
+  "max_level_width": 57,
+  "total_work_s": 610.0,
+  "critical_path_s": 40.0,
+  "avg_parallelism": 15.25,
+  "simulated_makespan_s": {
+   "8": 80.0,
+   "64": 40.0,
+   "192": 40.0
+  }
+ },
+ "libxkbcommon-1.13.2 qyh2zg9r": {
+  "derivations": 29,
+  "edges": 42,
+  "depth_levels": 16,
+  "max_level_width": 6,
+  "total_work_s": 29.0,
+  "critical_path_s": 16.0,
+  "avg_parallelism": 1.81,
+  "simulated_makespan_s": {
+   "8": 16.0,
+   "64": 16.0,
+   "192": 16.0
+  }
+ }
+}
