@@ -1,0 +1,6 @@
+transport=ssh-ng build exit=0 wall=33.7246 s
+built on localhost nonce=ec2-1792529549 uid=1000
+warm build exit=0 wall=3.2865 s remote=1
+instance=i-0c5d313270cbb8cde
+instance shutting-down 72.9412 s after the build ended
+m7a.large	eu-north-1c	2026-10-20T20:52:31+00:00	User initiated (2026-10-20 20:54:12 GMT)	Client.UserInitiatedShutdown: User initiated shutdown
