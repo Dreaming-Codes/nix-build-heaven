@@ -219,6 +219,16 @@ in
     cidr_ipv4 = "0.0.0.0/0";
     description = "nix-grpc-daemon with mTLS from the gate CA";
   };
+  # ssh-ng transport (modules/builder.nix transports). Not applied yet: added
+  # with the ssh-ng prototype, applies when the AMI is re-baked with sshd.
+  resource.aws_vpc_security_group_ingress_rule.ssh4 = {
+    security_group_id = ref "aws_security_group.builder.id";
+    ip_protocol = "tcp";
+    from_port = 22;
+    to_port = 22;
+    cidr_ipv4 = "0.0.0.0/0";
+    description = "sshd for ssh-ng, host cert and client key from the gate";
+  };
   resource.aws_vpc_security_group_egress_rule.all4 = {
     security_group_id = ref "aws_security_group.builder.id";
     ip_protocol = "-1";
