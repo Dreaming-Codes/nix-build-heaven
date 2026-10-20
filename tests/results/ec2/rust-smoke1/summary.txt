@@ -1,0 +1,6 @@
+build exit=0 wall=31.7335 s
+built on localhost nonce=ec2-1792535667
+warm build exit=0 wall=3.22106 s remote=1
+instance=i-0075044715f930a93
+instance shutting-down 67.7459 s after the build ended
+m7a.large	eu-north-1c	2026-10-20T22:34:29+00:00	User initiated (2026-10-20 22:36:08 GMT)	Client.UserInitiatedShutdown: User initiated shutdown

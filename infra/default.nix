@@ -103,13 +103,13 @@ in
 
   variable.snapshot_id = {
     type = "string";
-    # Uploaded 2026-10-20 by scripts/upload-ami.sh from packages.ami (0mz4016f).
-    default = "snap-094d64b10df04f71e";
+    # Uploaded 2026-10-21 by scripts/upload-ami.sh from packages.ami (gmk4q99l), ssh-ng only.
+    default = "snap-078826d508752975f";
     description = "EBS snapshot of the builder raw image, from scripts/upload-ami.sh";
   };
   variable.image_name = {
     type = "string";
-    default = "nbh-builder-26.11.20261012.6aa7ad7-0mz4016f";
+    default = "nbh-builder-26.11.20261012.6aa7ad7-gmk4q99l";
   };
   variable.gate_credentials_file = {
     type = "string";

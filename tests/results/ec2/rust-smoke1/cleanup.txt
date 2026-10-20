@@ -1,0 +1,4 @@
+2026-10-21T00:36:25+02:00 i-0075044715f930a93 terminated
+eu-north-1 instances=0 volumes=0 spot=1
+2026-10-21T00:37:22+02:00 all regions checked
+2026-10-21T00:41:51+02:00 recheck eu-north-1 spot_open_active=0 spot_of_smoke=closed	instance-terminated-by-user instances_live=0 volumes=0

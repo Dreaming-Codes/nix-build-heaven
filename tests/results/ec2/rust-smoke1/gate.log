@@ -1,0 +1,8 @@
+nbh-gate: 2026-10-20T22:34:26.314988Z machines file: builder available=true
+nbh-gate: 2026-10-20T22:34:27.614129Z launch grok-bot-vm-145538761-1792535666-1
+nbh-gate: 2026-10-20T22:34:29.679899Z launched i-0075044715f930a93 m7a.large in eu-north-1c at spot $0.0134/h
+nbh-gate: 2026-10-20T22:34:29.679960Z launched grok-bot-vm-145538761-1792535666-1 as i-0075044715f930a93
+nbh-gate: 2026-10-20T22:34:55.443570Z probe grok-bot-vm-145538761-1792535666-1 ok, 13.53.44.168:22 is listening
+nbh-gate: 2026-10-20T22:34:55.443816Z splice connection 1 to 13.53.44.168:22
+nbh-gate: 2026-10-20T22:34:59.388654Z splice connection 2 to 13.53.44.168:22
+nbh-gate: 2026-10-20T22:36:08.315985Z terminate grok-bot-vm-145538761-1792535666-1 (i-0075044715f930a93)
