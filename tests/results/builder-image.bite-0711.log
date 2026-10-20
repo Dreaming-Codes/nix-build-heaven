@@ -1,0 +1,6 @@
+vm-test-run-nbh-builder-image> client # [   90.503894] faux_driver regulatory: Direct firmware load for regulatory.db failed with error -2
+vm-test-run-nbh-builder-image> subtest: builder waits for user-data and serves once it appears
+vm-test-run-nbh-builder-image> builder # [   68.763426] faux_driver regulatory: Direct firmware load for regulatory.db failed with error -2
+vm-test-run-nbh-builder-image> (finished: subtest: builder waits for user-data and serves once it appears, in 87.68 seconds)
+vm-test-run-nbh-builder-image> subtest: ssh material is this boot's, in a directory sshd reads as nbh
+vm-test-run-nbh-builder-image> !!! Test "ssh material is this boot's, in a directory sshd reads as nbh" failed with error: "/run/nbh-ssh is 711, sshd reads authorized_keys with nbh's privileges"

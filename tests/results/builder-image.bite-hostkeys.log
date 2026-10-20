@@ -1,0 +1,4 @@
+vm-test-run-nbh-builder-image> client # [  178.873981] faux_driver regulatory: Direct firmware load for regulatory.db failed with error -2
+vm-test-run-nbh-builder-image> subtest: builder waits for user-data and serves once it appears
+vm-test-run-nbh-builder-image> builder # [   52.493919] faux_driver regulatory: Direct firmware load for regulatory.db failed with error -2
+vm-test-run-nbh-builder-image> !!! Test "builder waits for user-data and serves once it appears" failed with error: "command `ls /etc/ssh/ssh_host_*` unexpectedly succeeded"
