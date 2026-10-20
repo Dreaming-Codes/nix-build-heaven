@@ -3,7 +3,7 @@
 # build latency, and whether builders-use-substitutes makes the builder fetch
 # an input from a binary cache instead of receiving it from the client.
 # TCG timings: crypto and copies are emulated, so only the ratio means much.
-{ self, pkgs }:
+{ self, pkgs, substOnly ? false }:
 let
   common = import ./common.nix { inherit self pkgs; };
   bulk = pkgs.writeText "bulk.nix" ''
@@ -21,7 +21,7 @@ let
   '';
 in
 pkgs.testers.runNixOSTest {
-  name = "nbh-transport-bench";
+  name = if substOnly then "nbh-transport-subst" else "nbh-transport-bench";
   nodes = {
     builder =
       { nodes, ... }:
@@ -76,8 +76,10 @@ pkgs.testers.runNixOSTest {
         out = client.succeed(cmd + " 2>&1")
         return time.monotonic() - t0, out
 
+    subst_only = ${if substOnly then "True" else "False"}
     results = {"grpc": {"small": [], "bulk": []}, "ssh-ng": {"small": [], "bulk": []}}
     with subtest("small two-step build, 3 runs each, alternating"):
+      if not subst_only:
         for i in range(3):
             for t in ("grpc", "ssh-ng"):
                 use(t)
@@ -87,12 +89,14 @@ pkgs.testers.runNixOSTest {
         print("MEASURED small " + json.dumps({t: results[t]["small"] for t in results}))
 
     with subtest("warm-up: bash and coreutils reach the builder once, over each transport"):
+      if not subst_only:
         for t in ("grpc", "ssh-ng"):
             use(t)
             client.succeed(f"head -c 16 /dev/urandom > /tmp/warm-{t}")
             client.succeed(f"NIX_REMOTE=daemon nix-build /etc/nbh/bulk.nix --argstr nonce warm-{t}-{time.time_ns()} --arg blob /tmp/warm-{t} --no-out-link")
 
     with subtest("64 MiB fresh input up, 64 MiB output back, 3 runs each, alternating"):
+      if not subst_only:
         for i in range(3):
             for t in ("grpc", "ssh-ng"):
                 use(t)
@@ -111,7 +115,7 @@ pkgs.testers.runNixOSTest {
             use(t)
             client.succeed(f"head -c 33554432 /dev/urandom > /tmp/subst-{t}")
             p = client.succeed(f"nix-store --add /tmp/subst-{t}").strip()
-            client.succeed(f"nix --extra-experimental-features nix-command copy --to file:///var/lib/cache {p}")
+            client.succeed(f"nix --extra-experimental-features nix-command copy --to 'file:///var/lib/cache?compression=none' {p}")
             client.succeed("truncate -s0 /tmp/http.log")
             client.succeed(f"head -c 16 /dev/urandom > /tmp/tiny-{t}")
             d, out = timed(f"NIX_REMOTE=daemon nix-build /etc/nbh/bulk.nix --argstr nonce subst-{t}-{time.time_ns()} --arg blob /tmp/tiny-{t} --argstr subst {p} --no-out-link")

@@ -69,6 +69,7 @@
         phase3-gate-coldstart = import ./tests/gate-coldstart.nix { inherit self pkgs; };
         ssh-coldstart = import ./tests/ssh-coldstart.nix { inherit self pkgs; };
         transport-bench = import ./tests/transport-bench.nix { inherit self pkgs; };
+        transport-subst = import ./tests/transport-bench.nix { inherit self pkgs; substOnly = true; };
       };
     };
 }
