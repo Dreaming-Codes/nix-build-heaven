@@ -8,6 +8,13 @@ let
   cfg = config.services.nbh.builder;
   # 0755: sshd reads authorized_keys with nbh's privileges.
   keys = "/run/nbh-ssh";
+  userDataFields = lib.importJSON ../gate/user-data-fields.json;
+  field =
+    name:
+    if lib.elem name userDataFields then
+      ".${name}"
+    else
+      throw "builder.nix reads user-data field ${name}, which nbh-gate does not write (gate/user-data-fields.json)";
 in
 {
   options.services.nbh.builder = {
@@ -84,11 +91,11 @@ in
           echo "user-data not available yet, retrying"
           sleep 1
         done
-        [ "$(jq -r .nbh <<<"$ud")" = 1 ] || { echo "user-data is not nbh v1" >&2; exit 1; }
+        [ "$(jq -r ${field "nbh"} <<<"$ud")" = 1 ] || { echo "user-data is not nbh v1" >&2; exit 1; }
         install -d -m 0755 ${keys}
-        (umask 077; jq -r .ssh_host_key <<<"$ud" > ${keys}/ssh_host_ed25519_key)
-        jq -r .ssh_host_cert <<<"$ud" > ${keys}/ssh_host_ed25519_key-cert.pub
-        jq -r .ssh_authorized_keys <<<"$ud" > ${keys}/authorized_keys.nbh
+        (umask 077; jq -r ${field "ssh_host_key"} <<<"$ud" > ${keys}/ssh_host_ed25519_key)
+        jq -r ${field "ssh_host_cert"} <<<"$ud" > ${keys}/ssh_host_ed25519_key-cert.pub
+        jq -r ${field "ssh_authorized_keys"} <<<"$ud" > ${keys}/authorized_keys.nbh
         chmod 0644 ${keys}/ssh_host_ed25519_key-cert.pub ${keys}/authorized_keys.nbh
       '';
     };

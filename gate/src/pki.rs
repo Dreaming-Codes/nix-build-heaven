@@ -17,7 +17,7 @@ pub const HOST_CERT_TTL: Duration = Duration::from_secs(3 * 3600);
 
 pub const CLOCK_SKEW: Duration = Duration::from_secs(300);
 
-/// What the builder's nbh-keys unit reads from EC2 user-data.
+/// Field names shared with builder.nix through `user-data-fields.json`.
 #[derive(Serialize)]
 struct UserData {
     nbh: u32,
@@ -167,5 +167,17 @@ mod tests {
         assert_eq!(cert.public_key(), key.public_key().key_data());
         let client = fs::read_to_string(dir.path().join("pki/ssh_client.pub")).unwrap();
         assert_eq!(ud["ssh_authorized_keys"], client.as_str());
+    }
+
+    #[test]
+    fn user_data_fields_match_what_builder_nix_reads() {
+        let (_dir, a) = pki();
+        let ud: serde_json::Map<String, serde_json::Value> =
+            serde_json::from_slice(&a.user_data(SystemTime::now()).unwrap()).unwrap();
+        let mut got: Vec<&str> = ud.keys().map(String::as_str).collect();
+        let mut want: Vec<&str> = serde_json::from_str(include_str!("../user-data-fields.json")).unwrap();
+        got.sort();
+        want.sort();
+        assert_eq!(got, want);
     }
 }
