@@ -8,17 +8,29 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"nix-build-heaven/gate/certs"
 	"nix-build-heaven/gate/cloud"
 	"nix-build-heaven/gate/fleet"
 	"nix-build-heaven/gate/gate"
 )
 
 func main() {
+	if len(os.Args) > 1 {
+		switch os.Args[1] {
+		case "pki-init":
+			pkiInit(os.Args[2:])
+			return
+		case "userdata":
+			userData(os.Args[2:])
+			return
+		}
+	}
 	host, _ := os.Hostname()
 	cfg := fleet.DefaultConfig(fmt.Sprintf("%s-%d", host, time.Now().Unix()))
 	listen := flag.String("listen", "127.0.0.1:50051", "address the nix-daemon connects to")
@@ -57,4 +69,34 @@ func main() {
 	if err := g.Run(ctx); err != nil {
 		log.Fatal(err)
 	}
+}
+
+// pki-init DIR CLIENT_CN creates the private CA and the client identity once.
+func pkiInit(args []string) {
+	if len(args) != 2 {
+		log.Fatal("usage: nbh-gate pki-init DIR CLIENT_CN")
+	}
+	if err := certs.Dir(args[0]).Init(time.Now(), args[1]); err != nil {
+		log.Fatal(err)
+	}
+}
+
+// userdata DIR [IP...] prints builder user-data with a fresh 3 h server certificate.
+func userData(args []string) {
+	if len(args) < 1 {
+		log.Fatal("usage: nbh-gate userdata DIR [EXTRA_IP...]")
+	}
+	ca, err := certs.Dir(args[0]).CA()
+	if err != nil {
+		log.Fatal(err)
+	}
+	var ips []net.IP
+	for _, a := range args[1:] {
+		ips = append(ips, net.ParseIP(a))
+	}
+	srv, err := certs.Server(ca, time.Now(), 3*time.Hour, ips...)
+	if err != nil {
+		log.Fatal(err)
+	}
+	os.Stdout.Write(certs.NewUserData(ca, srv))
 }
