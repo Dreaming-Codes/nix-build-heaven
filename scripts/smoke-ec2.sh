@@ -22,7 +22,7 @@ admin() { AWS_SHARED_CREDENTIALS_FILE=/home/box/secrets/aws-grok-bot.credentials
 ts() { date +%s.%N; }
 
 AWS_SHARED_CREDENTIALS_FILE=/home/box/secrets/nbh-gate.credentials AWS_PROFILE=nbh-gate \
-  "$gate" -backend aws -pki "$pki" -owner box-smoke -instance-types "$types" -max-price "${NBH_MAX_PRICE:-0.05}" \
+  "$gate" -backend aws -pki "$pki" -owner "${NBH_OWNER:-box-smoke}" -instance-types "$types" -max-price "${NBH_MAX_PRICE:-0.05}" \
   -machines-file "$out/machines" -machines-entry "$uri x86_64-linux - 2 1 big-parallel,benchmark" \
   -retry-hold 150s >"$out/gate.log" 2>&1 &
 gpid=$!
