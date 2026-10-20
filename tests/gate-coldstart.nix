@@ -31,7 +31,7 @@ pkgs.testers.runNixOSTest {
 
       def build(tag, extra="", user="alice"):
           nonce = f"{tag}-{time.time_ns()}"
-          cmd = f"nix-build /etc/nbh/probe.nix --argstr nonce {nonce} --no-out-link -L {extra}"
+          cmd = f"nix-build /etc/nbh/probe.nix --argstr nonce {nonce} --no-out-link {extra}"
           if user == "alice":
               cmd = f"su - alice -c '{cmd}'"
           else:
@@ -54,7 +54,6 @@ pkgs.testers.runNixOSTest {
           assert blog.count("on 'grpc://nbh-builder") >= 2, blog
           assert d >= 20, f"finished in {d:.1f} s, before the fake builder booted"
           journal = client.succeed("journalctl -u nbh-gate.service")
-          assert journal.count("launch test") + journal.count("launch client") >= 0
           assert len(re.findall(r"launched \S+ as i-fake", journal)) == 1, journal
 
       with subtest("warm: second build splices straight to the serving builder"):

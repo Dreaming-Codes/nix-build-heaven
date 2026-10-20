@@ -44,7 +44,7 @@ pkgs.testers.runNixOSTest {
 
       with subtest("unprivileged user builds through the nix-daemon with max-jobs 0, entirely on the builder"):
           nonce = str(int(time.time()))
-          blog = client.succeed(f"su - alice -c 'nix-build /etc/nbh/probe.nix --argstr nonce {nonce} --no-out-link -L' 2>&1")
+          blog = client.succeed(f"su - alice -c 'nix-build /etc/nbh/probe.nix --argstr nonce {nonce} --no-out-link' 2>&1")
           print(blog)
           out = blog.strip().splitlines()[-1]
           assert out.startswith("/nix/store/") and out.endswith(f"nbh-probe-b-{nonce}"), out
