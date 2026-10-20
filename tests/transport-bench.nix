@@ -56,7 +56,7 @@ pkgs.testers.runNixOSTest {
     client.wait_for_unit("fake-imds.service")
     client.succeed(f"nbh-gate pki-init {pki} client")
     client.succeed(f"nbh-gate userdata {pki} > /var/lib/fake-imds/user-data")
-    client.succeed("mkdir -p /var/lib/cache && cd /var/lib/cache && (python3 -m http.server 8170 > /tmp/http.log 2>&1 &)")
+    client.succeed("mkdir -p /var/lib/cache && cd /var/lib/cache && (${pkgs.python3}/bin/python3 -m http.server 8170 > /tmp/http.log 2>&1 &)")
     client.wait_for_open_port(8170)
     builder.start()
     builder.wait_for_open_port(50051, timeout=180)

@@ -46,13 +46,13 @@ pkgs.testers.runNixOSTest {
       pki = "${common.pki}"
       entry = "${entry}"
 
-      def build(tag, extra="", user="alice", check=True):
+      def build(tag, extra="", user="alice", check=True, prefix=""):
           nonce = f"{tag}-{time.time_ns()}"
           cmd = f"nix-build /etc/nbh/probe.nix --argstr nonce {nonce} --no-out-link {extra}"
           if user == "alice":
               cmd = f"su - alice -c '{cmd}'"
           else:
-              cmd = f"NIX_REMOTE=daemon {cmd}"
+              cmd = f"NIX_REMOTE=daemon {prefix}{cmd}"
           t0 = time.monotonic()
           if check:
               blog = client.succeed(cmd + " 2>&1")
@@ -124,7 +124,7 @@ pkgs.testers.runNixOSTest {
           assert d <= 25, d
 
       with subtest("a resetting gate (grpc-style refuse): ssh-ng does not retry"):
-          client.succeed("python3 ${listener} rst 2299 > /tmp/rst.log 2>&1 &")
+          client.succeed("${pkgs.python3}/bin/python3 ${listener} rst 2299 > /tmp/rst.log 2>&1 &")
           client.wait_for_open_port(2299)
           bad = entry.replace(":2222", ":2299")
           d1, blog1 = build("rst-local", f"--max-jobs 1 --builders '{bad}'", user="root")
@@ -132,7 +132,8 @@ pkgs.testers.runNixOSTest {
           a1 = int(client.succeed("grep -c accept /tmp/rst.log").strip())
           print(f"MEASURED reset_maxjobs1_s={d1:.1f} accepts={a1} remote={'ssh-ng://' in blog1 and 'building' in blog1}")
           client.succeed("truncate -s0 /tmp/rst.log")
-          d0, blog0 = build("rst-nolocal", f"--max-jobs 0 --builders '{bad}' --option connect-timeout 5", user="root", check=False)
+          # max-jobs 0: no local fallback. Bounded by timeout in case the hook postpones forever.
+          d0, blog0 = build("rst-nolocal", f"--max-jobs 0 --builders '{bad}'", user="root", check=False, prefix="timeout 90 ")
           print(blog0)
           a0 = int(client.succeed("grep -c accept /tmp/rst.log || true").strip() or 0)
           print(f"MEASURED reset_maxjobs0_s={d0:.1f} accepts={a0}")
