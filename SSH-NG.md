@@ -78,7 +78,7 @@ gone from the repo and from AWS: no plugin, no patch, no 50051 rule. The
 builder AMI is ami-0dbc5c7676643380c, ssh-ng only. The old AMI is deleted.
 The Rust gate's EC2 smoke spliced 25.8 s after launch and built cold in 31.7 s.
 The nixos branch still sets `transport` and the old single-dash gate flags,
-so it needs the changes listed in TRAIL 00:42. See TRAIL 00:13 to 00:52.
+so it needs the changes in TRAIL 00:55. See TRAIL 00:13 to 00:55.
 
 ## Work to finish the switch (estimates, guess)
 
