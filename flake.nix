@@ -68,6 +68,7 @@
         phase2-builder-image = import ./tests/builder-image.nix { inherit self pkgs; };
         phase3-gate-coldstart = import ./tests/gate-coldstart.nix { inherit self pkgs; };
         ssh-coldstart = import ./tests/ssh-coldstart.nix { inherit self pkgs; };
+        transport-bench = import ./tests/transport-bench.nix { inherit self pkgs; };
       };
     };
 }
