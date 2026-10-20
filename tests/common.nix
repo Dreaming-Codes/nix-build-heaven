@@ -12,8 +12,9 @@ let
         builder = "/bin/sh";
         args = [ "-c" script ];
       };
-      # The sandbox has no sleep binary; spin for busy seconds instead.
-      a = mk "nbh-probe-a-''${nonce}" "while [ $SECONDS -lt ''${busy} ]; do :; done; echo a-''${nonce} > $out";
+      # The sandbox shell is a bare ash with no sleep and no $SECONDS, so spin on
+      # /proc/uptime for busy seconds.
+      a = mk "nbh-probe-a-''${nonce}" "read s _ < /proc/uptime; while read n _ < /proc/uptime; [ \''${n%.*} -lt $((\''${s%.*} + ''${busy})) ]; do :; done; echo a-''${nonce} > $out";
     in
     mk "nbh-probe-b-''${nonce}" "read x < ''${a}; echo \"$x b\" > $out"
   '';

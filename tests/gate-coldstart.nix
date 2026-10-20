@@ -63,7 +63,9 @@ pkgs.testers.runNixOSTest {
           d, blog = build("warm")
           print(f"MEASURED warm_build_s={d:.1f}")
           assert blog.count("on 'grpc://nbh-builder") >= 2, blog
-          assert d < 10, d
+          assert d < 20, f"{d:.1f} s, as long as a 20 s builder boot"
+          journal = client.succeed("journalctl -u nbh-gate.service")
+          assert len(re.findall(r"launched \S+ as i-fake", journal)) == 1, journal
           last_close = time.monotonic()
 
       with subtest("a 30 s build outlasts idle-grace 10 s + 5 s recheck without a drain"):
