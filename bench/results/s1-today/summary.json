@@ -1,0 +1,22 @@
+{
+ "exit_code": 0,
+ "wall_s": 368.0,
+ "planned_builds": 11,
+ "builds_seen_in_log": 11,
+ "mean_cpu_busy": 0.902,
+ "share_of_time_cpu_over_90pct": 0.82,
+ "total_work_s": 812.8,
+ "critical_path_s": 367.3,
+ "avg_parallelism": 2.21,
+ "max_level_width": 8,
+ "observed_max_concurrent_builds": 8,
+ "simulated_makespan_s": {
+  "1": 812.8,
+  "8": 367.3,
+  "16": 367.3,
+  "32": 367.3,
+  "64": 367.3,
+  "96": 367.3,
+  "192": 367.3
+ }
+}

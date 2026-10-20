@@ -1,0 +1,28 @@
+{
+ "derivations": 11,
+ "edges": 3,
+ "depth_levels": 2,
+ "max_level_width": 8,
+ "total_work_s": 812.8,
+ "critical_path_s": 367.3,
+ "avg_parallelism": 2.21,
+ "critical_path": [
+  {
+   "drv": "spotify-player-0.25.1",
+   "s": 367.3
+  }
+ ],
+ "simulated_makespan_s": {
+  "1": 812.8,
+  "8": 367.3,
+  "16": 367.3,
+  "32": 367.3,
+  "64": 367.3,
+  "96": 367.3,
+  "192": 367.3
+ },
+ "weights": "measured",
+ "unmeasured_derivations": 0,
+ "observed_max_concurrent_builds": 8,
+ "observed_wall_s": 367.3
+}

@@ -1,0 +1,16 @@
+{
+ "derivations": 10496,
+ "edges": 109227,
+ "depth_levels": 320,
+ "max_level_width": 1084,
+ "total_work_s": 10496.0,
+ "critical_path_s": 320.0,
+ "avg_parallelism": 32.8,
+ "simulated_makespan_s": {
+  "1": 10496.0,
+  "8": 1339.0,
+  "64": 320.0,
+  "192": 320.0
+ },
+ "weights": "unit (1 per derivation)"
+}

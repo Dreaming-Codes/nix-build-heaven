@@ -1,0 +1,57 @@
+{
+ "79w048yggk51x8agxc61xx2i32ca30xi-nh-4.4.2.drv": {
+  "start": 0.647,
+  "end": 0.82,
+  "s": 0.17299999999999993
+ },
+ "6apr801skl1gjj1shicjh8wsw6sc4r6r-hplip.state.drv": {
+  "start": 0.756,
+  "end": 0.873,
+  "s": 0.11699999999999999
+ },
+ "ln47padkr10j67hdsihnhskmdssr70jn-nix-file-overlay-0.1.0-vendor.drv": {
+  "start": 0.769,
+  "end": 1.543,
+  "s": 0.7739999999999999
+ },
+ "340hlki1zdb8jyzshrfvgwc6mj6v3am0-rsworktree-0.7.1-vendor.drv": {
+  "start": 0.787,
+  "end": 7.838,
+  "s": 7.051
+ },
+ "rcyqaf6z6d95lmqbjshnkw7gqksqgd7v-switchboard-with-plugs-8.0.3.drv": {
+  "start": 0.673,
+  "end": 12.404,
+  "s": 11.731
+ },
+ "bz7fqci5l26s8wazl8si8zj64yvpj4rv-ananicy-cpp-1.2.0.drv": {
+  "start": 0.628,
+  "end": 36.407,
+  "s": 35.778999999999996
+ },
+ "8rq1igy8c3cnvgq8c995w9i4sfnnlw4n-nix-file-overlay-0.1.0.drv": {
+  "start": 1.545,
+  "end": 38.585,
+  "s": 37.04
+ },
+ "yvdda1g7j1jzwp42xghpk58yckvl3cgp-xwayland-24.1.14.drv": {
+  "start": 0.699,
+  "end": 87.099,
+  "s": 86.4
+ },
+ "bx1g4g3lmqmn0hrhx75vlrdi0x9wmdwy-rsworktree-0.7.1.drv": {
+  "start": 7.851,
+  "end": 117.821,
+  "s": 109.97
+ },
+ "cnm480gxqnqs5jkxlkm503r717ijsi0w-hplip-3.26.4.drv": {
+  "start": 0.887,
+  "end": 157.368,
+  "s": 156.481
+ },
+ "km8cdzgg61rww5823k433y99lgjjvvns-spotify-player-0.25.1.drv": {
+  "start": 0.659,
+  "end": 367.948,
+  "s": 367.289
+ }
+}

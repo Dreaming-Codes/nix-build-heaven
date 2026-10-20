@@ -1,0 +1,12 @@
+these 11 derivations will be built:
+  /nix/store/340hlki1zdb8jyzshrfvgwc6mj6v3am0-rsworktree-0.7.1-vendor.drv
+  /nix/store/6apr801skl1gjj1shicjh8wsw6sc4r6r-hplip.state.drv
+  /nix/store/79w048yggk51x8agxc61xx2i32ca30xi-nh-4.4.2.drv
+  /nix/store/ln47padkr10j67hdsihnhskmdssr70jn-nix-file-overlay-0.1.0-vendor.drv
+  /nix/store/8rq1igy8c3cnvgq8c995w9i4sfnnlw4n-nix-file-overlay-0.1.0.drv
+  /nix/store/bx1g4g3lmqmn0hrhx75vlrdi0x9wmdwy-rsworktree-0.7.1.drv
+  /nix/store/bz7fqci5l26s8wazl8si8zj64yvpj4rv-ananicy-cpp-1.2.0.drv
+  /nix/store/cnm480gxqnqs5jkxlkm503r717ijsi0w-hplip-3.26.4.drv
+  /nix/store/km8cdzgg61rww5823k433y99lgjjvvns-spotify-player-0.25.1.drv
+  /nix/store/rcyqaf6z6d95lmqbjshnkw7gqksqgd7v-switchboard-with-plugs-8.0.3.drv
+  /nix/store/yvdda1g7j1jzwp42xghpk58yckvl3cgp-xwayland-24.1.14.drv
