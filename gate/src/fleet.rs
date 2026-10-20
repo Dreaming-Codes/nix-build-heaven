@@ -57,7 +57,6 @@ impl Config {
     }
 }
 
-/// EC2's instance state name.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum CloudState {
     Pending,

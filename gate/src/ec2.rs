@@ -73,7 +73,6 @@ fn parse_ini_section(text: &str, name: &str) -> HashMap<String, String> {
     out
 }
 
-/// An EC2 error code, if EC2 sent one, and a message.
 #[derive(Debug)]
 struct ApiError(Option<String>, String);
 
@@ -100,7 +99,6 @@ impl Api {
         Api { region, creds, agent }
     }
 
-    /// One signed Query API call; returns the response XML.
     async fn call(&self, action: &str, mut params: Vec<(String, String)>) -> Result<String, ApiError> {
         params.insert(0, ("Action".into(), action.into()));
         params.insert(1, ("Version".into(), API_VERSION.into()));
@@ -199,7 +197,6 @@ fn text<'a>(n: Node<'a, 'a>, name: &str) -> Option<&'a str> {
     child(n, name)?.text()
 }
 
-/// The `item` children of the set element `name` under `n`.
 fn items<'a>(n: Node<'a, 'a>, name: &str) -> impl Iterator<Item = Node<'a, 'a>> {
     child(n, name).into_iter().flat_map(|s| s.children().filter(|c| c.has_tag_name("item")))
 }
@@ -299,7 +296,6 @@ where
     Err(format!("every type and AZ failed, last: {last}").into())
 }
 
-/// One `instancesSet` item of DescribeInstances.
 fn seen(i: Node, port: u16) -> Option<Seen> {
     let id = InstanceId(text(i, "instanceId")?.to_string());
     let key = items(i, "tagSet").find(|t| text(*t, "key") == Some(TAG_KEY)).and_then(|t| text(t, "value"));

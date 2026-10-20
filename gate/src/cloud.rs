@@ -11,7 +11,6 @@ use crate::fleet::{CloudState, InstanceId, Key, Seen};
 pub type Error = Box<dyn std::error::Error + Send + Sync>;
 
 pub trait Cloud: Send + Sync + 'static {
-    /// Starts one builder tagged with `key`.
     fn launch(&self, key: &Key) -> impl Future<Output = Result<InstanceId, Error>> + Send;
     /// Every instance tagged with this gate's owner, in any state.
     fn list(&self) -> impl Future<Output = Result<Vec<Seen>, Error>> + Send;

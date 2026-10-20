@@ -164,7 +164,6 @@ mod testutil {
     use std::path::{Path, PathBuf};
     use std::sync::atomic::{AtomicU32, Ordering};
 
-    /// A directory removed on drop.
     pub struct TempDir(PathBuf);
 
     impl TempDir {
