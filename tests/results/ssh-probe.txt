@@ -1,0 +1,16 @@
+# tests/ssh-probe/run.sh on the box, Determinate Nix 3.23.3, OpenSSH 10.5p1, 2026-10-20T20:27:15+02:00
+direct sshd sanity:
+error: unrecognised flag '-o'
+
+Try '/nix/var/nix/profiles/default/bin/nix --help' for more information.
+rst: exit=1 elapsed_ms=53 accepts=1 splices=0 out=Store URL: ssh-ng://box@127.0.0.1:52199?remote-program=/nix/store/kvhjwp9svxy2j0f1xllk95nfz6jl1n5z-determinate-nix-3.23.3/bin/nix-daemon kex_exchange_identification: read: Connection reset by peer Co
+fin: exit=1 elapsed_ms=43 accepts=1 splices=0 out=Store URL: ssh-ng://box@127.0.0.1:52199?remote-program=/nix/store/kvhjwp9svxy2j0f1xllk95nfz6jl1n5z-determinate-nix-3.23.3/bin/nix-daemon Connection closed by 127.0.0.1 port 52199 error: failed to sta
+close: exit=1 elapsed_ms=42 accepts=1 splices=0 out=Store URL: ssh-ng://box@127.0.0.1:52199?remote-program=/nix/store/kvhjwp9svxy2j0f1xllk95nfz6jl1n5z-determinate-nix-3.23.3/bin/nix-daemon kex_exchange_identification: read: Connection reset by peer Co
+hold: exit=124 elapsed_ms=45008 accepts=1 splices=0 out=Store URL: ssh-ng://box@127.0.0.1:52199?remote-program=/nix/store/kvhjwp9svxy2j0f1xllk95nfz6jl1n5z-determinate-nix-3.23.3/bin/nix-daemon shutting down[Kerror: interrupted by the user 
+hold [-o ConnectTimeout=10]: exit=1 elapsed_ms=10307 accepts=1 splices=0 out=Store URL: ssh-ng://box@127.0.0.1:52199?remote-program=/nix/store/kvhjwp9svxy2j0f1xllk95nfz6jl1n5z-determinate-nix-3.23.3/bin/nix-daemon Connection timed out during banner exchange Connection to 127.
+boot: exit=0 elapsed_ms=29886 accepts=1 splices=1 out=Store URL: ssh-ng://box@127.0.0.1:52199?remote-program=/nix/store/kvhjwp9svxy2j0f1xllk95nfz6jl1n5z-determinate-nix-3.23.3/bin/nix-daemon Version: 2.35.3 Trusted: 0 
+boot [-o ConnectTimeout=10]: exit=1 elapsed_ms=10069 accepts=1 splices=0 out=Store URL: ssh-ng://box@127.0.0.1:52199?remote-program=/nix/store/kvhjwp9svxy2j0f1xllk95nfz6jl1n5z-determinate-nix-3.23.3/bin/nix-daemon Connection timed out during banner exchange Connection to 127.
+boot [-o ConnectionAttempts=20]: exit=0 elapsed_ms=30102 accepts=1 splices=1 out=Store URL: ssh-ng://box@127.0.0.1:52199?remote-program=/nix/store/kvhjwp9svxy2j0f1xllk95nfz6jl1n5z-determinate-nix-3.23.3/bin/nix-daemon Version: 2.35.3 Trusted: 0 
+refused []: exit=1 elapsed_ms=45 out= to host 127.0.0.1 port 52199: Connection refused error: failed to start SSH master connection to '127.0.0.1' 
+refused [-o ConnectionAttempts=5]: exit=1 elapsed_ms=4050 out= to host 127.0.0.1 port 52199: Connection refused error: failed to start SSH master connection to '127.0.0.1' 
+proxycommand sleep 30 then pipe: exit=0 elapsed_ms=30197 out=5.3 Trusted: 0 
