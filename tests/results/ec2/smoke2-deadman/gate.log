@@ -1,0 +1,14 @@
+nbh-gate: 2026/10/20 20:04:54.667870 machines file: builder available=true
+nbh-gate: 2026/10/20 20:04:56.405833 launch grok-bot-vm-145538761-1792519494-1
+nbh-gate: 2026/10/20 20:04:56.405878 refuse connection 1 while the builder boots
+nbh-gate: 2026/10/20 20:04:57.536943 refuse connection 2 while the builder boots
+nbh-gate: aws: 2026/10/20 20:04:58.526556 launched i-0f4573b2955862af9 m7a.large in eu-north-1c at spot $0.0131/h
+nbh-gate: 2026/10/20 20:04:58.526586 launched grok-bot-vm-145538761-1792519494-1 as i-0f4573b2955862af9
+nbh-gate: 2026/10/20 20:04:59.087956 refuse connection 3 while the builder boots
+nbh-gate: 2026/10/20 20:05:01.514733 refuse connection 4 while the builder boots
+nbh-gate: 2026/10/20 20:05:05.748291 refuse connection 5 while the builder boots
+nbh-gate: 2026/10/20 20:05:12.004877 refuse connection 6 while the builder boots
+nbh-gate: 2026/10/20 20:05:22.562827 refuse connection 7 while the builder boots
+nbh-gate: 2026/10/20 20:05:28.779362 probe grok-bot-vm-145538761-1792519494-1 ok, 13.50.240.238:50051 is listening
+nbh-gate: 2026/10/20 20:05:42.514935 splice connection 8 to 13.50.240.238:50051
+nbh-gate: 2026/10/20 20:06:09.490116 splice connection 9 to 13.50.240.238:50051

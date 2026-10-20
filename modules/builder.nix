@@ -1,5 +1,6 @@
-# The AWS builder: nix-grpc-daemon behind mTLS, certificates from EC2 user-data,
-# and a dead-man switch that powers the instance off when nobody uses it.
+# The AWS builder: nix-grpc-daemon behind mTLS and/or sshd for ssh-ng, keys and
+# certificates from EC2 user-data, and a dead-man switch that powers the
+# instance off when nobody uses it.
 { grpcSrc }:
 {
   config,
@@ -10,7 +11,12 @@
 let
   cfg = config.services.nbh.builder;
   keys = "/run/nbh-keys";
+  # sshd reads authorized_keys with the user's privileges, so the ssh material
+  # lives apart from the grpc keys, whose directory only nix-grpc-daemon reads.
+  sshKeys = "/run/nbh-ssh";
   port = 50051;
+  grpc = lib.elem "grpc" cfg.transports;
+  sshng = lib.elem "ssh-ng" cfg.transports;
 in
 {
   imports = [ "${grpcSrc}/nixos/server.nix" ];
@@ -21,6 +27,15 @@ in
       type = lib.types.str;
       default = "http://169.254.169.254/latest/user-data";
       description = "IMDSv2 user-data URL holding the TLS material minted by nbh-gate.";
+    };
+    transports = lib.mkOption {
+      type = lib.types.listOf (lib.types.enum [ "grpc" "ssh-ng" ]);
+      default = [ "grpc" ];
+      description = "How clients reach the builder: nix-grpc-daemon on 50051 with mTLS, sshd for ssh-ng with a per-boot host certificate, or both.";
+    };
+    sshPort = lib.mkOption {
+      type = lib.types.port;
+      default = 22;
     };
     idleTimeout = lib.mkOption {
       type = lib.types.int;
@@ -38,7 +53,8 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf cfg.enable (lib.mkMerge [
+  (lib.mkIf grpc {
     services.nix-grpc-daemon = {
       enable = true;
       listen = "0.0.0.0:${toString port}";
@@ -52,7 +68,46 @@ in
         clientCaFile = "${keys}/client-ca.crt";
       };
     };
-
+    systemd.services.nix-grpc-daemon = {
+      requires = [ "nbh-keys.service" ];
+      after = [ "nbh-keys.service" ];
+    };
+    networking.firewall.allowedTCPPorts = [ port ];
+  })
+  (lib.mkIf sshng {
+    # ssh-ng: the client logs in as nbh with the gate's client key and runs
+    # `nix-daemon --stdio`, so nbh must be a trusted user to build derivations.
+    users.users.nbh = {
+      isSystemUser = true;
+      group = "nbh";
+      useDefaultShell = true;
+    };
+    users.groups.nbh = { };
+    nix.settings.trusted-users = [ "nbh" ];
+    services.openssh = {
+      enable = true;
+      ports = [ cfg.sshPort ];
+      openFirewall = true;
+      # No host key in the image: nbh-keys writes this boot's key and certificate.
+      hostKeys = lib.mkForce [ ];
+      authorizedKeysFiles = lib.mkForce [ "${sshKeys}/authorized_keys.%u" ];
+      settings = {
+        PasswordAuthentication = false;
+        KbdInteractiveAuthentication = false;
+        PermitRootLogin = lib.mkForce "no";
+        AllowUsers = [ "nbh" ];
+      };
+      extraConfig = ''
+        HostKey ${sshKeys}/ssh_host_ed25519_key
+        HostCertificate ${sshKeys}/ssh_host_ed25519_key-cert.pub
+      '';
+    };
+    systemd.services.sshd = {
+      requires = [ "nbh-keys.service" ];
+      after = [ "nbh-keys.service" ];
+    };
+  })
+  {
     systemd.services.nbh-keys = {
       description = "Fetch builder TLS material from EC2 user-data";
       wantedBy = [ "multi-user.target" ];
@@ -75,17 +130,23 @@ in
           sleep 1
         done
         [ "$(jq -r .nbh <<<"$ud")" = 1 ] || { echo "user-data is not nbh v1" >&2; exit 1; }
+      '' + lib.optionalString grpc ''
         install -d -m 0750 -g nix-grpc-daemon ${keys}
+        (
         umask 027
         jq -r .server_cert <<<"$ud" > ${keys}/server.crt
         jq -r .server_key <<<"$ud" > ${keys}/server.key
         jq -r .client_ca <<<"$ud" > ${keys}/client-ca.crt
         chgrp nix-grpc-daemon ${keys}/*
+        )
+      '' + lib.optionalString sshng ''
+        [ "$(jq -r '.ssh_host_cert // ""' <<<"$ud")" ] || { echo "user-data has no ssh material" >&2; exit 1; }
+        install -d -m 0755 ${sshKeys}
+        (umask 077; jq -r .ssh_host_key <<<"$ud" > ${sshKeys}/ssh_host_ed25519_key)
+        jq -r .ssh_host_cert <<<"$ud" > ${sshKeys}/ssh_host_ed25519_key-cert.pub
+        jq -r .ssh_authorized_keys <<<"$ud" > ${sshKeys}/authorized_keys.nbh
+        chmod 0644 ${sshKeys}/ssh_host_ed25519_key-cert.pub ${sshKeys}/authorized_keys.nbh
       '';
-    };
-    systemd.services.nix-grpc-daemon = {
-      requires = [ "nbh-keys.service" ];
-      after = [ "nbh-keys.service" ];
     };
 
     systemd.services.nbh-deadman = {
@@ -104,8 +165,11 @@ in
         fi
         # Busy means a client connection or a running build. The scheduler
         # gauges stay at zero for build-hook builds, so they cannot say this.
-        if ss -Htn state established '( sport = :${toString port} )' | grep -q . ||
-          ps -eo user= | grep -q '^nixbld'; then
+        # For ssh-ng a TCP connection is not enough, since scanners hit port
+        # 22 all day; an authenticated session runs as nbh (sshd-session and
+        # `nix-daemon --stdio`), which a scanner never gets to.
+        if ${if grpc then "ss -Htn state established '( sport = :${toString port} )' | grep -q . ||" else ""}
+          ps -eo user= | grep -q '^nixbld\|^nbh$'; then
           touch $state/last-busy
         fi
         idle=$(( $(date +%s) - $(stat -c %Y $state/last-busy) ))
@@ -148,7 +212,6 @@ in
       system-features = [ "benchmark" "big-parallel" ];
       experimental-features = [ "nix-command" "flakes" ];
     };
-
-    networking.firewall.allowedTCPPorts = [ 50051 ];
-  };
+  }
+  ]);
 }

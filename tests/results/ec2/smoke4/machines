@@ -1,0 +1,1 @@
+grpc://nbh-builder:50051?ca-cert=/home/box/secrets/nbh-pki/ca.crt&client-cert=/home/box/secrets/nbh-pki/client.crt&client-key=/home/box/secrets/nbh-pki/client.key&connect-timeout=150 x86_64-linux - 2 1 big-parallel,benchmark

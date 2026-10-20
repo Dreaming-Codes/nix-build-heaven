@@ -1,0 +1,6 @@
+build exit=0 wall=74.3857 s
+built on localhost nonce=ec2-1792519495 uid=1000
+instance=i-0f4573b2955862af9
+gate killed at 2026-10-20T20:06:10+02:00
+instance shutting-down 607.814 s after the build ended
+m7a.large	eu-north-1c	2026-10-20T18:04:58+00:00	User initiated	Client.InstanceInitiatedShutdown: Instance initiated shutdown
