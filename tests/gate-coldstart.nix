@@ -37,8 +37,8 @@ pkgs.testers.runNixOSTest {
           else:
               cmd = f"NIX_REMOTE=daemon {cmd}"
           t0 = time.monotonic()
-          log = client.succeed(cmd + " 2>&1")
-          return time.monotonic() - t0, log
+          blog = client.succeed(cmd + " 2>&1")
+          return time.monotonic() - t0, blog
 
       client.start()
       client.wait_for_unit("nbh-gate.service")
@@ -49,18 +49,18 @@ pkgs.testers.runNixOSTest {
       client.wait_until_succeeds("grep -q nbh-builder /run/nbh/machines")
 
       with subtest("cold start: gate holds the first connection through the 20 s boot, build runs remotely"):
-          d, log = build("cold")
+          d, blog = build("cold")
           print(f"MEASURED cold_build_s={d:.1f}")
-          assert log.count("on 'grpc://nbh-builder") >= 2, log
+          assert blog.count("on 'grpc://nbh-builder") >= 2, blog
           assert d >= 20, f"finished in {d:.1f} s, before the fake builder booted"
           journal = client.succeed("journalctl -u nbh-gate.service")
           assert journal.count("launch test") + journal.count("launch client") >= 0
           assert len(re.findall(r"launched \S+ as i-fake", journal)) == 1, journal
 
       with subtest("warm: second build splices straight to the serving builder"):
-          d, log = build("warm")
+          d, blog = build("warm")
           print(f"MEASURED warm_build_s={d:.1f}")
-          assert log.count("on 'grpc://nbh-builder") >= 2, log
+          assert blog.count("on 'grpc://nbh-builder") >= 2, blog
           assert d < 10, d
           last_close = time.monotonic()
 
@@ -80,9 +80,9 @@ pkgs.testers.runNixOSTest {
           )
           client.wait_until_succeeds("test ! -s /run/nbh/machines", timeout=30)
           d_off, _ = build("nbh-off", "--max-jobs 1 --builders @/dev/null", user="root")
-          d_down, log = build("down", "--max-jobs 1", user="root")
+          d_down, blog = build("down", "--max-jobs 1", user="root")
           print(f"MEASURED local_with_nbh_down_s={d_down:.1f} local_with_nbh_off_s={d_off:.1f}")
-          assert "grpc://" not in log, log
+          assert "grpc://" not in blog, blog
           assert d_down - d_off < 10, (d_down, d_off)
     '';
 }

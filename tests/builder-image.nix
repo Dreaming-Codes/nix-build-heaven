@@ -60,9 +60,9 @@ pkgs.testers.runNixOSTest {
 
       with subtest("client builds through the builder with its user-data certificate"):
           nonce = str(int(time.time()))
-          log = client.succeed(f"su - alice -c 'nix-build /etc/nbh/probe.nix --argstr nonce {nonce} --no-out-link -L' 2>&1")
-          out = log.strip().splitlines()[-1]
-          assert log.count("on 'grpc://nbh-builder") >= 2, log
+          blog = client.succeed(f"su - alice -c 'nix-build /etc/nbh/probe.nix --argstr nonce {nonce} --no-out-link -L' 2>&1")
+          out = blog.strip().splitlines()[-1]
+          assert blog.count("on 'grpc://nbh-builder") >= 2, blog
           builder.succeed(f"nix-store --check-validity {out}")
           build_done = time.monotonic()
 

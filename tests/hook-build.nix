@@ -44,12 +44,12 @@ pkgs.testers.runNixOSTest {
 
       with subtest("unprivileged user builds through the nix-daemon with max-jobs 0, entirely on the builder"):
           nonce = str(int(time.time()))
-          log = client.succeed(f"su - alice -c 'nix-build /etc/nbh/probe.nix --argstr nonce {nonce} --no-out-link -L' 2>&1")
-          print(log)
-          out = log.strip().splitlines()[-1]
+          blog = client.succeed(f"su - alice -c 'nix-build /etc/nbh/probe.nix --argstr nonce {nonce} --no-out-link -L' 2>&1")
+          print(blog)
+          out = blog.strip().splitlines()[-1]
           assert out.startswith("/nix/store/") and out.endswith(f"nbh-probe-b-{nonce}"), out
           assert client.succeed(f"cat {out}").strip() == f"a-{nonce} b"
-          assert log.count("on 'grpc://nbh-builder") >= 2, "both derivations must say they built on the builder"
+          assert blog.count("on 'grpc://nbh-builder") >= 2, "both derivations must say they built on the builder"
           builder.succeed(f"nix-store --check-validity {out}")
     '';
 }
