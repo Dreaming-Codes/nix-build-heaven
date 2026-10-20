@@ -1,6 +1,3 @@
-# The AWS builder: sshd for ssh-ng with this boot's host key and certificate
-# and the gate's client key from EC2 user-data, and a dead-man switch that
-# powers the instance off when nobody uses it.
 {
   config,
   lib,
@@ -9,7 +6,7 @@
 }:
 let
   cfg = config.services.nbh.builder;
-  # sshd reads authorized_keys with the user's privileges, so this is 0755.
+  # 0755: sshd reads authorized_keys with nbh's privileges.
   keys = "/run/nbh-ssh";
 in
 {
@@ -37,8 +34,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # The client logs in as nbh with the gate's client key and runs
-    # `nix-daemon --stdio`, so nbh must be a trusted user to build derivations.
+    # nbh runs the client's `nix-daemon --stdio`, so it must be trusted.
     users.users.nbh = {
       isSystemUser = true;
       group = "nbh";

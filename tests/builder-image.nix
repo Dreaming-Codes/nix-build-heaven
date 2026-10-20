@@ -1,6 +1,3 @@
-# The builder module as the AMI runs it. SSH material comes from IMDSv2
-# user-data (retrying until it exists), boot-to-serving is timed, and the
-# dead-man switch powers off on idle and on the uptime cap.
 { self, pkgs }:
 let
   common = import ./common.nix { inherit self pkgs; };

@@ -1,5 +1,3 @@
-# Shared VM test nodes: a Determinate Nix client that also serves fake IMDS
-# user-data, and a builder running the real builder module.
 { self, pkgs }:
 let
   pki = "/var/lib/nbh-gate/pki";

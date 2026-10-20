@@ -1,5 +1,4 @@
-# A tiny derivation the smoke test builds on the builder. Nothing in it is
-# cached anywhere, and /bin/sh is the sandbox's busybox ash.
+# The nonce keeps it out of every cache. /bin/sh is the sandbox's busybox ash.
 { nonce }:
 derivation {
   name = "nbh-probe-${nonce}";

@@ -1,7 +1,3 @@
-# Cold start through the real gate: it holds the daemon's ssh connection while
-# the fake EC2 "boots" the builder VM for 20 s, then splices it to the
-# builder's sshd. Also auth, warm builds, dead-man busy detection, scale-down
-# and the local fallback when the cloud is unreachable.
 { self, pkgs }:
 let
   common = import ./common.nix { inherit self pkgs; };

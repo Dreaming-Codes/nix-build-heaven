@@ -1,5 +1,4 @@
-# Client side: the machines file the gate owns, ssh options for nbh-builder,
-# and the gate itself. Hook mode, so nh and nixos-rebuild are unchanged.
+# Hook mode through `builders = @file`, so nh and nixos-rebuild need no flags.
 { self }:
 {
   config,

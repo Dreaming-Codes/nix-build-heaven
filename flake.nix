@@ -28,7 +28,6 @@
         gate = pkgs.callPackage ./nix/gate.nix { };
         determinateNix = determinate.inputs.nix.packages.${system}.default;
         ami = self.nixosConfigurations.builder-ami.config.system.build.amazonImage;
-        # OpenTofu JSON for the AWS side; scripts/tofu.sh applies it with local state.
         infra = terranix.lib.terranixConfiguration {
           inherit system;
           modules = [ ./infra ];

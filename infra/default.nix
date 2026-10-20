@@ -1,12 +1,3 @@
-# OpenTofu config for Nix Build Heaven, written with terranix. Two layers:
-#
-#   guards   the account-wide budget alert and CloudTrail audit log
-#   builder  network tags, security group, launch template, runtime IAM user,
-#            image import bucket and vmimport role, and the builder AMI
-#
-# The AMI and launch template exist only once `snapshot_id` is set, so the
-# first apply can run before an image is uploaded. State stays local, outside
-# git (scripts/tofu.sh keeps it under /home/box/secrets/nbh-tofu, mode 0700).
 { lib, ... }:
 let
   account = "845087560967";
@@ -14,10 +5,9 @@ let
   alertEmail = "lore.rizzotti@gmail.com";
   tags = { "nbh:managed" = "true"; };
   ref = s: "\${${s}}";
+  # The first apply runs before any image is uploaded.
   haveImage = ''var.snapshot_id != "" ? 1 : 0'';
 
-  # Section 12 of DESIGN.md, verbatim except the account id and the snapshot
-  # statement Phase 4 adds once a real RunInstances call tells us it is needed.
   gatePolicy = {
     Version = "2012-10-17";
     Statement = [
@@ -103,7 +93,6 @@ in
 
   variable.snapshot_id = {
     type = "string";
-    # Uploaded 2026-10-21 by scripts/upload-ami.sh from packages.ami (gmk4q99l), ssh-ng only.
     default = "snap-078826d508752975f";
     description = "EBS snapshot of the builder raw image, from scripts/upload-ami.sh";
   };
@@ -197,7 +186,7 @@ in
     { name = "vpc-id"; values = [ (ref "data.aws_vpc.default.id") ]; }
     { name = "default-for-az"; values = [ "true" ]; }
   ];
-  # The gate may only launch into subnets carrying the tag (section 12).
+  # gatePolicy launches only into subnets carrying this tag.
   resource.aws_ec2_tag.subnet_managed = {
     for_each = ref "toset(data.aws_subnets.default.ids)";
     resource_id = ref "each.value";
