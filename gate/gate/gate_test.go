@@ -2,12 +2,14 @@ package gate
 
 import (
 	"context"
+	"errors"
 	"io"
 	"log"
 	"net"
 	"os"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"testing"
 	"time"
 
@@ -73,20 +75,36 @@ func (w testWriter) Write(p []byte) (int, error) {
 	return len(p), nil
 }
 
-// roundTrip connects through the gate and reports whether bytes came back, and how long it took.
-func (h *harness) roundTrip() (bool, time.Duration, net.Conn) {
-	t0 := time.Now()
+// attempt connects through the gate once. It returns the open connection if
+// bytes came back, and whether the gate reset it otherwise.
+func (h *harness) attempt() (net.Conn, bool, error) {
 	c, err := net.Dial("tcp", h.gate.Addr())
 	if err != nil {
-		h.t.Fatal(err)
+		return nil, errors.Is(err, syscall.ECONNRESET), err
 	}
 	c.SetDeadline(time.Now().Add(10 * time.Second))
-	if _, err := c.Write([]byte("ping")); err != nil {
-		return false, time.Since(t0), c
+	if _, err = c.Write([]byte("ping")); err == nil {
+		buf := make([]byte, 4)
+		if _, err = io.ReadFull(c, buf); err == nil && string(buf) == "ping" {
+			return c, false, nil
+		}
 	}
-	buf := make([]byte, 4)
-	_, err = io.ReadFull(c, buf)
-	return err == nil && string(buf) == "ping", time.Since(t0), c
+	c.Close()
+	return nil, errors.Is(err, syscall.ECONNRESET), err
+}
+
+// dial behaves like the nix-grpc-store client: it retries a reset every
+// 500 ms until connect-timeout and gives up at once on anything else.
+func (h *harness) dial(connectTimeout time.Duration) (c net.Conn, resets int, took time.Duration, err error) {
+	t0 := time.Now()
+	for {
+		c, reset, err := h.attempt()
+		if c != nil || !reset || time.Since(t0)+500*time.Millisecond > connectTimeout {
+			return c, resets, time.Since(t0), err
+		}
+		resets++
+		time.Sleep(500 * time.Millisecond)
+	}
 }
 
 func (h *harness) machinesContent() string {
@@ -106,30 +124,35 @@ func waitFor(t *testing.T, what string, limit time.Duration, cond func() bool) t
 	return 0
 }
 
-func TestColdStartHoldsConnectionsUntilBuilderServes(t *testing.T) {
+func TestColdStartRefusesUntilBuilderServes(t *testing.T) {
 	fake := &cloud.Fake{BootDelay: 1500 * time.Millisecond, Addr: echoServer(t)}
 	h := start(t, fake, nil)
 	waitFor(t, "machines entry published", time.Second, func() bool { return h.machinesContent() == entry+"\n" })
-	results := make(chan time.Duration, 3)
+	type result struct {
+		ok     bool
+		resets int
+		took   time.Duration
+		err    error
+	}
+	results := make(chan result, 3)
 	for i := 0; i < 3; i++ {
 		go func() {
-			ok, d, c := h.roundTrip()
-			c.Close()
-			if !ok {
-				d = -1
+			c, resets, took, err := h.dial(10 * time.Second)
+			if c != nil {
+				c.Close()
 			}
-			results <- d
+			results <- result{c != nil, resets, took, err}
 		}()
 	}
 	for i := 0; i < 3; i++ {
-		d := <-results
-		if d < 0 {
-			t.Fatal("held connection was not spliced to the builder")
+		r := <-results
+		if !r.ok {
+			t.Fatalf("client gave up after %v and %d resets: %v", r.took, r.resets, r.err)
 		}
-		if d < 1500*time.Millisecond {
-			t.Fatalf("connection answered after %v, before the builder booted", d)
+		if r.resets == 0 || r.took < 1500*time.Millisecond {
+			t.Fatalf("answered after %v with %d resets, before the builder booted", r.took, r.resets)
 		}
-		t.Logf("held connection spliced after %v", d)
+		t.Logf("spliced after %v and %d resets", r.took, r.resets)
 	}
 	if n := fake.CallCount("Launch"); n != 1 {
 		t.Fatalf("Launch called %d times for 3 concurrent connections, want 1", n)
@@ -140,18 +163,17 @@ func TestFallbackWhenCloudUnreachable(t *testing.T) {
 	fake := &cloud.Fake{Addr: echoServer(t), Down: true, Latency: 200 * time.Millisecond}
 	h := start(t, fake, nil)
 	waitFor(t, "machines entry removed after failed reconcile", 2*time.Second, func() bool { return h.machinesContent() == "" && fileExists(h.machines) })
-	ok, d, c := h.roundTrip()
-	c.Close()
-	if ok {
-		t.Fatal("connection reached a builder while the cloud is down")
+	c, resets, d, _ := h.dial(10 * time.Second)
+	if ok := c != nil; ok || resets != 0 {
+		t.Fatalf("ok=%v resets=%d while the cloud is down, want a plain close", ok, resets)
 	}
 	if d > time.Second {
-		t.Fatalf("held connection released after %v, want under 1 s so nix falls back fast", d)
+		t.Fatalf("connection closed after %v, want under 1 s so nix falls back fast", d)
 	}
 	if n := fake.CallCount("Launch"); n != 0 {
 		t.Fatalf("Launch called %d times while unavailable", n)
 	}
-	t.Logf("connection refused through gate after %v; machines file empty", d)
+	t.Logf("connection closed by the gate after %v; machines file empty", d)
 }
 
 func TestFallbackWhenLaunchFails(t *testing.T) {
@@ -159,21 +181,20 @@ func TestFallbackWhenLaunchFails(t *testing.T) {
 	h := start(t, fake, nil)
 	waitFor(t, "machines entry", time.Second, func() bool { return h.machinesContent() == entry+"\n" })
 	fake.SetDown(true)
-	ok, d, c := h.roundTrip()
-	c.Close()
-	if ok || d > 2*time.Second {
-		t.Fatalf("ok=%v after %v, want released within 2 s", ok, d)
+	c, resets, d, _ := h.dial(10 * time.Second)
+	if ok := c != nil; ok || d > 2*time.Second {
+		t.Fatalf("ok=%v after %v, want the client to stop retrying within 2 s", ok, d)
 	}
 	waitFor(t, "machines entry removed", time.Second, func() bool { return h.machinesContent() == "" })
-	t.Logf("launch failure released the held connection after %v", d)
+	t.Logf("launch failure ended the client's retries after %v and %d resets", d, resets)
 }
 
 func TestTerminateAfterDrain(t *testing.T) {
 	fake := &cloud.Fake{BootDelay: 300 * time.Millisecond, Addr: echoServer(t)}
 	h := start(t, fake, nil)
-	ok, _, c := h.roundTrip()
-	if !ok {
-		t.Fatal("no splice")
+	c, _, _, err := h.dial(10 * time.Second)
+	if c == nil {
+		t.Fatalf("no splice: %v", err)
 	}
 	time.Sleep(1500 * time.Millisecond)
 	if fake.Running() != 1 {
@@ -194,11 +215,11 @@ func TestRestartAdoptsRunningBuilder(t *testing.T) {
 	fake := &cloud.Fake{Addr: echoServer(t)}
 	fake.Adopt("previous-run-7", time.Now().Add(-20*time.Minute))
 	h := start(t, fake, nil)
-	ok, _, c := h.roundTrip()
-	c.Close()
-	if !ok {
-		t.Fatal("connection not spliced to the adopted builder")
+	c, _, _, err := h.dial(10 * time.Second)
+	if c == nil {
+		t.Fatalf("connection not spliced to the adopted builder: %v", err)
 	}
+	c.Close()
 	if n := fake.CallCount("Launch"); n != 0 {
 		t.Fatalf("restarted gate launched %d new builders instead of adopting", n)
 	}
@@ -208,13 +229,12 @@ func TestRestartAdoptsRunningBuilder(t *testing.T) {
 func TestBootTimeoutTerminatesAndFallsBack(t *testing.T) {
 	fake := &cloud.Fake{BootDelay: time.Hour, Addr: echoServer(t)}
 	h := start(t, fake, func(c *fleet.Config) { c.BootTimeout = 700 * time.Millisecond })
-	ok, d, c := h.roundTrip()
-	c.Close()
-	if ok {
+	c, _, d, _ := h.dial(10 * time.Second)
+	if c != nil {
 		t.Fatal("spliced to a builder that never booted")
 	}
 	if d < 700*time.Millisecond || d > 2*time.Second {
-		t.Fatalf("released after %v, want just after the 700 ms boot timeout", d)
+		t.Fatalf("client stopped after %v, want just after the 700 ms boot timeout", d)
 	}
 	waitFor(t, "stuck builder terminated", 2*time.Second, func() bool { return fake.Running() == 0 })
 	if h.machinesContent() != "" {

@@ -1,6 +1,8 @@
 # Phase 3: the real nbh-gate on a Determinate client, with the fake EC2 backend
-# "launching" the builder VM after a 20 s boot delay. Repeats proof/coldstart.txt
-# with the gate, then checks terminate-after-drain and the unreachable fallback.
+# "launching" the builder VM after a 20 s boot delay. The gate refuses with a
+# reset until the builder serves and the plugin retries; then a long build must
+# not drain, the idle builder must terminate, and an unreachable cloud must fall
+# back to local builds.
 { self, pkgs }:
 let
   common = import ./common.nix { inherit self pkgs; };
@@ -48,19 +50,29 @@ pkgs.testers.runNixOSTest {
       builder.wait_for_open_port(50051, timeout=120)
       client.wait_until_succeeds("grep -q nbh-builder /run/nbh/machines")
 
-      with subtest("cold start: gate holds the first connection through the 20 s boot, build runs remotely"):
+      with subtest("cold start: gate refuses through the 20 s boot, nix retries, build runs remotely"):
           d, blog = build("cold")
           print(f"MEASURED cold_build_s={d:.1f}")
           assert blog.count("on 'grpc://nbh-builder") >= 2, blog
           assert d >= 20, f"finished in {d:.1f} s, before the fake builder booted"
           journal = client.succeed("journalctl -u nbh-gate.service")
           assert len(re.findall(r"launched \S+ as i-fake", journal)) == 1, journal
+          assert "refuse connection" in journal, journal
 
       with subtest("warm: second build splices straight to the serving builder"):
           d, blog = build("warm")
           print(f"MEASURED warm_build_s={d:.1f}")
           assert blog.count("on 'grpc://nbh-builder") >= 2, blog
           assert d < 10, d
+          last_close = time.monotonic()
+
+      with subtest("a 30 s build outlasts idle-grace 10 s + 5 s recheck without a drain"):
+          d, blog = build("long", "--argstr busy 30")
+          print(f"MEASURED long_build_s={d:.1f}")
+          assert blog.count("on 'grpc://nbh-builder") >= 2, blog
+          assert d >= 30, d
+          journal = client.succeed("journalctl -u nbh-gate.service")
+          assert "terminate " not in journal, journal
           last_close = time.monotonic()
 
       with subtest("terminate after drain: idle-grace 10 s + 5 s recheck"):

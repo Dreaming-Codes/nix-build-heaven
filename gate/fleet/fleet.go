@@ -73,7 +73,6 @@ func DefaultConfig(prefix string) Config {
 type State struct {
 	Cfg              Config
 	Instances        map[Key]*Instance
-	Held             []ConnID
 	Live             int
 	UnavailableUntil time.Time
 	Published        *bool
@@ -154,10 +153,15 @@ type (
 		InstanceID string
 	}
 	Splice struct {
-		Conns []ConnID
-		Addr  string
+		Conn ConnID
+		Addr string
 	}
-	Release         struct{ Conns []ConnID }
+	// Release closes the connection: no builder is coming, Nix builds locally.
+	Release struct{ Conn ConnID }
+	// Refuse resets the connection while a builder boots. The plugin retries a
+	// reset for connect-timeout but gives up at once on a TLS handshake that
+	// stalls past its 2 s connect deadline, so the gate must not hold it.
+	Refuse          struct{ Conn ConnID }
 	PublishMachines struct{ Available bool }
 	Probe           struct {
 		Key  Key
@@ -178,6 +182,7 @@ func (Launch) effect()          {}
 func (Terminate) effect()       {}
 func (Splice) effect()          {}
 func (Release) effect()         {}
+func (Refuse) effect()          {}
 func (PublishMachines) effect() {}
 func (Probe) effect()           {}
 func (PollLoad) effect()        {}
@@ -194,7 +199,7 @@ func (s *State) Step(now time.Time, ev Event) []Effect {
 			fx = append(fx, s.tick(now, in)...)
 		}
 	case ConnArrived:
-		s.Held = append(s.Held, e.ID)
+		fx = s.arrive(now, e.ID)
 	case ConnClosed:
 		s.Live--
 		for _, in := range s.Instances {
@@ -346,30 +351,35 @@ func (s *State) gone(now time.Time, in *Instance) []Effect {
 	return []Effect{SessionEnded{in.Key, in.InstanceID, now.Sub(in.LaunchedAt)}}
 }
 
-// settle derives what follows from the state alone: where held connections
-// go, whether to launch, and what the machines file should say.
+// arrive routes a new connection. Every connection attempt is demand: the
+// plugin retries a refused one every 0.5 to 4 s, so demand needs no memory.
+func (s *State) arrive(now time.Time, id ConnID) []Effect {
+	if in := s.serving(); in != nil {
+		in.to(Serving, now)
+		in.LastBusyAt = now
+		s.Live++
+		return []Effect{Splice{id, in.Addr}}
+	}
+	if s.Unavailable(now) {
+		return []Effect{Release{id}}
+	}
+	var fx []Effect
+	if s.Synced && s.pending() == 0 && len(s.Instances) < s.Cfg.MaxInstances {
+		s.launches++
+		k := Key(fmt.Sprintf("%s-%d", s.Cfg.KeyPrefix, s.launches))
+		s.Instances[k] = &Instance{Key: k, Phase: Requested, Since: now}
+		fx = append(fx, Launch{k})
+	}
+	return append(fx, Refuse{id})
+}
+
+// settle derives what follows from the state alone: dropping finished
+// instances and what the machines file should say.
 func (s *State) settle(now time.Time) []Effect {
 	var fx []Effect
 	for k, in := range s.Instances {
 		if in.Phase == Gone {
 			delete(s.Instances, k)
-		}
-	}
-	if len(s.Held) > 0 {
-		if in := s.serving(); in != nil {
-			in.to(Serving, now)
-			in.LastBusyAt = now
-			s.Live += len(s.Held)
-			fx = append(fx, Splice{s.Held, in.Addr})
-			s.Held = nil
-		} else if s.Unavailable(now) {
-			fx = append(fx, Release{s.Held})
-			s.Held = nil
-		} else if s.Synced && s.pending() == 0 && len(s.Instances) < s.Cfg.MaxInstances {
-			s.launches++
-			k := Key(fmt.Sprintf("%s-%d", s.Cfg.KeyPrefix, s.launches))
-			s.Instances[k] = &Instance{Key: k, Phase: Requested, Since: now}
-			fx = append(fx, Launch{k})
 		}
 	}
 	avail := !s.Unavailable(now)

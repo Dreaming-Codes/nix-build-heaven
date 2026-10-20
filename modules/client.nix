@@ -36,7 +36,7 @@ in
     connectTimeout = lib.mkOption {
       type = lib.types.int;
       default = 150;
-      description = "Seconds nix waits for the gate to splice its connection to a booting builder.";
+      description = "Seconds nix keeps retrying while the gate refuses connections for a booting builder.";
     };
     maxJobs = lib.mkOption {
       type = lib.types.int;

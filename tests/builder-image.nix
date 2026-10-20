@@ -11,7 +11,7 @@ pkgs.testers.runNixOSTest {
     builder = {
       imports = [ common.builder ];
       services.nbh.builder = {
-        idleTimeout = 25;
+        idleTimeout = 60;
         checkInterval = "3s";
       };
     };
@@ -19,7 +19,7 @@ pkgs.testers.runNixOSTest {
       imports = [ common.builder ];
       virtualisation.memorySize = 1024;
       services.nbh.builder = {
-        maxUptime = 45;
+        maxUptime = 150;
         checkInterval = "3s";
       };
     };
@@ -44,19 +44,10 @@ pkgs.testers.runNixOSTest {
 
       with subtest("builder waits for user-data and serves once it appears"):
           builder.start()
-          builder.wait_until_succeeds("journalctl -u nbh-keys.service | grep -q 'Failed\\|failed'", timeout=120)
+          builder.wait_until_succeeds("journalctl -u nbh-keys.service | grep -q 'user-data not available yet'", timeout=120)
           builder.fail("nc -z 127.0.0.1 50051")
           client.succeed(f"nbh-gate userdata {pki} > /var/lib/fake-imds/user-data")
           builder.wait_for_open_port(50051, timeout=60)
-
-      with subtest("boot to serving"):
-          t0 = time.monotonic()
-          capped.start()
-          capped.wait_for_open_port(50051, timeout=300)
-          boot_to_serving = time.monotonic() - t0
-          kernel_to_serving = float(capped.succeed("cut -d' ' -f1 /proc/uptime"))
-          print(f"MEASURED boot_to_serving_s={boot_to_serving:.1f} uptime_at_serving_s={kernel_to_serving:.1f}")
-          print(capped.succeed("systemd-analyze; systemd-analyze critical-chain nix-grpc-daemon.service || true"))
 
       with subtest("client builds through the builder with its user-data certificate"):
           nonce = str(int(time.time()))
@@ -67,15 +58,25 @@ pkgs.testers.runNixOSTest {
           build_done = time.monotonic()
 
       with subtest("dead-man: still up well inside the idle window, off after it"):
-          time.sleep(10)
+          time.sleep(30)
           builder.succeed("true")
           builder.wait_for_shutdown()
           idle_to_off = time.monotonic() - build_done
-          print(f"MEASURED idle_to_poweroff_s={idle_to_off:.1f} (idleTimeout 25 s, check every 3 s)")
-          assert 25 <= idle_to_off <= 45, idle_to_off
+          print(f"MEASURED idle_to_poweroff_s={idle_to_off:.1f} (idleTimeout 60 s, check every 3 s)")
+          assert 57 <= idle_to_off <= 80, idle_to_off
+
+      with subtest("boot to serving"):
+          t0 = time.monotonic()
+          capped.start()
+          capped.wait_for_open_port(50051, timeout=300)
+          boot_to_serving = time.monotonic() - t0
+          kernel_to_serving = float(capped.succeed("cut -d' ' -f1 /proc/uptime"))
+          print(f"MEASURED boot_to_serving_s={boot_to_serving:.1f} uptime_at_serving_s={kernel_to_serving:.1f}")
+          print(capped.succeed("systemd-analyze; systemd-analyze critical-chain nix-grpc-daemon.service || true"))
 
       with subtest("dead-man: uptime cap powers off an idle-forever builder"):
           capped.wait_for_shutdown()
-          print(f"MEASURED capped_off_after_start_s={time.monotonic() - t0:.1f} (maxUptime 45 s)")
+          print(f"MEASURED capped_off_after_start_s={time.monotonic() - t0:.1f} (maxUptime 150 s)")
+          assert time.monotonic() - t0 >= 150
     '';
 }

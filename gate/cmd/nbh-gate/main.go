@@ -1,5 +1,6 @@
-// nbh-gate holds the nix-daemon's first connection to the remote builder while
-// it launches one, splices traffic once it serves, and terminates it when idle.
+// nbh-gate launches a remote builder when the nix-daemon first connects,
+// resets connections until it serves so the client retries, splices traffic
+// once it serves, and terminates it when idle.
 package main
 
 import (

@@ -10,7 +10,7 @@
 let
   cfg = config.services.nbh.builder;
   keys = "/run/nbh-keys";
-  metrics = "127.0.0.1:9184";
+  port = 50051;
 in
 {
   imports = [ "${grpcSrc}/nixos/server.nix" ];
@@ -41,11 +41,10 @@ in
   config = lib.mkIf cfg.enable {
     services.nix-grpc-daemon = {
       enable = true;
-      listen = "0.0.0.0:50051";
+      listen = "0.0.0.0:${toString port}";
       idleTimeout = null;
       roles = [ "builder" "scheduler" ];
       trustClients = true;
-      metricsListen = metrics;
       minFree = lib.mkDefault "5G";
       tls = {
         certFile = "${keys}/server.crt";
@@ -61,18 +60,20 @@ in
       after = [ "network-online.target" ];
       wants = [ "network-online.target" ];
       path = [ pkgs.curl pkgs.jq pkgs.coreutils ];
+      # Retry inside the unit: a failed oneshot fails nix-grpc-daemon's start job
+      # for good, so Restart= would leave the builder up but never serving.
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        Restart = "on-failure";
-        RestartSec = 1;
       };
-      unitConfig.StartLimitIntervalSec = 0;
       script = ''
         base=${lib.escapeShellArg cfg.userDataUrl}
         imds=''${base%/latest/*}
-        token=$(curl -sf --max-time 2 -X PUT -H 'X-aws-ec2-metadata-token-ttl-seconds: 300' "$imds/latest/api/token")
-        ud=$(curl -sf --max-time 5 -H "X-aws-ec2-metadata-token: $token" "$base")
+        until token=$(curl -sf --max-time 2 -X PUT -H 'X-aws-ec2-metadata-token-ttl-seconds: 300' "$imds/latest/api/token") &&
+          ud=$(curl -sf --max-time 5 -H "X-aws-ec2-metadata-token: $token" "$base"); do
+          echo "user-data not available yet, retrying"
+          sleep 1
+        done
         [ "$(jq -r .nbh <<<"$ud")" = 1 ] || { echo "user-data is not nbh v1" >&2; exit 1; }
         install -d -m 0750 -g nix-grpc-daemon ${keys}
         umask 027
@@ -89,7 +90,7 @@ in
 
     systemd.services.nbh-deadman = {
       description = "Power off when idle or past the uptime cap";
-      path = [ pkgs.curl pkgs.gawk pkgs.coreutils pkgs.systemd ];
+      path = [ pkgs.iproute2 pkgs.procps pkgs.gnugrep pkgs.coreutils pkgs.systemd ];
       serviceConfig.Type = "oneshot";
       script = ''
         state=/run/nbh-deadman
@@ -101,12 +102,11 @@ in
           systemctl poweroff
           exit 0
         fi
-        if load=$(curl -sf --max-time 5 http://${metrics}/metrics); then
-          busy=$(awk '
-            /^nix_grpc_sched\{kind="(clients|queued)"\}/ { s += $NF }
-            /^nix_grpc_sched_system\{/ && /kind="running"/ { s += $NF }
-            END { print (s > 0) ? 1 : 0 }' <<<"$load")
-          [ "$busy" = 1 ] && touch $state/last-busy
+        # Busy means a client connection or a running build. The scheduler
+        # gauges stay at zero for build-hook builds, so they cannot say this.
+        if ss -Htn state established '( sport = :${toString port} )' | grep -q . ||
+          ps -eo user= | grep -q '^nixbld'; then
+          touch $state/last-busy
         fi
         idle=$(( $(date +%s) - $(stat -c %Y $state/last-busy) ))
         echo "idle $idle s, uptime $up s"

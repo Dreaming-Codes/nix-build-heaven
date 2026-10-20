@@ -35,7 +35,14 @@ type Options struct {
 
 type arrival struct {
 	id    fleet.ConnID
-	reply chan string
+	reply chan verdict
+}
+
+// verdict is the fleet's answer for one connection: splice it to addr, or
+// close it, with a reset when the client should retry.
+type verdict struct {
+	addr  string
+	reset bool
 }
 
 type Gate struct {
@@ -43,7 +50,7 @@ type Gate struct {
 	cloud   cloud.Cloud
 	ln      net.Listener
 	events  chan any
-	replies map[fleet.ConnID]chan string
+	replies map[fleet.ConnID]chan verdict
 }
 
 func Listen(opt Options, cl cloud.Cloud) (*Gate, error) {
@@ -54,7 +61,7 @@ func Listen(opt Options, cl cloud.Cloud) (*Gate, error) {
 	if opt.Log == nil {
 		opt.Log = log.New(os.Stderr, "nbh-gate: ", log.LstdFlags|log.Lmicroseconds)
 	}
-	return &Gate{opt: opt, cloud: cl, ln: ln, events: make(chan any, 256), replies: map[fleet.ConnID]chan string{}}, nil
+	return &Gate{opt: opt, cloud: cl, ln: ln, events: make(chan any, 256), replies: map[fleet.ConnID]chan verdict{}}, nil
 }
 
 func (g *Gate) Addr() string { return g.ln.Addr().String() }
@@ -142,17 +149,14 @@ func (g *Gate) exec(ctx context.Context, f fleet.Effect) {
 			g.reconcile()
 		}()
 	case fleet.Splice:
-		l.Printf("splice %d connection(s) to %s", len(e.Conns), e.Addr)
-		for _, id := range e.Conns {
-			g.replies[id] <- e.Addr
-			delete(g.replies, id)
-		}
+		l.Printf("splice connection %d to %s", e.Conn, e.Addr)
+		g.answer(e.Conn, verdict{addr: e.Addr})
 	case fleet.Release:
-		l.Printf("release %d held connection(s), nix builds locally", len(e.Conns))
-		for _, id := range e.Conns {
-			close(g.replies[id])
-			delete(g.replies, id)
-		}
+		l.Printf("release connection %d, nix builds locally", e.Conn)
+		g.answer(e.Conn, verdict{})
+	case fleet.Refuse:
+		l.Printf("refuse connection %d while the builder boots", e.Conn)
+		g.answer(e.Conn, verdict{reset: true})
 	case fleet.PublishMachines:
 		if err := g.writeMachines(e.Available); err != nil {
 			l.Printf("machines file: %v", err)
@@ -179,6 +183,11 @@ func (g *Gate) exec(ctx context.Context, f fleet.Effect) {
 	case fleet.SessionEnded:
 		l.Printf("session %s %s ended, billed %.0f s", e.Key, e.InstanceID, e.Billed.Seconds())
 	}
+}
+
+func (g *Gate) answer(id fleet.ConnID, v verdict) {
+	g.replies[id] <- v
+	delete(g.replies, id)
 }
 
 func (g *Gate) writeMachines(available bool) error {
@@ -260,22 +269,35 @@ func (g *Gate) accept(ctx context.Context) {
 			return
 		}
 		next++
-		reply := make(chan string, 1)
+		reply := make(chan verdict, 1)
 		g.post(arrival{next, reply})
 		go g.handle(c, next, reply)
 	}
 }
 
-func (g *Gate) handle(c net.Conn, id fleet.ConnID, reply chan string) {
+func (g *Gate) handle(c net.Conn, id fleet.ConnID, reply chan verdict) {
 	defer c.Close()
-	addr, ok := <-reply
-	if !ok {
+	v := <-reply
+	if v.reset {
+		if tc, ok := c.(*net.TCPConn); ok {
+			tc.SetLinger(0)
+		}
+		return
+	}
+	if v.addr == "" {
+		// Closing with the client's unread TLS hello in the buffer sends a
+		// reset, which the plugin retries; a FIN makes it give up at once.
+		if tc, ok := c.(*net.TCPConn); ok {
+			tc.CloseWrite()
+			tc.SetReadDeadline(time.Now().Add(2 * time.Second))
+			io.Copy(io.Discard, tc)
+		}
 		return
 	}
 	defer g.post(fleet.ConnClosed{ID: id})
-	b, err := net.DialTimeout("tcp", addr, 10*time.Second)
+	b, err := net.DialTimeout("tcp", v.addr, 10*time.Second)
 	if err != nil {
-		g.opt.Log.Printf("dial builder %s: %v", addr, err)
+		g.opt.Log.Printf("dial builder %s: %v", v.addr, err)
 		return
 	}
 	defer b.Close()

@@ -4,7 +4,7 @@
 let
   pki = "/var/lib/nbh-gate/pki";
   probe = pkgs.writeText "probe.nix" ''
-    { nonce }:
+    { nonce, busy ? "0" }:
     let
       mk = name: script: derivation {
         inherit name;
@@ -12,7 +12,8 @@ let
         builder = "/bin/sh";
         args = [ "-c" script ];
       };
-      a = mk "nbh-probe-a-''${nonce}" "echo a-''${nonce} > $out";
+      # The sandbox has no sleep binary; spin for busy seconds instead.
+      a = mk "nbh-probe-a-''${nonce}" "while [ $SECONDS -lt ''${busy} ]; do :; done; echo a-''${nonce} > $out";
     in
     mk "nbh-probe-b-''${nonce}" "read x < ''${a}; echo \"$x b\" > $out"
   '';
