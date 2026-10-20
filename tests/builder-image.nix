@@ -1,4 +1,4 @@
-# Phase 2: the builder module as the AMI runs it. Certificates come from IMDSv2
+# The builder module as the AMI runs it. SSH material comes from IMDSv2
 # user-data (retrying until it exists), boot-to-serving is timed, and the
 # dead-man switch powers off on idle and on the uptime cap.
 { self, pkgs }:
@@ -28,6 +28,7 @@ pkgs.testers.runNixOSTest {
       {
         imports = [ common.client ];
         services.nbh.gate.enable = false;
+        services.nbh.port = 22;
         networking.hosts.${nodes.builder.networking.primaryIPAddress} = [ "nbh-builder" ];
       };
   };
@@ -45,15 +46,15 @@ pkgs.testers.runNixOSTest {
       with subtest("builder waits for user-data and serves once it appears"):
           builder.start()
           builder.wait_until_succeeds("journalctl -u nbh-keys.service | grep -q 'user-data not available yet'", timeout=120)
-          builder.fail("nc -z 127.0.0.1 50051")
+          builder.fail("nc -z 127.0.0.1 22")
           client.succeed(f"nbh-gate userdata {pki} > /var/lib/fake-imds/user-data")
-          builder.wait_for_open_port(50051, timeout=60)
+          builder.wait_for_open_port(22, timeout=60)
 
-      with subtest("client builds through the builder with its user-data certificate"):
+      with subtest("client builds through the builder with its user-data host certificate"):
           nonce = str(int(time.time()))
           blog = client.succeed(f"su - alice -c 'nix-build /etc/nbh/probe.nix --argstr nonce {nonce} --no-out-link' 2>&1")
           out = blog.strip().splitlines()[-1]
-          assert blog.count("on 'grpc://nbh-builder") >= 2, blog
+          assert blog.count("on 'ssh-ng://nbh@nbh-builder") >= 2, blog
           builder.succeed(f"nix-store --check-validity {out}")
           build_done = time.monotonic()
 
@@ -68,11 +69,11 @@ pkgs.testers.runNixOSTest {
       with subtest("boot to serving"):
           t0 = time.monotonic()
           capped.start()
-          capped.wait_for_open_port(50051, timeout=300)
+          capped.wait_for_open_port(22, timeout=300)
           boot_to_serving = time.monotonic() - t0
           kernel_to_serving = float(capped.succeed("cut -d' ' -f1 /proc/uptime"))
           print(f"MEASURED boot_to_serving_s={boot_to_serving:.1f} uptime_at_serving_s={kernel_to_serving:.1f}")
-          print(capped.succeed("systemd-analyze; systemd-analyze critical-chain nix-grpc-daemon.service || true"))
+          print(capped.succeed("systemd-analyze; systemd-analyze critical-chain sshd.service || true"))
 
       with subtest("dead-man: uptime cap powers off an idle-forever builder"):
           capped.wait_for_shutdown()

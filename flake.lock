@@ -191,23 +191,6 @@
         "url": "https://flakehub.com/f/DeterminateSystems/nix-src/%2A"
       }
     },
-    "nix-grpc-store": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1792278270,
-        "narHash": "sha256-O1CJPGbzWt3hyYKf/QJLy5Lo97JI3G23Ux/VSOT/MiM=",
-        "owner": "Mic92",
-        "repo": "nix-grpc-store",
-        "rev": "199d78a4a8d45b480acde25f4a191e6034f94c5d",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Mic92",
-        "repo": "nix-grpc-store",
-        "rev": "199d78a4a8d45b480acde25f4a191e6034f94c5d",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1787962033,
@@ -287,7 +270,6 @@
     "root": {
       "inputs": {
         "determinate": "determinate",
-        "nix-grpc-store": "nix-grpc-store",
         "nixpkgs": "nixpkgs_3",
         "terranix": "terranix"
       }

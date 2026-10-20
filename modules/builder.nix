@@ -1,7 +1,6 @@
-# The AWS builder: nix-grpc-daemon behind mTLS and/or sshd for ssh-ng, keys and
-# certificates from EC2 user-data, and a dead-man switch that powers the
-# instance off when nobody uses it.
-{ grpcSrc }:
+# The AWS builder: sshd for ssh-ng with this boot's host key and certificate
+# and the gate's client key from EC2 user-data, and a dead-man switch that
+# powers the instance off when nobody uses it.
 {
   config,
   lib,
@@ -10,37 +9,21 @@
 }:
 let
   cfg = config.services.nbh.builder;
-  keys = "/run/nbh-keys";
-  # sshd reads authorized_keys with the user's privileges, so the ssh material
-  # lives apart from the grpc keys, whose directory only nix-grpc-daemon reads.
-  sshKeys = "/run/nbh-ssh";
-  port = 50051;
-  grpc = lib.elem "grpc" cfg.transports;
-  sshng = lib.elem "ssh-ng" cfg.transports;
+  # sshd reads authorized_keys with the user's privileges, so this is 0755.
+  keys = "/run/nbh-ssh";
 in
 {
-  imports = [ "${grpcSrc}/nixos/server.nix" ];
-
   options.services.nbh.builder = {
     enable = lib.mkEnableOption "the Nix Build Heaven remote builder";
     userDataUrl = lib.mkOption {
       type = lib.types.str;
       default = "http://169.254.169.254/latest/user-data";
-      description = "IMDSv2 user-data URL holding the TLS material minted by nbh-gate.";
-    };
-    transports = lib.mkOption {
-      type = lib.types.listOf (lib.types.enum [ "grpc" "ssh-ng" ]);
-      default = [ "grpc" ];
-      description = "How clients reach the builder: nix-grpc-daemon on 50051 with mTLS, sshd for ssh-ng with a per-boot host certificate, or both.";
-    };
-    sshPort = lib.mkOption {
-      type = lib.types.port;
-      default = 22;
+      description = "IMDSv2 user-data URL holding the SSH material minted by nbh-gate.";
     };
     idleTimeout = lib.mkOption {
       type = lib.types.int;
       default = 600;
-      description = "Seconds with no clients and no builds before the builder powers off.";
+      description = "Seconds with no ssh-ng session and no builds before the builder powers off.";
     };
     maxUptime = lib.mkOption {
       type = lib.types.int;
@@ -53,29 +36,8 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable (lib.mkMerge [
-  (lib.mkIf grpc {
-    services.nix-grpc-daemon = {
-      enable = true;
-      listen = "0.0.0.0:${toString port}";
-      idleTimeout = null;
-      roles = [ "builder" "scheduler" ];
-      trustClients = true;
-      minFree = lib.mkDefault "5G";
-      tls = {
-        certFile = "${keys}/server.crt";
-        keyFile = "${keys}/server.key";
-        clientCaFile = "${keys}/client-ca.crt";
-      };
-    };
-    systemd.services.nix-grpc-daemon = {
-      requires = [ "nbh-keys.service" ];
-      after = [ "nbh-keys.service" ];
-    };
-    networking.firewall.allowedTCPPorts = [ port ];
-  })
-  (lib.mkIf sshng {
-    # ssh-ng: the client logs in as nbh with the gate's client key and runs
+  config = lib.mkIf cfg.enable {
+    # The client logs in as nbh with the gate's client key and runs
     # `nix-daemon --stdio`, so nbh must be a trusted user to build derivations.
     users.users.nbh = {
       isSystemUser = true;
@@ -86,11 +48,10 @@ in
     nix.settings.trusted-users = [ "nbh" ];
     services.openssh = {
       enable = true;
-      ports = [ cfg.sshPort ];
       openFirewall = true;
       # No host key in the image: nbh-keys writes this boot's key and certificate.
       hostKeys = lib.mkForce [ ];
-      authorizedKeysFiles = lib.mkForce [ "${sshKeys}/authorized_keys.%u" ];
+      authorizedKeysFiles = lib.mkForce [ "${keys}/authorized_keys.%u" ];
       settings = {
         PasswordAuthentication = false;
         KbdInteractiveAuthentication = false;
@@ -98,25 +59,23 @@ in
         AllowUsers = [ "nbh" ];
       };
       extraConfig = ''
-        HostKey ${sshKeys}/ssh_host_ed25519_key
-        HostCertificate ${sshKeys}/ssh_host_ed25519_key-cert.pub
+        HostKey ${keys}/ssh_host_ed25519_key
+        HostCertificate ${keys}/ssh_host_ed25519_key-cert.pub
       '';
     };
     systemd.services.sshd = {
       requires = [ "nbh-keys.service" ];
       after = [ "nbh-keys.service" ];
     };
-  })
-  {
+
     systemd.services.nbh-keys = {
-      description = "Fetch builder TLS material from EC2 user-data";
+      description = "Fetch the builder's SSH material from EC2 user-data";
       wantedBy = [ "multi-user.target" ];
-      before = [ "nix-grpc-daemon.service" ];
       after = [ "network-online.target" ];
       wants = [ "network-online.target" ];
       path = [ pkgs.curl pkgs.jq pkgs.coreutils ];
-      # Retry inside the unit: a failed oneshot fails nix-grpc-daemon's start job
-      # for good, so Restart= would leave the builder up but never serving.
+      # Retry inside the unit: a failed oneshot fails sshd's start job for
+      # good, so Restart= would leave the builder up but never serving.
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
@@ -130,28 +89,17 @@ in
           sleep 1
         done
         [ "$(jq -r .nbh <<<"$ud")" = 1 ] || { echo "user-data is not nbh v1" >&2; exit 1; }
-      '' + lib.optionalString grpc ''
-        install -d -m 0750 -g nix-grpc-daemon ${keys}
-        (
-        umask 027
-        jq -r .server_cert <<<"$ud" > ${keys}/server.crt
-        jq -r .server_key <<<"$ud" > ${keys}/server.key
-        jq -r .client_ca <<<"$ud" > ${keys}/client-ca.crt
-        chgrp nix-grpc-daemon ${keys}/*
-        )
-      '' + lib.optionalString sshng ''
-        [ "$(jq -r '.ssh_host_cert // ""' <<<"$ud")" ] || { echo "user-data has no ssh material" >&2; exit 1; }
-        install -d -m 0755 ${sshKeys}
-        (umask 077; jq -r .ssh_host_key <<<"$ud" > ${sshKeys}/ssh_host_ed25519_key)
-        jq -r .ssh_host_cert <<<"$ud" > ${sshKeys}/ssh_host_ed25519_key-cert.pub
-        jq -r .ssh_authorized_keys <<<"$ud" > ${sshKeys}/authorized_keys.nbh
-        chmod 0644 ${sshKeys}/ssh_host_ed25519_key-cert.pub ${sshKeys}/authorized_keys.nbh
+        install -d -m 0755 ${keys}
+        (umask 077; jq -r .ssh_host_key <<<"$ud" > ${keys}/ssh_host_ed25519_key)
+        jq -r .ssh_host_cert <<<"$ud" > ${keys}/ssh_host_ed25519_key-cert.pub
+        jq -r .ssh_authorized_keys <<<"$ud" > ${keys}/authorized_keys.nbh
+        chmod 0644 ${keys}/ssh_host_ed25519_key-cert.pub ${keys}/authorized_keys.nbh
       '';
     };
 
     systemd.services.nbh-deadman = {
       description = "Power off when idle or past the uptime cap";
-      path = [ pkgs.iproute2 pkgs.procps pkgs.gnugrep pkgs.coreutils pkgs.systemd ];
+      path = [ pkgs.procps pkgs.gnugrep pkgs.coreutils pkgs.systemd ];
       serviceConfig.Type = "oneshot";
       script = ''
         state=/run/nbh-deadman
@@ -163,15 +111,11 @@ in
           systemctl poweroff
           exit 0
         fi
-        # Busy means a client connection or a running build. The scheduler
-        # gauges stay at zero for build-hook builds, so they cannot say this.
-        # For ssh-ng a TCP connection is not enough, since scanners hit port
-        # 22 all day. An authenticated ssh-ng session runs `nix-daemon --stdio`
-        # as nbh, which a scanner never gets to. Any nbh process is not enough
-        # either: PAM leaves nbh's systemd --user running after logout (VM run 1).
-        if ${if grpc then "ss -Htn state established '( sport = :${toString port} )' | grep -q . ||" else ""}
-          pgrep -u nbh -x nix-daemon > /dev/null ||
-          ps -eo user= | grep -q '^nixbld'; then
+        # Busy is an ssh-ng session or a running build. A TCP connection on 22
+        # cannot say it, since scanners hit 22 all day; an authenticated session
+        # runs `nix-daemon --stdio` as nbh. Any nbh process cannot either: PAM
+        # leaves nbh's systemd --user running after logout.
+        if pgrep -u nbh -x nix-daemon > /dev/null || ps -eo user= | grep -q '^nixbld'; then
           touch $state/last-busy
         fi
         idle=$(( $(date +%s) - $(stat -c %Y $state/last-busy) ))
@@ -214,6 +158,5 @@ in
       system-features = [ "benchmark" "big-parallel" ];
       experimental-features = [ "nix-command" "flakes" ];
     };
-  }
-  ]);
+  };
 }

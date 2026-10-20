@@ -35,9 +35,7 @@ in
       };
       services.nbh = {
         enable = true;
-        plugin = self.packages.x86_64-linux.plugin;
-        tlsDir = pki;
-        connectTimeout = 60;
+        pkiDir = pki;
         maxJobs = 4;
       };
       environment.systemPackages = [ self.packages.x86_64-linux.gate ];
@@ -63,8 +61,6 @@ in
         enable = true;
         userDataUrl = "http://${nodes.client.networking.primaryIPAddress}:8169/latest/user-data";
       };
-      services.nix-grpc-daemon.minFree = "0";
-      services.nix-grpc-daemon.logLevel = "debug";
       nix.settings.substituters = pkgs.lib.mkForce [ ];
     };
 }

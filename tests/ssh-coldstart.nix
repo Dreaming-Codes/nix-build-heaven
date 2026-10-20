@@ -1,28 +1,20 @@
-# ssh-ng alternative to Phase 3: the same gate with -transport ssh-ng holds the
-# daemon's ssh connection while the fake EC2 "boots" the builder VM for 20 s
-# and splices it to the builder's sshd. Also measures how the ssh-ng hook
-# reacts to a gate that resets instead (the grpc gate's behaviour).
+# Cold start through the real gate: it holds the daemon's ssh connection while
+# the fake EC2 "boots" the builder VM for 20 s, then splices it to the
+# builder's sshd. Also auth, warm builds, dead-man busy detection, scale-down
+# and the local fallback when the cloud is unreachable.
 { self, pkgs }:
 let
   common = import ./common.nix { inherit self pkgs; };
-  listener = ./plugin-probe/listener.py;
 in
 pkgs.testers.runNixOSTest {
   name = "nbh-ssh-coldstart";
   nodes = {
-    builder = {
-      imports = [ common.builder ];
-      services.nbh.builder.transports = [ "ssh-ng" ];
-    };
+    builder = common.builder;
     client =
       { nodes, ... }:
       {
         imports = [ common.client ];
         nix.settings.trusted-users = [ "root" ];
-        services.nbh = {
-          transport = "ssh-ng";
-          plugin = pkgs.lib.mkForce null;
-        };
         services.nbh.gate.extraArgs = [
           "-backend" "fake"
           "-fake-addr" "${nodes.builder.networking.primaryIPAddress}:22"
@@ -39,12 +31,10 @@ pkgs.testers.runNixOSTest {
         ExecStart=
         ExecStart=${nodes.client.systemd.services.nbh-gate.serviceConfig.ExecStart} -fake-down
       '';
-      entry = nodes.client.services.nbh.machinesEntry;
     in
     ''
       import re, time
       pki = "${common.pki}"
-      entry = "${entry}"
 
       def build(tag, extra="", user="alice", check=True, prefix=""):
           nonce = f"{tag}-{time.time_ns()}"
@@ -122,21 +112,6 @@ pkgs.testers.runNixOSTest {
           d = time.monotonic() - last_close
           print(f"MEASURED terminate_after_last_build_s={d:.1f}")
           assert d <= 25, d
-
-      with subtest("a resetting gate (grpc-style refuse): ssh-ng does not retry"):
-          client.succeed("${pkgs.python3}/bin/python3 ${listener} rst 2299 > /tmp/rst.log 2>&1 &")
-          client.wait_for_open_port(2299)
-          bad = entry.replace(":2222", ":2299")
-          d1, blog1 = build("rst-local", f"--max-jobs 1 --builders '{bad}'", user="root")
-          print(blog1)
-          a1 = int(client.succeed("grep -c accept /tmp/rst.log").strip())
-          print(f"MEASURED reset_maxjobs1_s={d1:.1f} accepts={a1} remote={'ssh-ng://' in blog1 and 'building' in blog1}")
-          client.succeed("truncate -s0 /tmp/rst.log")
-          # max-jobs 0: no local fallback. Bounded by timeout in case the hook postpones forever.
-          d0, blog0 = build("rst-nolocal", f"--max-jobs 0 --builders '{bad}'", user="root", check=False, prefix="timeout 90 ")
-          print(blog0)
-          a0 = int(client.succeed("grep -c accept /tmp/rst.log || true").strip() or 0)
-          print(f"MEASURED reset_maxjobs0_s={d0:.1f} accepts={a0}")
 
       with subtest("fallback: cloud unreachable, machines file empty, local build adds under 10 s"):
           client.succeed(

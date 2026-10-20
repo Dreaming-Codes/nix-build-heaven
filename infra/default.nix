@@ -207,20 +207,11 @@ in
 
   resource.aws_security_group.builder = {
     name = "nbh-builder";
+    # Stale since the grpc transport went, but changing it replaces the group.
     description = "nix-grpc-daemon behind mTLS";
     vpc_id = ref "data.aws_vpc.default.id";
     inherit tags;
   };
-  resource.aws_vpc_security_group_ingress_rule.grpc4 = {
-    security_group_id = ref "aws_security_group.builder.id";
-    ip_protocol = "tcp";
-    from_port = 50051;
-    to_port = 50051;
-    cidr_ipv4 = "0.0.0.0/0";
-    description = "nix-grpc-daemon with mTLS from the gate CA";
-  };
-  # ssh-ng transport (modules/builder.nix transports). Not applied yet: added
-  # with the ssh-ng prototype, applies when the AMI is re-baked with sshd.
   resource.aws_vpc_security_group_ingress_rule.ssh4 = {
     security_group_id = ref "aws_security_group.builder.id";
     ip_protocol = "tcp";
