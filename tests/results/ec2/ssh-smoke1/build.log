@@ -1,0 +1,15 @@
+copying path '/nix/store/l8b4mi6dhb4fkrfr94af32x69lnhglsz-source' from 'https://cache.nixos.org'...
+this derivation will be built:
+  /nix/store/rb0wr1i6jb0k8awf1v6ln25by8bjfjf2-grpc-probe-ec2-1792529361.drv
+[31;1merror:[0m Could not find executable '[35;1mssh[0m'
+cannot build on 'ssh-ng://nbh@nbh-builder:2222': error: failed to start SSH master connection to 'nbh-builder'
+Failed to find a machine for remote build!
+derivation: rb0wr1i6jb0k8awf1v6ln25by8bjfjf2-grpc-probe-ec2-1792529361.drv
+required (system, features): (x86_64-linux, [])
+1 available machines:
+(systems, maxjobs, supportedFeatures, mandatoryFeatures)
+([x86_64-linux], 2, [benchmark, big-parallel], [])
+❌ 
+error: Cannot build '/nix/store/rb0wr1i6jb0k8awf1v6ln25by8bjfjf2-grpc-probe-ec2-1792529361.drv'.
+       Reason: local builds are disabled (max-jobs = 0)
+       Hint: set 'max-jobs' to a non-zero value to enable local builds, or configure remote builders via 'builders'
