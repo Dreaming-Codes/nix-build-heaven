@@ -1,0 +1,44 @@
+{
+ "derivations": 15,
+ "edges": 18,
+ "depth_levels": 6,
+ "max_level_width": 6,
+ "total_work_s": 10929.6,
+ "critical_path_s": 3773.1,
+ "avg_parallelism": 2.9,
+ "critical_path": [
+  {
+   "drv": "libinput-1.31.3",
+   "s": 6.9
+  },
+  {
+   "drv": "kwin-6.7.5",
+   "s": 1548.2
+  },
+  {
+   "drv": "plasma-workspace-6.7.5",
+   "s": 774.1
+  },
+  {
+   "drv": "xdg-desktop-portal-kde-6.7.5",
+   "s": 1380.1
+  },
+  {
+   "drv": "kinfocenter-6.7.5",
+   "s": 63.7
+  }
+ ],
+ "simulated_makespan_s": {
+  "1": 10929.6,
+  "8": 3773.1,
+  "16": 3773.1,
+  "32": 3773.1,
+  "64": 3773.1,
+  "96": 3773.1,
+  "192": 3773.1
+ },
+ "weights": "measured",
+ "unmeasured_derivations": 2,
+ "observed_max_concurrent_builds": 6,
+ "observed_wall_s": 3774.0
+}

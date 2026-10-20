@@ -1,0 +1,67 @@
+{
+ "w2zk312y8b5windqc3dpwf5cllnijynv-libinput-1.31.3.drv": {
+  "start": 4.684,
+  "end": 11.603,
+  "s": 6.919
+ },
+ "g1sk3cjhs4287912687m3yaxw7sz2zah-libinput-gestures-2.79.drv": {
+  "start": 11.941,
+  "end": 12.27,
+  "s": 0.32899999999999885
+ },
+ "f3ziawbhyhk2nxh0qkdg21csmyvawvik-xf86-input-libinput-1.5.0.drv": {
+  "start": 12.043,
+  "end": 35.013,
+  "s": 22.97
+ },
+ "53q07smjqb9pnx579zl5wf7n2052mnmi-niri-26.04.drv": {
+  "start": 11.991,
+  "end": 1521.561,
+  "s": 1509.57
+ },
+ "6ypw2bszv1rcxk8mwm8mqmz0mrabrxlq-kwin-6.7.5.drv": {
+  "start": 11.705,
+  "end": 1559.955,
+  "s": 1548.25
+ },
+ "1rv3w61v1xasaaynvxflsz3yjrw89cff-plasma-workspace-6.7.5.drv": {
+  "start": 1560.153,
+  "end": 2334.265,
+  "s": 774.1119999999999
+ },
+ "296lslxjy39fff73c3i2g6p3jm0h6195-plasma-pa-6.7.5.drv": {
+  "start": 2334.674,
+  "end": 3168.515,
+  "s": 833.8409999999999
+ },
+ "xnya92zbs94rzvdmjm2naabr4wqr50i8-print-manager-6.7.5.drv": {
+  "start": 2334.813,
+  "end": 3173.429,
+  "s": 838.616
+ },
+ "7mppjry8ph2zmd2f6llfsbpv8gjvllf9-kwin-x11-6.7.5.drv": {
+  "start": 2334.605,
+  "end": 3607.192,
+  "s": 1272.587
+ },
+ "p0k2ii7vfiwm46g9s3nw79gzmv8b9ryz-bluedevil-6.7.5.drv": {
+  "start": 2334.51,
+  "end": 3631.595,
+  "s": 1297.0849999999996
+ },
+ "69k4avq4h762p415n1zvv4wv1zpqc8qy-xdg-desktop-portal-kde-6.7.5.drv": {
+  "start": 2334.888,
+  "end": 3715.034,
+  "s": 1380.1460000000002
+ },
+ "vnq4fg4425wn06wn1pj65ly39p116d2x-powerdevil-6.7.5.drv": {
+  "start": 2334.74,
+  "end": 3716.282,
+  "s": 1381.5420000000004
+ },
+ "c7799byrhkvjarbi25v7n4yzpis8rqjy-kinfocenter-6.7.5.drv": {
+  "start": 3715.082,
+  "end": 3778.732,
+  "s": 63.65000000000009
+ }
+}
