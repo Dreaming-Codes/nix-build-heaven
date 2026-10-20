@@ -101,13 +101,20 @@ pkgs.testers.runNixOSTest {
       with subtest("dead-man sees an ssh-ng build as busy (an nbh session or a nixbld process)"):
           nonce = f"busy-{time.time_ns()}"
           client.succeed(f"su - alice -c 'nix-build /etc/nbh/probe.nix --argstr nonce {nonce} --argstr busy 20 --no-out-link' > /tmp/busy.log 2>&1 &")
-          builder.wait_until_succeeds("ps -eo user= | grep -q '^nbh$'", timeout=60)
+          builder.wait_until_succeeds("ps -eo user= | grep -q '^nixbld'", timeout=60)
           print(builder.succeed("ps -eo user,comm | grep -E '^(nbh|nixbld)' || true"))
+          builder.succeed("pgrep -u nbh -x nix-daemon")
           builder.succeed("systemctl start nbh-deadman.service")
           out = builder.succeed("journalctl -u nbh-deadman.service -n 3 -o cat")
           print(out)
           assert re.search(r"idle [0-1] s", out), out
-          client.wait_until_succeeds("grep -q nbh-probe-b /tmp/busy.log", timeout=120)
+          client.wait_until_succeeds("grep -q '^/nix/store/.*nbh-probe-b' /tmp/busy.log", timeout=120)
+          print(client.succeed("cat /tmp/busy.log"))
+          # Between builds, with nbh's user manager still lingering, the builder is idle.
+          builder.succeed("touch -d '-5 min' /run/nbh-deadman/last-busy && systemctl start nbh-deadman.service")
+          out = builder.succeed("journalctl -u nbh-deadman.service -n 3 -o cat")
+          print(out)
+          assert re.search(r"idle 3\d\d s", out), out
           last_close = time.monotonic()
 
       with subtest("terminate after drain: idle-grace 10 s + 5 s recheck"):

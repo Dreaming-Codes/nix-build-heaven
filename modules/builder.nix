@@ -166,10 +166,12 @@ in
         # Busy means a client connection or a running build. The scheduler
         # gauges stay at zero for build-hook builds, so they cannot say this.
         # For ssh-ng a TCP connection is not enough, since scanners hit port
-        # 22 all day; an authenticated session runs as nbh (sshd-session and
-        # `nix-daemon --stdio`), which a scanner never gets to.
+        # 22 all day. An authenticated ssh-ng session runs `nix-daemon --stdio`
+        # as nbh, which a scanner never gets to. Any nbh process is not enough
+        # either: PAM leaves nbh's systemd --user running after logout (VM run 1).
         if ${if grpc then "ss -Htn state established '( sport = :${toString port} )' | grep -q . ||" else ""}
-          ps -eo user= | grep -q '^nixbld\|^nbh$'; then
+          pgrep -u nbh -x nix-daemon > /dev/null ||
+          ps -eo user= | grep -q '^nixbld'; then
           touch $state/last-busy
         fi
         idle=$(( $(date +%s) - $(stat -c %Y $state/last-busy) ))
