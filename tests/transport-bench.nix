@@ -8,11 +8,15 @@ let
   common = import ./common.nix { inherit self pkgs; };
   bulk = pkgs.writeText "bulk.nix" ''
     { nonce, blob, subst ? "" }:
+    let
+      bash = builtins.storePath "${pkgs.bash}";
+      coreutils = builtins.storePath "${pkgs.coreutils}";
+    in
     derivation {
       name = "nbh-bulk-''${nonce}";
       system = "x86_64-linux";
-      builder = "${pkgs.bash}/bin/bash";
-      args = [ "-c" "${pkgs.coreutils}/bin/cat ''${blob} ''${if subst == "" then "" else builtins.storePath subst} > /dev/null; ${pkgs.coreutils}/bin/head -c 67108864 /dev/urandom > $out" ];
+      builder = "''${bash}/bin/bash";
+      args = [ "-c" "''${coreutils}/bin/cat ''${blob} ''${if subst == "" then "" else builtins.storePath subst} > /dev/null; ''${coreutils}/bin/head -c 67108864 /dev/urandom > $out" ];
     }
   '';
 in
@@ -41,6 +45,8 @@ pkgs.testers.runNixOSTest {
         networking.hosts.${nodes.builder.networking.primaryIPAddress} = [ "nbh-builder" ];
         networking.firewall.allowedTCPPorts = [ 8170 ];
         environment.etc."nbh/bulk.nix".source = bulk;
+        # Registered in the client store so bulk.nix can depend on them.
+        environment.systemPackages = [ pkgs.bash pkgs.coreutils ];
       };
   };
   testScript = ''
@@ -79,6 +85,12 @@ pkgs.testers.runNixOSTest {
                 assert out.count(marker[t]) >= 2, out
                 results[t]["small"].append(round(d, 2))
         print("MEASURED small " + json.dumps({t: results[t]["small"] for t in results}))
+
+    with subtest("warm-up: bash and coreutils reach the builder once, over each transport"):
+        for t in ("grpc", "ssh-ng"):
+            use(t)
+            client.succeed(f"head -c 16 /dev/urandom > /tmp/warm-{t}")
+            client.succeed(f"NIX_REMOTE=daemon nix-build /etc/nbh/bulk.nix --argstr nonce warm-{t}-{time.time_ns()} --arg blob /tmp/warm-{t} --no-out-link")
 
     with subtest("64 MiB fresh input up, 64 MiB output back, 3 runs each, alternating"):
         for i in range(3):
