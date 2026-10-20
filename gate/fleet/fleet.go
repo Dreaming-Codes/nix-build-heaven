@@ -56,6 +56,12 @@ type Config struct {
 	// RetryHold is the client's connect-timeout. A refused client keeps
 	// retrying for up to this long, with gaps that grow past IdleGrace.
 	RetryHold time.Duration
+	// HoldWhileBooting keeps a connection open and silent while a builder
+	// boots and splices it once the builder serves, instead of refusing it.
+	// The ssh-ng client waits for the server banner with no deadline unless
+	// ConnectTimeout is set, and it does not retry a reset or a FIN, so it
+	// needs this; the grpc plugin needs the opposite (see Refuse).
+	HoldWhileBooting bool
 }
 
 func DefaultConfig(prefix string) Config {
@@ -86,7 +92,9 @@ type State struct {
 	// LastRefused is the last connection refused while a builder booted.
 	// Its client may still be retrying until LastRefused + RetryHold.
 	LastRefused time.Time
-	launches    int
+	// Held are connections kept open while a builder boots (HoldWhileBooting).
+	Held     []ConnID
+	launches int
 }
 
 func New(cfg Config) *State {
@@ -373,15 +381,53 @@ func (s *State) arrive(now time.Time, id ConnID) []Effect {
 	if s.Unavailable(now) {
 		return []Effect{Release{id}}
 	}
-	var fx []Effect
-	if s.Synced && s.pending() == 0 && len(s.Instances) < s.Cfg.MaxInstances {
-		s.launches++
-		k := Key(fmt.Sprintf("%s-%d", s.Cfg.KeyPrefix, s.launches))
-		s.Instances[k] = &Instance{Key: k, Phase: Requested, Since: now}
-		fx = append(fx, Launch{k})
+	if s.Cfg.HoldWhileBooting {
+		// settle launches once it may and splices or releases when it knows.
+		s.Held = append(s.Held, id)
+		return nil
 	}
+	fx := s.launchIfNeeded(now)
 	s.LastRefused = now
 	return append(fx, Refuse{id})
+}
+
+func (s *State) launchIfNeeded(now time.Time) []Effect {
+	if !s.Synced || s.pending() > 0 || len(s.Instances) >= s.Cfg.MaxInstances {
+		return nil
+	}
+	s.launches++
+	k := Key(fmt.Sprintf("%s-%d", s.Cfg.KeyPrefix, s.launches))
+	s.Instances[k] = &Instance{Key: k, Phase: Requested, Since: now}
+	return []Effect{Launch{k}}
+}
+
+// settleHeld answers held connections: splice them once a builder serves,
+// release them when the cloud is unavailable (Nix then builds locally), and
+// otherwise make sure a launch is under way, which may only happen after the
+// first reconcile or once a terminating builder is gone.
+func (s *State) settleHeld(now time.Time) []Effect {
+	if len(s.Held) == 0 {
+		return nil
+	}
+	var fx []Effect
+	if in := s.serving(); in != nil {
+		in.to(Serving, now)
+		in.LastBusyAt = now
+		for _, id := range s.Held {
+			s.Live++
+			fx = append(fx, Splice{id, in.Addr})
+		}
+		s.Held = nil
+		return fx
+	}
+	if s.Unavailable(now) {
+		for _, id := range s.Held {
+			fx = append(fx, Release{id})
+		}
+		s.Held = nil
+		return fx
+	}
+	return s.launchIfNeeded(now)
 }
 
 // settle derives what follows from the state alone: dropping finished
@@ -393,6 +439,7 @@ func (s *State) settle(now time.Time) []Effect {
 			delete(s.Instances, k)
 		}
 	}
+	fx = append(fx, s.settleHeld(now)...)
 	avail := !s.Unavailable(now)
 	if s.Published == nil || *s.Published != avail {
 		s.Published = &avail

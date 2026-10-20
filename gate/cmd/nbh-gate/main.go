@@ -51,7 +51,8 @@ func main() {
 	maxPrice := flag.String("max-price", "", "aws backend: Spot price cap in $/h, empty for the on-demand price")
 	owner := flag.String("owner", host, "aws backend: nbh:owner tag; one gate per owner")
 	pki := flag.String("pki", "/var/lib/nbh-gate/pki", "aws backend: directory with the private CA that signs builder certificates")
-	builderPort := flag.Int("builder-port", 50051, "aws backend: port nix-grpc-daemon listens on")
+	builderPort := flag.Int("builder-port", 0, "aws backend: builder port, 0 for the transport's default (grpc 50051, ssh-ng 22)")
+	transport := flag.String("transport", "grpc", "grpc (refuse while booting, the plugin retries) or ssh-ng (hold while booting, ssh waits for the banner)")
 	flag.DurationVar(&cfg.IdleGrace, "idle-grace", cfg.IdleGrace, "idle time before draining")
 	flag.DurationVar(&cfg.BootTimeout, "boot-timeout", cfg.BootTimeout, "time allowed from launch to serving")
 	flag.DurationVar(&cfg.RetryHold, "retry-hold", cfg.RetryHold, "keep a builder up this long after refusing a client, the client's connect-timeout")
@@ -59,6 +60,19 @@ func main() {
 	flag.Parse()
 	if *entry == "" {
 		log.Fatal("-machines-entry is required")
+	}
+	switch *transport {
+	case "grpc":
+		if *builderPort == 0 {
+			*builderPort = 50051
+		}
+	case "ssh-ng":
+		cfg.HoldWhileBooting = true
+		if *builderPort == 0 {
+			*builderPort = 22
+		}
+	default:
+		log.Fatalf("unknown transport %q", *transport)
 	}
 	var cl cloud.Cloud
 	switch *backend {
@@ -82,11 +96,7 @@ func main() {
 			MaxPrice:       *maxPrice,
 			Log:            log.New(os.Stderr, "nbh-gate: aws: ", log.LstdFlags|log.Lmicroseconds),
 			UserData: func() ([]byte, error) {
-				srv, err := certs.Server(ca, time.Now(), 3*time.Hour)
-				if err != nil {
-					return nil, err
-				}
-				return certs.NewUserData(ca, srv), nil
+				return mintUserData(certs.Dir(*pki), ca, nil)
 			},
 		}
 	default:
@@ -114,6 +124,27 @@ func pkiInit(args []string) {
 	if err := certs.Dir(args[0]).Init(time.Now(), args[1]); err != nil {
 		log.Fatal(err)
 	}
+	if err := certs.Dir(args[0]).InitSSH(args[1]); err != nil {
+		log.Fatal(err)
+	}
+}
+
+// mintUserData holds a fresh 3 h TLS server certificate and, when the pki
+// directory has SSH keys, a fresh host key with a 3 h host certificate. One
+// user-data serves either transport, so one AMI can run both.
+func mintUserData(d certs.Dir, ca certs.Pair, ips []net.IP) ([]byte, error) {
+	now := time.Now()
+	srv, err := certs.Server(ca, now, 3*time.Hour, ips...)
+	if err != nil {
+		return nil, err
+	}
+	u := certs.NewUserDataStruct(ca, srv)
+	if a, err := d.SSH(); err == nil {
+		if err := u.WithSSH(a, now, 3*time.Hour); err != nil {
+			return nil, err
+		}
+	}
+	return u.JSON(), nil
 }
 
 // userdata DIR [IP...] prints builder user-data with a fresh 3 h server certificate.
@@ -129,9 +160,9 @@ func userData(args []string) {
 	for _, a := range args[1:] {
 		ips = append(ips, net.ParseIP(a))
 	}
-	srv, err := certs.Server(ca, time.Now(), 3*time.Hour, ips...)
+	ud, err := mintUserData(certs.Dir(args[0]), ca, ips)
 	if err != nil {
 		log.Fatal(err)
 	}
-	os.Stdout.Write(certs.NewUserData(ca, srv))
+	os.Stdout.Write(ud)
 }

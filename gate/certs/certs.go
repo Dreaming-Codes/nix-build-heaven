@@ -101,15 +101,25 @@ type UserData struct {
 	ServerCert string `json:"server_cert"`
 	ServerKey  string `json:"server_key"`
 	ClientCA   string `json:"client_ca"`
+	// ssh-ng transport; empty when the gate runs grpc only.
+	SSHHostKey        string `json:"ssh_host_key,omitempty"`
+	SSHHostCert       string `json:"ssh_host_cert,omitempty"`
+	SSHAuthorizedKeys string `json:"ssh_authorized_keys,omitempty"`
 }
 
-func NewUserData(ca, server Pair) []byte {
-	b, err := json.Marshal(UserData{1, string(server.CertPEM()), string(server.KeyPEM()), string(ca.CertPEM())})
+func NewUserDataStruct(ca, server Pair) *UserData {
+	return &UserData{Version: 1, ServerCert: string(server.CertPEM()), ServerKey: string(server.KeyPEM()), ClientCA: string(ca.CertPEM())}
+}
+
+func (u *UserData) JSON() []byte {
+	b, err := json.Marshal(u)
 	if err != nil {
 		panic(err)
 	}
 	return b
 }
+
+func NewUserData(ca, server Pair) []byte { return NewUserDataStruct(ca, server).JSON() }
 
 // Dir holds the CA and the client identity on the host:
 // ca.crt, ca.key, client.crt, client.key.
