@@ -1,0 +1,5 @@
+ok  	nix-build-heaven/gate/certs	1.042s
+?   	nix-build-heaven/gate/cloud	[no test files]
+?   	nix-build-heaven/gate/cmd/nbh-gate	[no test files]
+ok  	nix-build-heaven/gate/fleet	1.014s
+ok  	nix-build-heaven/gate/gate	8.593s

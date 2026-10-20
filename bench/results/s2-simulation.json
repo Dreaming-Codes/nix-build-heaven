@@ -1,0 +1,64 @@
+{
+ "label": "SIMULATION from one measured run; work is inferred, serial share and caps are guesses",
+ "run": "results/s2-libinput-oom",
+ "work_core_s": {
+  "kwin-6.7.5": 5637,
+  "kwin-x11-6.7.5": 5637,
+  "niri-26.04": 5457,
+  "plasma-workspace-6.7.5": 5382,
+  "plasma-desktop-6.7.5": 5382,
+  "print-manager-6.7.5": 2168,
+  "kdeplasma-addons-6.7.5": 2141,
+  "powerdevil-6.7.5": 2141,
+  "xdg-desktop-portal-kde-6.7.5": 2140,
+  "bluedevil-6.7.5": 1826,
+  "plasma-pa-6.7.5": 1456,
+  "kinfocenter-6.7.5": 327,
+  "xf86-input-libinput-1.5.0": 57,
+  "libinput-1.31.3": 40,
+  "libinput-gestures-2.79": 0
+ },
+ "provenance": {
+  "kwin-6.7.5": "observed in run",
+  "xf86-input-libinput-1.5.0": "observed in run",
+  "plasma-workspace-6.7.5": "observed in run",
+  "kdeplasma-addons-6.7.5": "estimated: never started; guess: as large as powerdevil",
+  "libinput-gestures-2.79": "observed in run",
+  "bluedevil-6.7.5": "observed in run",
+  "kwin-x11-6.7.5": "estimated: same source tree as kwin; ninja reached 370/1623 when killed",
+  "niri-26.04": "estimated: rustc killed while compiling the lib test target; observed work is a lower bound",
+  "powerdevil-6.7.5": "observed in run",
+  "plasma-desktop-6.7.5": "estimated: never started; guess: as large as plasma-workspace",
+  "libinput-1.31.3": "observed in run",
+  "print-manager-6.7.5": "estimated: ninja reached 55/117 when killed",
+  "plasma-pa-6.7.5": "estimated: ninja reached 91/131 when killed",
+  "kinfocenter-6.7.5": "observed in run",
+  "xdg-desktop-portal-kde-6.7.5": "observed in run"
+ },
+ "total_work_core_s": 39790,
+ "makespan_s": {
+  "optimistic": {
+   "1x8 (the box's shape)": 5412,
+   "1x64": 1253,
+   "1x192": 937,
+   "8x8 = 64 cores": 3216,
+   "24x8 = 192 cores": 3216,
+   "3x64 = 192 cores": 1144,
+   "critical_path_floor": 868
+  },
+  "pessimistic": {
+   "1x8 (the box's shape)": 6519,
+   "1x64": 2950,
+   "1x192": 2794,
+   "8x8 = 64 cores": 4700,
+   "24x8 = 192 cores": 4700,
+   "3x64 = 192 cores": 2864,
+   "critical_path_floor": 2790
+  }
+ },
+ "calibration_1x8": {
+  "measured_plasma_workspace_end_s": 2334.265,
+  "optimistic": 2370,
+  "pessimistic": 3085
+ }
+}
