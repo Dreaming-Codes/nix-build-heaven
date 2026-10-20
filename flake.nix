@@ -35,6 +35,16 @@
         gate = pkgs.callPackage ./nix/gate.nix { };
         plugin = pluginFor determinate;
         determinateNix = determinate.inputs.nix.packages.${system}.default;
+        ami = self.nixosConfigurations.builder-ami.config.system.build.amazonImage;
+      };
+
+      nixosConfigurations.builder-ami = nixpkgs.lib.nixosSystem {
+        inherit system;
+        modules = [
+          "${nixpkgs}/nixos/maintainers/scripts/ec2/amazon-image.nix"
+          self.nixosModules.builder
+          ./nix/ami.nix
+        ];
       };
 
       nixosModules = {
