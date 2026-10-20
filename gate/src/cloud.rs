@@ -10,7 +10,7 @@ pub type Error = Box<dyn std::error::Error + Send + Sync>;
 
 pub trait Cloud: Send + Sync + 'static {
     fn launch(&self, key: &Key) -> impl Future<Output = Result<InstanceId, Error>> + Send;
-    /// Every instance tagged with this gate's owner, in any state.
+    /// Every instance tagged with this gate's owner.
     fn list(&self) -> impl Future<Output = Result<Vec<Seen>, Error>> + Send;
     fn terminate(&self, id: &InstanceId) -> impl Future<Output = Result<(), Error>> + Send;
 }

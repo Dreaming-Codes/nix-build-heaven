@@ -510,6 +510,28 @@ mod tests {
     }
 
     #[test]
+    fn list_keeps_a_terminated_instance_without_an_address() {
+        let xml = r#"<DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2016-11-15/">
+          <reservationSet><item><instancesSet><item>
+            <instanceId>i-8</instanceId>
+            <instanceState><code>48</code><name>terminated</name></instanceState>
+            <launchTime>2026-10-20T21:07:00.000Z</launchTime>
+            <ipAddress>203.0.113.8</ipAddress>
+            <tagSet><item><key>nbh:key</key><value>k2</value></item></tagSet>
+          </item></instancesSet></item></reservationSet></DescribeInstancesResponse>"#;
+        let doc = Document::parse(xml).unwrap();
+        let i = items(doc.root_element(), "reservationSet").flat_map(|r| items(r, "instancesSet")).next().unwrap();
+        let want = Seen {
+            key: Key(s("k2")),
+            id: InstanceId(s("i-8")),
+            state: CloudState::Terminated,
+            addr: None,
+            launched_at: humantime::parse_rfc3339("2026-10-20T21:07:00Z").unwrap(),
+        };
+        assert_eq!(seen(i, 22), Some(want));
+    }
+
+    #[test]
     fn credentials_come_from_the_named_profile() {
         let ini = "[default]\naws_access_key_id = A\naws_secret_access_key = B\n\n[nbh-gate]\naws_access_key_id = AK\naws_secret_access_key = SK\nregion = eu-north-1\n";
         let p = parse_ini_section(ini, "nbh-gate");
