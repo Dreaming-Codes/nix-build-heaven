@@ -196,10 +196,10 @@ in
 
   resource.aws_security_group.builder = {
     name = "nbh-builder";
-    # Stale since the grpc transport went, but changing it replaces the group.
-    description = "nix-grpc-daemon behind mTLS";
+    description = "sshd for ssh-ng behind the gate's SSH host CA";
     vpc_id = ref "data.aws_vpc.default.id";
     inherit tags;
+    lifecycle.ignore_changes = [ "description" ];
   };
   resource.aws_vpc_security_group_ingress_rule.ssh4 = {
     security_group_id = ref "aws_security_group.builder.id";
