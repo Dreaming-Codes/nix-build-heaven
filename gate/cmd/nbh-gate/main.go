@@ -5,15 +5,18 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"fmt"
 	"log"
 	"net"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
+
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 
 	"nix-build-heaven/gate/certs"
 	"nix-build-heaven/gate/cloud"
@@ -42,6 +45,13 @@ func main() {
 	fakeAddr := flag.String("fake-addr", "127.0.0.1:50052", "fake backend: address every fake instance serves on")
 	fakeBoot := flag.Duration("fake-boot-delay", 75*time.Second, "fake backend: pending time before running")
 	fakeDown := flag.Bool("fake-down", false, "fake backend: every call fails, like an unreachable region")
+	region := flag.String("region", "eu-north-1", "aws backend: region")
+	template := flag.String("launch-template", "nbh-builder", "aws backend: launch template name")
+	itypes := flag.String("instance-types", "m7a.24xlarge,c7a.24xlarge,c7i.24xlarge", "aws backend: Spot types in order of preference")
+	maxPrice := flag.String("max-price", "", "aws backend: Spot price cap in $/h, empty for the on-demand price")
+	owner := flag.String("owner", host, "aws backend: nbh:owner tag; one gate per owner")
+	pki := flag.String("pki", "/var/lib/nbh-gate/pki", "aws backend: directory with the private CA that signs builder certificates")
+	builderPort := flag.Int("builder-port", 50051, "aws backend: port nix-grpc-daemon listens on")
 	flag.DurationVar(&cfg.IdleGrace, "idle-grace", cfg.IdleGrace, "idle time before draining")
 	flag.DurationVar(&cfg.BootTimeout, "boot-timeout", cfg.BootTimeout, "time allowed from launch to serving")
 	flag.DurationVar(&cfg.RetryHold, "retry-hold", cfg.RetryHold, "keep a builder up this long after refusing a client, the client's connect-timeout")
@@ -55,7 +65,30 @@ func main() {
 	case "fake":
 		cl = &cloud.Fake{Addr: *fakeAddr, BootDelay: *fakeBoot, Down: *fakeDown}
 	case "aws":
-		log.Fatal(errors.New("aws backend lands in Phase 4; use -backend fake"))
+		ca, err := certs.Dir(*pki).CA()
+		if err != nil {
+			log.Fatalf("pki %s: %v", *pki, err)
+		}
+		awsCfg, err := config.LoadDefaultConfig(context.Background(), config.WithRegion(*region))
+		if err != nil {
+			log.Fatal(err)
+		}
+		cl = &cloud.AWS{
+			EC2:            ec2.NewFromConfig(awsCfg),
+			LaunchTemplate: *template,
+			InstanceTypes:  strings.Split(*itypes, ","),
+			Owner:          *owner,
+			Port:           *builderPort,
+			MaxPrice:       *maxPrice,
+			Log:            log.New(os.Stderr, "nbh-gate: aws: ", log.LstdFlags|log.Lmicroseconds),
+			UserData: func() ([]byte, error) {
+				srv, err := certs.Server(ca, time.Now(), 3*time.Hour)
+				if err != nil {
+					return nil, err
+				}
+				return certs.NewUserData(ca, srv), nil
+			},
+		}
 	default:
 		log.Fatalf("unknown backend %q", *backend)
 	}

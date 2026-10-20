@@ -103,12 +103,13 @@ in
 
   variable.snapshot_id = {
     type = "string";
-    default = "";
+    # Uploaded 2026-10-20 by scripts/upload-ami.sh from packages.ami (0mz4016f).
+    default = "snap-094d64b10df04f71e";
     description = "EBS snapshot of the builder raw image, from scripts/upload-ami.sh";
   };
   variable.image_name = {
     type = "string";
-    default = "";
+    default = "nbh-builder-26.11.20261012.6aa7ad7-0mz4016f";
   };
   variable.gate_credentials_file = {
     type = "string";
@@ -318,12 +319,9 @@ in
         delete_on_termination = true;
       };
     }];
-    network_interfaces = [{
-      device_index = 0;
-      associate_public_ip_address = true;
-      security_groups = [ (ref "aws_security_group.builder.id") ];
-      delete_on_termination = true;
-    }];
+    # Default subnets map a public IPv4 on launch, so the gate can pass a
+    # plain SubnetId per attempt.
+    vpc_security_group_ids = [ (ref "aws_security_group.builder.id") ];
     inherit tags;
   };
 
