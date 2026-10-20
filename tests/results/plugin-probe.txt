@@ -1,0 +1,5 @@
+warning: Git tree '/workspace/nbh/nix-build-heaven' has uncommitted changes
+hold: exit=1 elapsed_ms=2274 accepts=2 last_error=last error: UNAVAILABLE: ipv4:127.0.0.1:50199: Endpoint closing
+rst: exit=1 elapsed_ms=19570 accepts=6 last_error=last error: UNAVAILABLE: ipv4:127.0.0.1:50199: recvmsg:Connection reset by peer
+fin: exit=1 elapsed_ms=67 accepts=1 last_error=last error: UNAVAILABLE: ipv4:127.0.0.1:50199: Socket closed
+close: exit=1 elapsed_ms=66 accepts=1 last_error=last error: UNAVAILABLE: ipv4:127.0.0.1:50199: Socket closed
