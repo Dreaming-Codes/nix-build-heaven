@@ -62,12 +62,17 @@ in
 
   config = lib.mkIf cfg.enable (lib.mkMerge [
     {
+      assertions = [
+        {
+          assertion = !lib.hasInfix "connecttimeout" (lib.toLower config.programs.ssh.extraConfig);
+          message = "services.nbh: no ConnectTimeout in programs.ssh.extraConfig. ssh must wait for the banner while nbh-gate holds the connection through a builder boot.";
+        }
+      ];
       nix.distributedBuilds = true;
       nix.settings.builders = lib.mkForce "@${cfg.machinesFile}";
       nix.settings.builders-use-substitutes = true;
-      # nix-daemon runs ssh as root. No ConnectTimeout: ssh then waits for the
-      # banner while the gate holds the connection through a boot. Keepalives
-      # end a session on a reclaimed Spot builder in about a minute.
+      # nix-daemon runs ssh as root. Keepalives end a session on a reclaimed
+      # Spot builder in about a minute.
       programs.ssh.extraConfig = ''
         Host nbh-builder
           HostKeyAlias nbh-builder
