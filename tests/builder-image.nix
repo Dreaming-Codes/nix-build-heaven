@@ -44,8 +44,14 @@ pkgs.testers.runNixOSTest {
           builder.start()
           builder.wait_until_succeeds("journalctl -u nbh-keys.service | grep -q 'user-data not available yet'", timeout=120)
           builder.fail("nc -z 127.0.0.1 22")
+          builder.fail("ls /etc/ssh/ssh_host_*")
           client.succeed(f"nbh-gate userdata {pki} > /var/lib/fake-imds/user-data")
           builder.wait_for_open_port(22, timeout=60)
+
+      with subtest("ssh material is this boot's, in a directory sshd reads as nbh"):
+          builder.fail("ls /etc/ssh/ssh_host_*")
+          mode = builder.succeed("stat -c %a /run/nbh-ssh").strip()
+          assert mode == "755", f"/run/nbh-ssh is {mode}, sshd reads authorized_keys with nbh's privileges"
 
       with subtest("client builds through the builder with its user-data host certificate"):
           nonce = str(int(time.time()))

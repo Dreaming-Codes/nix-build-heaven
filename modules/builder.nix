@@ -6,7 +6,6 @@
 }:
 let
   cfg = config.services.nbh.builder;
-  # 0755: sshd reads authorized_keys with nbh's privileges.
   keys = "/run/nbh-ssh";
   userDataFields = lib.importJSON ../gate/user-data-fields.json;
   field =
@@ -58,7 +57,6 @@ in
     services.openssh = {
       enable = true;
       openFirewall = true;
-      # No host key in the image: nbh-keys writes this boot's key and certificate.
       hostKeys = lib.mkForce [ ];
       authorizedKeysFiles = lib.mkForce [ "${keys}/authorized_keys.%u" ];
       settings = {
