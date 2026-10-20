@@ -1,0 +1,31 @@
+nbh-gate: 2026/10/20 21:19:58.123032 machines file: builder available=true
+nbh-gate: 2026/10/20 21:19:59.701060 launch grok-bot-vm-145538761-1792523998-1
+nbh-gate: 2026/10/20 21:19:59.701113 refuse connection 1 while the builder boots
+nbh-gate: 2026/10/20 21:20:00.517836 refuse connection 2 while the builder boots
+nbh-gate: aws: 2026/10/20 21:20:01.842722 launched i-0b3a61000bf36b77d c7i.24xlarge in eu-north-1b at spot $0.5499/h
+nbh-gate: 2026/10/20 21:20:01.842772 launched grok-bot-vm-145538761-1792523998-1 as i-0b3a61000bf36b77d
+nbh-gate: 2026/10/20 21:20:02.122611 refuse connection 3 while the builder boots
+nbh-gate: 2026/10/20 21:20:04.549842 refuse connection 4 while the builder boots
+nbh-gate: 2026/10/20 21:20:08.754112 refuse connection 5 while the builder boots
+nbh-gate: 2026/10/20 21:20:15.017702 refuse connection 6 while the builder boots
+nbh-gate: 2026/10/20 21:20:27.481433 refuse connection 7 while the builder boots
+nbh-gate: 2026/10/20 21:20:34.236293 probe grok-bot-vm-145538761-1792523998-1 ok, 16.192.77.40:50051 is listening
+nbh-gate: 2026/10/20 21:20:47.351466 splice connection 8 to 16.192.77.40:50051
+nbh-gate: 2026/10/20 21:20:51.424515 splice connection 9 to 16.192.77.40:50051
+nbh-gate: 2026/10/20 21:20:51.950441 splice connection 10 to 16.192.77.40:50051
+nbh-gate: 2026/10/20 21:20:52.480156 splice connection 11 to 16.192.77.40:50051
+nbh-gate: 2026/10/20 21:21:00.310756 splice connection 12 to 16.192.77.40:50051
+nbh-gate: 2026/10/20 21:21:01.186675 splice connection 13 to 16.192.77.40:50051
+nbh-gate: 2026/10/20 21:21:01.797474 splice connection 14 to 16.192.77.40:50051
+nbh-gate: 2026/10/20 21:21:02.483613 splice connection 15 to 16.192.77.40:50051
+nbh-gate: 2026/10/20 21:21:05.992943 splice connection 16 to 16.192.77.40:50051
+nbh-gate: 2026/10/20 21:21:06.642958 splice connection 17 to 16.192.77.40:50051
+nbh-gate: 2026/10/20 21:21:15.150761 splice connection 18 to 16.192.77.40:50051
+nbh-gate: 2026/10/20 21:21:29.798754 splice connection 19 to 16.192.77.40:50051
+nbh-gate: 2026/10/20 21:21:44.768333 splice connection 20 to 16.192.77.40:50051
+nbh-gate: 2026/10/20 21:22:27.786647 splice connection 21 to 16.192.77.40:50051
+nbh-gate: 2026/10/20 21:22:28.634899 splice connection 22 to 16.192.77.40:50051
+nbh-gate: 2026/10/20 21:36:29.800947 splice connection 23 to 16.192.77.40:50051
+nbh-gate: 2026/10/20 21:36:30.145710 splice connection 24 to 16.192.77.40:50051
+nbh-gate: 2026/10/20 21:36:30.500294 splice connection 25 to 16.192.77.40:50051
+nbh-gate: 2026/10/20 21:37:48.123885 terminate grok-bot-vm-145538761-1792523998-1 (i-0b3a61000bf36b77d)

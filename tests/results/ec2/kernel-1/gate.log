@@ -1,0 +1,14 @@
+nbh-gate: 2026/10/20 21:15:25.194608 machines file: builder available=true
+nbh-gate: 2026/10/20 21:15:26.284344 launch grok-bot-vm-145538761-1792523725-1
+nbh-gate: 2026/10/20 21:15:26.284386 refuse connection 1 while the builder boots
+nbh-gate: 2026/10/20 21:15:27.196419 refuse connection 2 while the builder boots
+nbh-gate: 2026/10/20 21:15:28.596353 refuse connection 3 while the builder boots
+nbh-gate: 2026/10/20 21:15:31.467057 refuse connection 4 while the builder boots
+nbh-gate: aws: 2026/10/20 21:15:32.001548 no c7i.24xlarge in eu-north-1b: operation error EC2: RunInstances, exceeded maximum number of attempts, 3, https response error StatusCode: 500, RequestID: 416b894b-1494-498f-aae2-766cb07ddac2, api error InsufficientInstanceCapacity: There is no Spot capacity available that matches your request.
+nbh-gate: aws: 2026/10/20 21:15:34.052739 launched i-0a482cfaa645242ae c7i.24xlarge in eu-north-1c at spot $0.6129/h
+nbh-gate: 2026/10/20 21:15:34.052765 launched grok-bot-vm-145538761-1792523725-1 as i-0a482cfaa645242ae
+nbh-gate: 2026/10/20 21:15:35.224724 refuse connection 5 while the builder boots
+nbh-gate: 2026/10/20 21:15:41.134160 refuse connection 6 while the builder boots
+nbh-gate: 2026/10/20 21:15:53.436406 refuse connection 7 while the builder boots
+nbh-gate: 2026/10/20 21:16:08.305231 probe grok-bot-vm-145538761-1792523725-1 ok, 13.53.75.20:50051 is listening
+nbh-gate: 2026/10/20 21:16:08.848741 splice connection 8 to 13.53.75.20:50051

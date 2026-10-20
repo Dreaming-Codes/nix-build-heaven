@@ -1,0 +1,5 @@
+2026-10-20T21:19:59+02:00 types=c7i.24xlarge,c7a.24xlarge,m7a.24xlarge max-price=0.80 abort_s=2700 free_kb=6837952
+2026-10-20T21:36:50+02:00 build exit=0 aborted=0 wall=1011.2 s free_kb=6385540
+2026-10-20T21:36:50+02:00 instance=i-0b3a61000bf36b77d
+2026-10-20T21:37:52+02:00 instance shutting-down 62.5231 s after the build ended
+c7i.24xlarge	eu-north-1b	2026-10-20T19:20:01+00:00	User initiated (2026-10-20 19:37:48 GMT)	sir-c1yfnjyk

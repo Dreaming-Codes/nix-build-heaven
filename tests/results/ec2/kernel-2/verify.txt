@@ -1,0 +1,13 @@
+/nix/store/kxs8qcaf100xpklda6qwrsv0yvbqsp0g-linux-cachyos-latest-lto-x86_64-v3-7.2.8 sha256-ZgB4o9anRaqJM8zJIi4s13ge1RwMHoShCAwvEnfdSBg= 25841176 /nix/store/61g9nhv4i4ywv34w53aw10z3q20rgy6k-linux-cachyos-latest-lto-x86_64-v3-7.2.8.drv False
+/nix/store/vn1lzz4blxwsj26l0byl36cjyw2g4gkw-linux-cachyos-latest-lto-x86_64-v3-7.2.8-modules sha256-oNIomyUHboo4QEGX0SLXrMn7CGw2LN/Xpzc/FglKl0c= 161948408 /nix/store/61g9nhv4i4ywv34w53aw10z3q20rgy6k-linux-cachyos-latest-lto-x86_64-v3-7.2.8.drv False
+/nix/store/z2wks294x06bmd6lfa69hcsk0qc13x0n-linux-cachyos-latest-lto-x86_64-v3-7.2.8-dev sha256-ng27DP5d3mQzz2h/W6HqISmoIsoDzlg3bth6q1wtTag= 638715000 /nix/store/61g9nhv4i4ywv34w53aw10z3q20rgy6k-linux-cachyos-latest-lto-x86_64-v3-7.2.8.drv False
+xinux z2wks294x06bmd6lfa69hcsk0qc13x0n NarHash: sha256:1a2d5mfanynqdqvmikh3r8iaha91xahmnzv8rwrn9pjxzq6bn3cy
+xinux vn1lzz4blxwsj26l0byl36cjyw2g4gkw NarHash: sha256:0iwp984icgrplzbxyb1ndh4gpjdcswid35s180w8lvh74ndjilm0
+xinux kxs8qcaf100xpklda6qwrsv0yvbqsp0g NarHash: sha256:0628vmvi4bqc12hq87hc3kaiwy6p5hp25jfc6f4slid7ssiph036
+checking '/nix/store/kxs8qcaf100xpklda6qwrsv0yvbqsp0g-linux-cachyos-latest-lto-x86_64-v3-7.2.8'...
+checking '/nix/store/vn1lzz4blxwsj26l0byl36cjyw2g4gkw-linux-cachyos-latest-lto-x86_64-v3-7.2.8-modules'...
+checking '/nix/store/z2wks294x06bmd6lfa69hcsk0qc13x0n-linux-cachyos-latest-lto-x86_64-v3-7.2.8-dev'...
+sha256-ng27DP5d3mQzz2h/W6HqISmoIsoDzlg3bth6q1wtTag=
+sha256-oNIomyUHboo4QEGX0SLXrMn7CGw2LN/Xpzc/FglKl0c=
+sha256-ZgB4o9anRaqJM8zJIi4s13ge1RwMHoShCAwvEnfdSBg=
+store verify exit: ok, no errors printed

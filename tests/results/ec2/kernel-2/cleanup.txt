@@ -1,0 +1,13 @@
+== instances (all states, nbh:managed)
+i-0b3a61000bf36b77d	c7i.24xlarge	terminated	2026-10-20T19:20:01+00:00
+i-0a482cfaa645242ae	c7i.24xlarge	terminated	2026-10-20T19:15:33+00:00
+== non-terminated instances, any tag
+== spot requests open/active
+sir-c1yfnjyk	active	fulfilled	i-0b3a61000bf36b77d
+== volumes
+== addresses
+== spot price c7i.24xlarge eu-north-1b over the run
+0.549900	2026-10-20T18:00:00+00:00
+== c7i.24xlarge eu-north-1c (kernel-1)
+0.612900	2026-10-20T13:00:00+00:00
+== 21:39:52 recheck: sir-c1yfnjyk closed instance-terminated-by-user; sir-cfyqmp3k closed instance-terminated-by-user

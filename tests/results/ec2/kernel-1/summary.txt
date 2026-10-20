@@ -1,0 +1,6 @@
+2026-10-20T21:15:26+02:00 types=c7i.24xlarge,c7a.24xlarge,m7a.24xlarge max-price=0.80 abort_s=2700
+2026-10-20T21:17:06+02:00 build exit=1 aborted=0 wall=100.102 s
+2026-10-20T21:17:06+02:00 instance=i-0a482cfaa645242ae
+2026-10-20T21:17:06+02:00 skipping copy-back; terminating i-0a482cfaa645242ae
+2026-10-20T21:17:10+02:00 instance shutting-down 1.77333 s after build/copy ended
+c7i.24xlarge	eu-north-1c	2026-10-20T19:15:33+00:00	User initiated (2026-10-20 19:17:08 GMT)	sir-cfyqmp3k

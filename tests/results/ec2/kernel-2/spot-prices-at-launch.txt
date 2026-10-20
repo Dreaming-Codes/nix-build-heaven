@@ -1,0 +1,9 @@
+c7i.24xlarge	eu-north-1b	0.549900
+c7i.24xlarge	eu-north-1c	0.612900
+c7i.24xlarge	eu-north-1a	0.682100
+c7a.24xlarge	eu-north-1c	0.787100
+c7a.24xlarge	eu-north-1b	0.889800
+m7a.24xlarge	eu-north-1b	0.972700
+c7a.24xlarge	eu-north-1a	0.976600
+m7a.24xlarge	eu-north-1a	1.201900
+m7a.24xlarge	eu-north-1c	1.248900
