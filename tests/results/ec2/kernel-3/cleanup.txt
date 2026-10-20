@@ -1,0 +1,9 @@
+2026-10-20T23:54:36+02:00
+instance:
+terminated	2026-10-20T21:07:00+00:00	User initiated (2026-10-20 21:25:31 GMT)
+nbh-managed not terminated:
+any non-terminated instance:
+volumes:
+addresses:
+spot requests open/active:
+all-regions check done 2026-10-20T23:55:06+02:00

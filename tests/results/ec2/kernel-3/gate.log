@@ -1,0 +1,14 @@
+nbh-gate: 2026/10/20 23:06:56.010993 machines file: builder available=true
+nbh-gate: 2026/10/20 23:06:58.484057 launch grok-bot-vm-145538761-1792530416-1
+nbh-gate: aws: 2026/10/20 23:07:00.417184 launched i-015f0f3b3a0fe7640 c7i.24xlarge in eu-north-1b at spot $0.5499/h
+nbh-gate: 2026/10/20 23:07:00.417219 launched grok-bot-vm-145538761-1792530416-1 as i-015f0f3b3a0fe7640
+nbh-gate: 2026/10/20 23:07:33.124460 probe grok-bot-vm-145538761-1792530416-1 ok, 13.51.169.0:22 is listening
+nbh-gate: 2026/10/20 23:07:33.124544 splice connection 1 to 13.51.169.0:22
+nbh-gate: 2026/10/20 23:07:34.833211 splice connection 2 to 13.51.169.0:22
+nbh-gate: 2026/10/20 23:07:36.261190 splice connection 3 to 13.51.169.0:22
+nbh-gate: 2026/10/20 23:07:40.824052 splice connection 4 to 13.51.169.0:22
+nbh-gate: 2026/10/20 23:07:51.102643 splice connection 5 to 13.51.169.0:22
+nbh-gate: 2026/10/20 23:07:58.697272 splice connection 6 to 13.51.169.0:22
+nbh-gate: 2026/10/20 23:09:46.100749 splice connection 7 to 13.51.169.0:22
+nbh-gate: 2026/10/20 23:10:28.656568 splice connection 8 to 13.51.169.0:22
+nbh-gate: 2026/10/20 23:25:31.014471 terminate grok-bot-vm-145538761-1792530416-1 (i-015f0f3b3a0fe7640)

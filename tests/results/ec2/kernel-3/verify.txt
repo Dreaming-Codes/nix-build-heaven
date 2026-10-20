@@ -1,0 +1,4 @@
+kxs8qcaf100xpklda6qwrsv0yvbqsp0g-linux-c sha256-ZgB4o9anRaqJM8zJIi4s13ge1RwMHoShCAwvEnfdSBg= 25841176 3aw10z3q20rgy6k-linux-cachyos-latest-lto-x86_64-v3-7.2.8.drv
+vn1lzz4blxwsj26l0byl36cjyw2g4gkw-linux-c sha256-oNIomyUHboo4QEGX0SLXrMn7CGw2LN/Xpzc/FglKl0c= 161948408 3aw10z3q20rgy6k-linux-cachyos-latest-lto-x86_64-v3-7.2.8.drv
+z2wks294x06bmd6lfa69hcsk0qc13x0n-linux-c sha256-ng27DP5d3mQzz2h/W6HqISmoIsoDzlg3bth6q1wtTag= 638715000 3aw10z3q20rgy6k-linux-cachyos-latest-lto-x86_64-v3-7.2.8.drv
+z7s3hfkr27bha22hkrgdrsadzz5kixcl-linux-s sha256-/FYadQrjCSZbr7k/rKJVzMsvQn/gY49bdNut/9Pyzqc= 1637705200 store/gb00j0s8ivkh23ri6bnglcyb19b0n3cw-linux-src-patched.drv
