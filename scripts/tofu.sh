@@ -13,4 +13,8 @@ install -m 600 "$cfg" "$state/config.tf.json"
 export AWS_SHARED_CREDENTIALS_FILE=${AWS_SHARED_CREDENTIALS_FILE:-/home/box/secrets/aws-grok-bot.credentials}
 export AWS_PROFILE=${AWS_PROFILE:-grok-bot} AWS_REGION=${AWS_REGION:-eu-north-1}
 cd "$state"
-exec nix shell nixpkgs#opentofu -c tofu "$@"
+rc=0
+nix shell nixpkgs#opentofu -c tofu "$@" || rc=$?
+# tofu writes state 0644; it holds nbh-gate's secret key.
+chmod 600 "$state"/*.tfstate* "$state"/*.bin 2>/dev/null || true
+exit $rc
