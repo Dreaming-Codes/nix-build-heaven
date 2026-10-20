@@ -93,6 +93,7 @@ pkgs.testers.runNixOSTest {
                 results[t]["bulk"].append(round(d, 2))
         print("MEASURED bulk " + json.dumps({t: results[t]["bulk"] for t in results}))
 
+    substituted = {}
     with subtest("builders-use-substitutes: the builder fetches a cached input itself"):
         for t in ("grpc", "ssh-ng"):
             use(t)
@@ -104,13 +105,13 @@ pkgs.testers.runNixOSTest {
             d, out = timed(f"NIX_REMOTE=daemon nix-build /etc/nbh/bulk.nix --argstr nonce subst-{t}-{time.time_ns()} --arg blob /tmp/tiny-{t} --argstr subst {p} --no-out-link")
             assert marker[t] in out, out
             h = p.split("/")[-1].split("-")[0]
-            log = client.succeed("cat /tmp/http.log")
-            got_narinfo = f"GET /{h}.narinfo HTTP/1.1\" 200" in log
-            got_nar = "GET /nar/" in log and "\" 200" in log
+            httplog = client.succeed("cat /tmp/http.log")
+            got_narinfo = f"GET /{h}.narinfo HTTP/1.1\" 200" in httplog
+            got_nar = "GET /nar/" in httplog and "\" 200" in httplog
             builder.succeed(f"nix-store --check-validity {p}")
             print(f"MEASURED substitute transport={t} narinfo_200={got_narinfo} nar_fetched={got_nar} build_s={d:.1f}")
-            print(log)
-            results[t]["substituted"] = got_narinfo and got_nar
-    print("MEASURED summary " + json.dumps(results))
+            print(httplog)
+            substituted[t] = got_narinfo and got_nar
+    print("MEASURED summary " + json.dumps({"timings": results, "substituted": substituted}))
   '';
 }
