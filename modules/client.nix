@@ -95,10 +95,10 @@ in
           ExecStart = lib.escapeShellArgs (
             [
               (lib.getExe cfg.gate.package)
-              "-listen" "127.0.0.1:${toString cfg.port}"
-              "-machines-file" cfg.machinesFile
-              "-machines-entry" entry
-              "-transport" "ssh-ng"
+              "run"
+              "--listen" "127.0.0.1:${toString cfg.port}"
+              "--machines-file" cfg.machinesFile
+              "--machines-entry" entry
             ]
             ++ cfg.gate.extraArgs
           );

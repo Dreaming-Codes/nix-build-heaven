@@ -1,10 +1,8 @@
-{ buildGoModule }:
-buildGoModule {
+{ rustPlatform }:
+rustPlatform.buildRustPackage {
   pname = "nbh-gate";
-  version = "0.1.0";
+  version = "0.2.0";
   src = ../gate;
-  vendorHash = "sha256-L623YmIVgX8sM7C5GTKZOm+uRt2DgIsPlJbhbHox7l4=";
-  subPackages = [ "cmd/nbh-gate" ];
-  env.CGO_ENABLED = "0";
+  cargoLock.lockFile = ../gate/Cargo.lock;
   meta.mainProgram = "nbh-gate";
 }

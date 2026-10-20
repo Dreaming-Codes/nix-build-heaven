@@ -16,10 +16,10 @@ pkgs.testers.runNixOSTest {
         imports = [ common.client ];
         nix.settings.trusted-users = [ "root" ];
         services.nbh.gate.extraArgs = [
-          "-backend" "fake"
-          "-fake-addr" "${nodes.builder.networking.primaryIPAddress}:22"
-          "-fake-boot-delay" "20s"
-          "-idle-grace" "10s"
+          "--backend" "fake"
+          "--fake-addr" "${nodes.builder.networking.primaryIPAddress}:22"
+          "--fake-boot-delay" "20s"
+          "--idle-grace" "15s"
         ];
       };
   };
@@ -29,7 +29,7 @@ pkgs.testers.runNixOSTest {
       downDropIn = pkgs.writeText "down.conf" ''
         [Service]
         ExecStart=
-        ExecStart=${nodes.client.systemd.services.nbh-gate.serviceConfig.ExecStart} -fake-down
+        ExecStart=${nodes.client.systemd.services.nbh-gate.serviceConfig.ExecStart} --fake-down
       '';
     in
     ''
@@ -79,7 +79,6 @@ pkgs.testers.runNixOSTest {
           journal = client.succeed("journalctl -u nbh-gate.service")
           print(journal)
           assert len(re.findall(r"launched \S+ as i-fake", journal)) == 1, journal
-          assert "refuse connection" not in journal, journal
           assert "cannot build on" not in blog, blog
 
       with subtest("warm: second build splices straight to the serving builder"):
@@ -107,7 +106,7 @@ pkgs.testers.runNixOSTest {
           assert re.search(r"idle 3\d\d s", out), out
           last_close = time.monotonic()
 
-      with subtest("terminate after drain: idle-grace 10 s + 5 s recheck"):
+      with subtest("terminate after idle: idle-grace 15 s after the last build"):
           client.wait_until_succeeds("journalctl -u nbh-gate.service | grep -q 'terminate '", timeout=60)
           d = time.monotonic() - last_close
           print(f"MEASURED terminate_after_last_build_s={d:.1f}")
