@@ -235,3 +235,28 @@ func TestNoLaunchBeforeFirstReconcile(t *testing.T) {
 		t.Fatalf("the client's retry after the first reconcile must launch: %#v", fx)
 	}
 }
+
+// Phase 3 run 5: the builder served 4 s after the 8th refusal, the client's
+// next retry was 19 s out, and idle-grace 10 s + drain 5 s killed the builder
+// first. A refused client must still find its builder when it comes back.
+func TestBuilderOutlivesRetryGapAfterRefusal(t *testing.T) {
+	c := cfg()
+	c.IdleGrace, c.RetryHold = 10*s, 60*s
+	st := New(c)
+	st.Synced = true
+	st.Step(at(0), ConnArrived{1})
+	st.Step(at(1*s), Launched{"desk-1", "i-1"})
+	st.Step(at(40*s), ConnArrived{2})
+	st.Step(at(41*s), Observed{[]Seen{{"desk-1", "i-1", Running, "10.0.0.1:50051", at(1 * s)}}})
+	st.Step(at(44*s), ProbeOK{"desk-1"})
+	for d, fx := range drive(st, 45*s, 99*s) {
+		for _, e := range fx {
+			if _, ok := e.(Terminate); ok {
+				t.Fatalf("terminated at %v, within RetryHold of the refusal at 40s", d)
+			}
+		}
+	}
+	if fx := st.Step(at(99*s), ConnArrived{3}); !reflect.DeepEqual(fx, []Effect{Splice{3, "10.0.0.1:50051"}}) {
+		t.Fatalf("the returning client must be spliced: %#v", fx)
+	}
+}

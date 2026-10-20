@@ -44,6 +44,7 @@ func main() {
 	fakeDown := flag.Bool("fake-down", false, "fake backend: every call fails, like an unreachable region")
 	flag.DurationVar(&cfg.IdleGrace, "idle-grace", cfg.IdleGrace, "idle time before draining")
 	flag.DurationVar(&cfg.BootTimeout, "boot-timeout", cfg.BootTimeout, "time allowed from launch to serving")
+	flag.DurationVar(&cfg.RetryHold, "retry-hold", cfg.RetryHold, "keep a builder up this long after refusing a client, the client's connect-timeout")
 	flag.DurationVar(&cfg.MaxSession, "max-session", cfg.MaxSession, "hard cap on one builder's lifetime")
 	flag.Parse()
 	if *entry == "" {

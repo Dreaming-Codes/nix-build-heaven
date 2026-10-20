@@ -53,6 +53,9 @@ type Config struct {
 	TerminateRetry time.Duration
 	ProbeEvery     time.Duration
 	PollEvery      time.Duration
+	// RetryHold is the client's connect-timeout. A refused client keeps
+	// retrying for up to this long, with gaps that grow past IdleGrace.
+	RetryHold time.Duration
 }
 
 func DefaultConfig(prefix string) Config {
@@ -67,6 +70,7 @@ func DefaultConfig(prefix string) Config {
 		TerminateRetry: 30 * time.Second,
 		ProbeEvery:     2 * time.Second,
 		PollEvery:      5 * time.Second,
+		RetryHold:      150 * time.Second,
 	}
 }
 
@@ -78,8 +82,11 @@ type State struct {
 	Published        *bool
 	// Synced is set by the first reconcile result. Until then a launch could
 	// duplicate a builder a previous gate process left running.
-	Synced   bool
-	launches int
+	Synced bool
+	// LastRefused is the last connection refused while a builder booted.
+	// Its client may still be retrying until LastRefused + RetryHold.
+	LastRefused time.Time
+	launches    int
 }
 
 func New(cfg Config) *State {
@@ -260,7 +267,7 @@ func (s *State) tick(now time.Time, in *Instance) []Effect {
 		if s.Live > 0 {
 			in.LastBusyAt = now
 		}
-		if now.Sub(in.LastBusyAt) >= s.Cfg.IdleGrace {
+		if now.Sub(in.LastBusyAt) >= s.Cfg.IdleGrace && now.Sub(s.LastRefused) >= s.Cfg.RetryHold {
 			in.to(Draining, now)
 			return nil
 		}
@@ -351,8 +358,11 @@ func (s *State) gone(now time.Time, in *Instance) []Effect {
 	return []Effect{SessionEnded{in.Key, in.InstanceID, now.Sub(in.LaunchedAt)}}
 }
 
-// arrive routes a new connection. Every connection attempt is demand: the
-// plugin retries a refused one every 0.5 to 4 s, so demand needs no memory.
+// arrive routes a new connection. Every connection attempt is demand. A
+// refused client retries, but gRPC's reconnect backoff stretches the gaps
+// (measured 1 s growing to 14 s and more), so the next attempt can land after
+// IdleGrace; LastRefused keeps a fresh builder up until that client returns
+// or its connect-timeout has surely expired.
 func (s *State) arrive(now time.Time, id ConnID) []Effect {
 	if in := s.serving(); in != nil {
 		in.to(Serving, now)
@@ -370,6 +380,7 @@ func (s *State) arrive(now time.Time, id ConnID) []Effect {
 		s.Instances[k] = &Instance{Key: k, Phase: Requested, Since: now}
 		fx = append(fx, Launch{k})
 	}
+	s.LastRefused = now
 	return append(fx, Refuse{id})
 }
 

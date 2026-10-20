@@ -98,6 +98,7 @@ in
               "-listen" "127.0.0.1:${toString cfg.port}"
               "-machines-file" cfg.machinesFile
               "-machines-entry" entry
+              "-retry-hold" "${toString cfg.connectTimeout}s"
             ]
             ++ cfg.gate.extraArgs
           );

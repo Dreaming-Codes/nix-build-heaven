@@ -47,6 +47,7 @@ type harness struct {
 func start(t *testing.T, fake *cloud.Fake, mut func(*fleet.Config)) *harness {
 	cfg := fleet.DefaultConfig("test")
 	cfg.IdleGrace = 1 * time.Second
+	cfg.RetryHold = 2 * time.Second
 	cfg.DrainRecheck = 300 * time.Millisecond
 	cfg.ProbeEvery = 100 * time.Millisecond
 	cfg.TerminateRetry = time.Second

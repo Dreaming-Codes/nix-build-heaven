@@ -27,6 +27,15 @@ pkgs.testers.runNixOSTest {
   };
   testScript =
     { nodes, ... }:
+    let
+      # Reuse the module's exact argv; the machines entry contains spaces, so
+      # rebuilding it from `systemctl show` would split it and drop later flags.
+      downDropIn = pkgs.writeText "down.conf" ''
+        [Service]
+        ExecStart=
+        ExecStart=${nodes.client.systemd.services.nbh-gate.serviceConfig.ExecStart} -fake-down
+      '';
+    in
     ''
       import re, time
       pki = "${common.pki}"
@@ -81,15 +90,16 @@ pkgs.testers.runNixOSTest {
           client.wait_until_succeeds("journalctl -u nbh-gate.service | grep -q 'terminate '", timeout=60)
           d = time.monotonic() - last_close
           print(f"MEASURED terminate_after_last_build_s={d:.1f}")
-          assert 14 <= d <= 25, d
+          # last_close is when nix-build returned, which trails the hook's
+          # last connection close, so only idle-grace itself bounds it below.
+          assert 10 <= d <= 25, d
           client.wait_until_succeeds("journalctl -u nbh-gate.service | grep -q 'session .* ended, billed'", timeout=60)
 
       with subtest("fallback: cloud unreachable, machines file empty, local build adds under 10 s"):
           client.succeed(
               "mkdir -p /run/systemd/system/nbh-gate.service.d && "
-              "printf '[Service]\\nExecStart=\\nExecStart=%s -fake-down\\n' "
-              "\"$(systemctl show -p ExecStart --value nbh-gate.service | sed -n 's/.*argv\\[\\]=\\([^;]*\\);.*/\\1/p')\" "
-              "> /run/systemd/system/nbh-gate.service.d/down.conf && systemctl daemon-reload && systemctl restart nbh-gate.service"
+              "cp ${downDropIn} /run/systemd/system/nbh-gate.service.d/down.conf && "
+              "systemctl daemon-reload && systemctl restart nbh-gate.service"
           )
           client.wait_until_succeeds("test ! -s /run/nbh/machines", timeout=30)
           d_off, _ = build("nbh-off", "--max-jobs 1 --builders @/dev/null", user="root")
