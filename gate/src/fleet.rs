@@ -41,12 +41,16 @@ pub struct Config {
 }
 
 impl Config {
+    pub const BOOT_TIMEOUT: Duration = Duration::from_secs(150);
+    pub const IDLE_GRACE: Duration = Duration::from_secs(65);
+    pub const MAX_SESSION: Duration = Duration::from_secs(3 * 3600);
+
     pub fn new(key_prefix: String) -> Self {
         Config {
             key_prefix,
-            boot_timeout: Duration::from_secs(150),
-            idle_grace: Duration::from_secs(65),
-            max_session: Duration::from_secs(3 * 3600),
+            boot_timeout: Self::BOOT_TIMEOUT,
+            idle_grace: Self::IDLE_GRACE,
+            max_session: Self::MAX_SESSION,
             unavailable_for: Duration::from_secs(300),
             terminate_retry: Duration::from_secs(30),
             probe_every: Duration::from_secs(2),

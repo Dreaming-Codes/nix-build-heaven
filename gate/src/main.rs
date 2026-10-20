@@ -81,15 +81,26 @@ struct RunArgs {
     pki: PathBuf,
     #[arg(long, default_value_t = 22)]
     builder_port: u16,
-    /// Time with no open connection before the builder is terminated [default: 65s].
-    #[arg(long, value_parser = duration)]
-    idle_grace: Option<Duration>,
-    /// Time allowed from launch to serving [default: 150s].
-    #[arg(long, value_parser = duration)]
-    boot_timeout: Option<Duration>,
-    /// Hard cap on one builder's lifetime [default: 3h].
-    #[arg(long, value_parser = duration)]
-    max_session: Option<Duration>,
+    /// Time with no open connection before the builder is terminated.
+    #[arg(long, default_value_t = fleet::Config::IDLE_GRACE.into())]
+    idle_grace: humantime::Duration,
+    /// Time allowed from launch to serving.
+    #[arg(long, default_value_t = fleet::Config::BOOT_TIMEOUT.into())]
+    boot_timeout: humantime::Duration,
+    /// Hard cap on one builder's lifetime.
+    #[arg(long, default_value_t = fleet::Config::MAX_SESSION.into())]
+    max_session: humantime::Duration,
+}
+
+impl RunArgs {
+    fn fleet(&self, key_prefix: String) -> fleet::Config {
+        fleet::Config {
+            idle_grace: self.idle_grace.into(),
+            boot_timeout: self.boot_timeout.into(),
+            max_session: self.max_session.into(),
+            ..fleet::Config::new(key_prefix)
+        }
+    }
 }
 
 type Result<T> = std::result::Result<T, Box<dyn Error + Send + Sync>>;
@@ -111,10 +122,7 @@ async fn run(a: Box<RunArgs>) -> Result<()> {
     let a = *a;
     let host = std::fs::read_to_string("/proc/sys/kernel/hostname")?.trim().to_string();
     let started = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH)?.as_secs();
-    let mut fleet = fleet::Config::new(format!("{host}-{started}"));
-    fleet.idle_grace = a.idle_grace.unwrap_or(fleet.idle_grace);
-    fleet.boot_timeout = a.boot_timeout.unwrap_or(fleet.boot_timeout);
-    fleet.max_session = a.max_session.unwrap_or(fleet.max_session);
+    let fleet = a.fleet(format!("{host}-{started}"));
     let opt = gate::Options {
         machines_file: a.machines_file,
         machines_entry: a.machines_entry,
@@ -152,6 +160,47 @@ async fn run(a: Box<RunArgs>) -> Result<()> {
         r = gate => r,
         _ = tokio::signal::ctrl_c() => Ok(()),
         _ = term.recv() => Ok(()),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use clap::CommandFactory;
+
+    fn run_args(extra: &[&str]) -> RunArgs {
+        let argv = ["nbh-gate", "run", "--machines-entry", "e"].iter().chain(extra);
+        match Cli::try_parse_from(argv).unwrap() {
+            Cli::Run(a) => *a,
+            _ => unreachable!(),
+        }
+    }
+
+    #[test]
+    fn unset_timing_flags_keep_the_fleet_defaults() {
+        let got = run_args(&[]).fleet("k".into());
+        let want = fleet::Config::new("k".into());
+        assert_eq!(
+            (got.idle_grace, got.boot_timeout, got.max_session),
+            (want.idle_grace, want.boot_timeout, want.max_session)
+        );
+        let set = run_args(&["--idle-grace", "15s"]).fleet("k".into());
+        assert_eq!(set.idle_grace, Duration::from_secs(15));
+    }
+
+    #[test]
+    fn help_shows_the_fleet_defaults() {
+        let mut cli = Cli::command();
+        let run = cli.find_subcommand_mut("run").unwrap();
+        for (id, want) in [
+            ("idle_grace", fleet::Config::IDLE_GRACE),
+            ("boot_timeout", fleet::Config::BOOT_TIMEOUT),
+            ("max_session", fleet::Config::MAX_SESSION),
+        ] {
+            let arg = run.get_arguments().find(|a| a.get_id() == id).unwrap();
+            let shown = arg.get_default_values()[0].to_str().unwrap();
+            assert_eq!(humantime::parse_duration(shown).unwrap(), want, "--{id} help shows {shown}");
+        }
     }
 }
 
