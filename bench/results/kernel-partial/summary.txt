@@ -1,0 +1,3 @@
+first kbuild line at 28 s
+stop: time box at 448 s
+nix build exit 1

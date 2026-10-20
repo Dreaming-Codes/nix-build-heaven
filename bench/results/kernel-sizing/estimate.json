@@ -1,0 +1,169 @@
+{
+ "work_box_core_s": 21628,
+ "inputs": {
+  "box_core_s_per_cc": 0.7098999655053466,
+  "real_cc_objects": 20606,
+  "mod_o_and_links_core_s": 7000,
+  "serial_s": [
+   240,
+   300,
+   460
+  ],
+  "fixed_s": 390
+ },
+ "rows": [
+  {
+   "instance": "c7a.24xlarge",
+   "region": "eu-north-1",
+   "vcpu": 96,
+   "gib": 192,
+   "spot_usd_h": 0.743,
+   "wall_min": [
+    13.4,
+    14.4,
+    17.1
+   ],
+   "usd_per_build": [
+    0.17,
+    0.18,
+    0.21
+   ]
+  },
+  {
+   "instance": "c7i.24xlarge",
+   "region": "eu-north-1",
+   "vcpu": 96,
+   "gib": 192,
+   "spot_usd_h": 0.559,
+   "wall_min": [
+    14.3,
+    15.3,
+    17.9
+   ],
+   "usd_per_build": [
+    0.13,
+    0.14,
+    0.17
+   ]
+  },
+  {
+   "instance": "c7i.48xlarge",
+   "region": "eu-north-1",
+   "vcpu": 192,
+   "gib": 384,
+   "spot_usd_h": 1.108,
+   "wall_min": [
+    12.4,
+    13.4,
+    16.0
+   ],
+   "usd_per_build": [
+    0.23,
+    0.25,
+    0.3
+   ]
+  },
+  {
+   "instance": "m7a.48xlarge",
+   "region": "eu-north-1",
+   "vcpu": 192,
+   "gib": 768,
+   "spot_usd_h": 1.182,
+   "wall_min": [
+    11.9,
+    12.9,
+    15.6
+   ],
+   "usd_per_build": [
+    0.24,
+    0.26,
+    0.31
+   ]
+  },
+  {
+   "instance": "c7a.48xlarge",
+   "region": "eu-north-1",
+   "vcpu": 192,
+   "gib": 384,
+   "spot_usd_h": 1.652,
+   "wall_min": [
+    11.9,
+    12.9,
+    15.6
+   ],
+   "usd_per_build": [
+    0.33,
+    0.36,
+    0.43
+   ]
+  },
+  {
+   "instance": "c7a.24xlarge",
+   "region": "eu-central-1",
+   "vcpu": 96,
+   "gib": 192,
+   "spot_usd_h": 1.901,
+   "wall_min": [
+    13.4,
+    14.4,
+    17.1
+   ],
+   "usd_per_build": [
+    0.42,
+    0.46,
+    0.54
+   ]
+  },
+  {
+   "instance": "c7i.48xlarge",
+   "region": "eu-central-1",
+   "vcpu": 192,
+   "gib": 384,
+   "spot_usd_h": 2.03,
+   "wall_min": [
+    12.4,
+    13.4,
+    16.0
+   ],
+   "usd_per_build": [
+    0.42,
+    0.45,
+    0.54
+   ]
+  },
+  {
+   "instance": "c8a.48xlarge",
+   "region": "eu-central-1",
+   "vcpu": 192,
+   "gib": 384,
+   "spot_usd_h": 2.334,
+   "wall_min": [
+    11.6,
+    12.6,
+    15.3
+   ],
+   "usd_per_build": [
+    0.45,
+    0.49,
+    0.59
+   ]
+  },
+  {
+   "instance": "box (local)",
+   "region": "-",
+   "vcpu": 8,
+   "gib": 15,
+   "spot_usd_h": 0.0,
+   "wall_min": [
+    54.3,
+    55.3,
+    58.0
+   ],
+   "usd_per_build": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ ]
+}
