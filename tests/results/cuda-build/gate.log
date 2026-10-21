@@ -1,0 +1,67 @@
+nbh-gate: 2026-10-21T02:22:11.572767Z aws account 845087560967 matches --aws-account, profile nbh-gate
+nbh-gate: 2026-10-21T02:22:11.575167Z machines file: builder available=true
+nbh-gate: 2026-10-21T02:22:26.174562Z launch grok-bot-vm-145538761-1792549331-1
+nbh-gate: 2026-10-21T02:22:28.098862Z launched i-092bb1e799ca11cdf c7i.24xlarge in eu-north-1b at spot $0.5499/h
+nbh-gate: 2026-10-21T02:22:28.098921Z launched grok-bot-vm-145538761-1792549331-1 as i-092bb1e799ca11cdf
+nbh-gate: 2026-10-21T02:23:09.687993Z probe grok-bot-vm-145538761-1792549331-1 ok, 16.171.9.1:22 is listening
+nbh-gate: 2026-10-21T02:23:09.688140Z splice connection 1 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:23:21.717403Z splice connection 2 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:47:57.031028Z splice connection 3 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:47:57.031923Z splice connection 4 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:48:03.081177Z splice connection 5 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:48:09.933892Z splice connection 6 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:48:15.808348Z splice connection 7 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:48:28.394356Z splice connection 8 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:48:47.011061Z splice connection 9 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:48:59.596300Z splice connection 10 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:49:18.218225Z splice connection 11 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:49:30.952937Z splice connection 12 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:49:49.414137Z splice connection 13 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:50:02.151659Z splice connection 14 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:50:20.613390Z splice connection 15 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:50:33.503729Z splice connection 16 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:50:51.968614Z splice connection 17 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:51:04.713895Z splice connection 18 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:51:23.169284Z splice connection 19 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:51:35.911495Z splice connection 20 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:51:54.376763Z splice connection 21 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:52:07.269119Z splice connection 22 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:52:25.734036Z splice connection 23 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:52:38.472143Z splice connection 24 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:52:57.091207Z splice connection 25 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:53:01.887580Z splice connection 26 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:53:09.828258Z splice connection 27 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:53:33.092906Z splice connection 28 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:53:41.184676Z splice connection 29 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:54:04.297701Z splice connection 30 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:54:12.543185Z splice connection 31 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:54:35.497831Z splice connection 32 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:54:43.903151Z splice connection 33 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:55:06.702727Z splice connection 34 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:55:37.906457Z splice connection 35 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:56:09.108460Z splice connection 36 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:56:40.301904Z splice connection 37 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:57:11.505191Z splice connection 38 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:57:42.713798Z splice connection 39 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:57:47.406446Z splice connection 40 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:58:18.614467Z splice connection 41 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:58:49.974137Z splice connection 42 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:59:21.184731Z splice connection 43 to 16.171.9.1:22
+nbh-gate: 2026-10-21T02:59:52.389405Z splice connection 44 to 16.171.9.1:22
+nbh-gate: 2026-10-21T03:00:23.740404Z splice connection 45 to 16.171.9.1:22
+nbh-gate: 2026-10-21T03:00:55.100040Z splice connection 46 to 16.171.9.1:22
+nbh-gate: 2026-10-21T03:01:26.296724Z splice connection 47 to 16.171.9.1:22
+nbh-gate: 2026-10-21T03:01:57.494904Z splice connection 48 to 16.171.9.1:22
+nbh-gate: 2026-10-21T03:02:28.859847Z splice connection 49 to 16.171.9.1:22
+nbh-gate: 2026-10-21T03:02:37.092103Z splice connection 50 to 16.171.9.1:22
+nbh-gate: 2026-10-21T03:02:39.194081Z splice connection 51 to 16.171.9.1:22
+nbh-gate: 2026-10-21T03:02:40.400192Z splice connection 52 to 16.171.9.1:22
+nbh-gate: 2026-10-21T03:02:43.131380Z splice connection 53 to 16.171.9.1:22
+nbh-gate: 2026-10-21T03:02:44.490547Z splice connection 54 to 16.171.9.1:22
+nbh-gate: 2026-10-21T03:02:45.690871Z splice connection 55 to 16.171.9.1:22
+nbh-gate: 2026-10-21T03:02:46.890990Z splice connection 56 to 16.171.9.1:22
+nbh-gate: 2026-10-21T03:02:48.098646Z splice connection 57 to 16.171.9.1:22
+nbh-gate: 2026-10-21T03:03:54.209571Z splice connection 58 to 16.171.9.1:22
+nbh-gate: 2026-10-21T03:03:55.596383Z splice connection 59 to 16.171.9.1:22
+nbh-gate: 2026-10-21T03:05:03.031463Z terminate grok-bot-vm-145538761-1792549331-1 (i-092bb1e799ca11cdf)
+nbh-gate: 2026-10-21T03:05:29.444145Z session grok-bot-vm-145538761-1792549331-1 i-092bb1e799ca11cdf ended, billed 2581 s

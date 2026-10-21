@@ -1,0 +1,15 @@
+96
+               total        used        free      shared  buff/cache   available
+Mem:             185           2         184           0           0         183
+Filesystem        1B-blocks       Used   Available Use% Mounted on
+/dev/nvme0n1p2 105589161984 2215813120 99019001856   3% /
+/dev/nvme0n1p2 105589161984 2215813120 99019001856   3% /
+nix (Nix) 2.34.8
+build-dir = 
+cores = 0
+max-jobs = 96
+sandbox = relaxed
+substituters = https://install.determinate.systems?priority=20 https://cache.nixos.org?priority=40 https://nix-community.cachix.org?priority=41 https://numtide.cachix.org?priority=43 https://cache.nixos-cuda.org?priority=45 https://cache.nixos.org/
+trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM= nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE= cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M=
+/run/current-system/sw/bin/gawk
+/run/current-system/sw/bin/gzip

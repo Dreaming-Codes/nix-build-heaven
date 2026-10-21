@@ -1,0 +1,24 @@
+account 845087560967
+ap-south-1 instances=0 volumes=0 spot_requests=0
+eu-north-1 instances=0 volumes=0 spot_requests=1
+  sir-1phznvtk	active
+eu-west-3 instances=0 volumes=0 spot_requests=0
+eu-west-2 instances=0 volumes=0 spot_requests=0
+eu-west-1 instances=0 volumes=0 spot_requests=0
+ap-northeast-3 instances=0 volumes=0 spot_requests=0
+ap-northeast-2 instances=0 volumes=0 spot_requests=0
+ap-northeast-1 instances=0 volumes=0 spot_requests=0
+ca-central-1 instances=0 volumes=0 spot_requests=0
+sa-east-1 instances=0 volumes=0 spot_requests=0
+ap-southeast-1 instances=0 volumes=0 spot_requests=0
+ap-southeast-2 instances=0 volumes=0 spot_requests=0
+eu-central-1 instances=0 volumes=0 spot_requests=0
+us-east-1 instances=0 volumes=0 spot_requests=0
+us-east-2 instances=0 volumes=0 spot_requests=0
+us-west-1 instances=0 volumes=0 spot_requests=0
+us-west-2 instances=0 volumes=0 spot_requests=0
+2026-10-21T05:06:56+02:00
+eu-north-1 recheck
+0
+0
+0

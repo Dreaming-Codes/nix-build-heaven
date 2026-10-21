@@ -1,0 +1,4 @@
+runtime closure bytes 206289516184
+Filesystem        1B-blocks        Used   Available Use% Mounted on
+/dev/nvme0n1p2 105589161984 30984540160 70250274816  31% /
+29464707856	/nix/store
