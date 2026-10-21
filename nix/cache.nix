@@ -1,3 +1,4 @@
+# This deployment's own values, read by the builder, infra and scripts. Hosts set theirs through services.nbh.cache.
 {
   account = "845087560967";
   region = "eu-north-1";

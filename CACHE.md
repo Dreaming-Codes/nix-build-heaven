@@ -169,7 +169,7 @@ Flow after a build session, `scripts/cache-publish.sh`:
 2. The signer runs `nbh-cache sign` with the `nbh-cache-signer` key. It signs only narinfos whose store path is in the expect list from the bot's own evaluation and whose nar decompresses to NarHash and NarSize.
 3. `nbh-cache gc` runs with a stamp file, at most once per 24 h.
 
-Hosts use `services.nbh.cache` in `modules/client.nix`. It adds the `s3://` substituter at priority 50 and the public key, and points nix-daemon's `AWS_SHARED_CREDENTIALS_FILE` at the host key. It also adds a `nbh-cache-roots` unit, triggered by a path unit on `/nix/var/nix/profiles`, which writes the closure of the system profile, `/run/current-system` and `/run/booted-system` to `roots/<host>`.
+Hosts use `services.nbh.cache` in `modules/client.nix`. The host sets `account`, `region`, `bucket`, `publicKey` and `credentialsFile`, which have no defaults, so a missing one fails eval. `profile` defaults to `nbh-cache-<host>`. The module adds the `s3://` substituter at priority 50 and the public key, and points nix-daemon's `AWS_SHARED_CREDENTIALS_FILE` at the host key. It also adds a `nbh-cache-roots` unit, triggered by a path unit on `/nix/var/nix/profiles`, which writes the closure of the system profile, `/run/current-system` and `/run/booted-system` to `roots/<host>`.
 
 Builders. `modules/builder.nix` now lists only determinate and cache.nixos.org, with the flakehub -3 and -4 keys and the cache key. An assertion rejects any other substituter. Breaking it once with nixos-cuda failed eval (measured). The re-baked AMI ami-028a6bddd61022087 (launch template version 5) carries it (measured, `tests/results/rebake-3/live/builder.txt`).
 
