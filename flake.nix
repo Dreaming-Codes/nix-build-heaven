@@ -46,7 +46,12 @@
 
       nixosModules = {
         builder = ./modules/builder.nix;
-        client = import ./modules/client.nix { inherit self; };
+        # The key lets two modules of one host both import this without a duplicate-option error.
+        client = {
+          key = "nix-build-heaven/modules/client.nix";
+          _file = ./modules/client.nix;
+          imports = [ (import ./modules/client.nix { inherit self; }) ];
+        };
       };
 
       checks.${system} = {
