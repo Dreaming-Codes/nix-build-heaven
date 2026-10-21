@@ -1,6 +1,6 @@
 # Shared binary cache, phase 1
 
-Status: design and prototype only. Nothing here is wired into `modules/` or `infra/`.
+Status: deployed on 2026-10-21 as `nbh-cache-845087560967` (see Deployment). The hosts switch to it with the nixos branch `nbh-cache-client`, which is not pushed. Builders push once the AMI is re-baked.
 
 Goal, in Lorenzo's words: "a shared nix build cache that can be used both my machines and the builders. We need the cache to not blow in size so we should only keep what is used in the flake currently, if there's no proper way to do this we can probably do a time retention period".
 
@@ -43,9 +43,9 @@ Roots. One small object per thing to keep, `roots/<name>`, holding store paths o
 
 - `roots/DreamingDesk` and `roots/DreamingBlade` are rewritten on every switch from an activation hook or a small unit, from `/run/current-system`. Adding `/run/booted-system` to the same file keeps the reboot target. Old generations are not roots, which is the "only what the flake uses currently" rule.
 - `roots/builder-ami` is written by `upload-ami.sh` only if builders ever substitute their own image paths. The AMI itself is an EBS snapshot and does not need the cache.
-- The gate writes `roots/session-<id>` before a session pushes and deletes it after the host has switched or after the grace window, whichever is first.
+- Session roots are not built. The 14-day grace window and push's narinfo refresh keep a session's outputs until the hosts switch and root them (inferred).
 
-Algorithm (prototype `cache-gc/nbh-cache-gc.py`).
+Algorithm (`cache/nbh-cache.py gc`).
 
 1. Note the start time T. List every object with its LastModified.
 2. Seeds are every hash named in `roots/*` plus every narinfo newer than T minus grace.
@@ -71,9 +71,9 @@ Crash and race cases.
 
 Writer protocol. Write or refresh the root, push, then re-check that every path in the pushed closure has a narinfo and re-push any that are missing. `nix copy` is idempotent, so the re-check is just a second `nix copy --to`.
 
-Where GC runs. In the gate after a session ends, at most once per 24 h, plus a manual `nbh-cache gc`. No Lambda and no builder involvement. Cost per run at 50 GB, about 20k objects (guess): 20 LISTs and narinfo GETs only for hashes not already in a local cache, since narinfos only change by gaining signatures. That is well under $0.01 on S3 and inside the free tier on R2 (inferred). Egress to Amsterdam is about 1 KB per new narinfo (measured sizes 510 to 775 bytes).
+Where GC runs. In `scripts/cache-publish.sh` after a session's push and sign, at most once per 24 h through a stamp file, plus a manual `nbh-cache gc`. No Lambda and no builder involvement. Each run lists the bucket and GETs live narinfos. At the guessed 20k objects that is well under $0.01 (inferred).
 
-Grace window. At least the 3 h builder uptime cap so a session can never lose its own outputs. Suggested 3 days so a closure built for one host survives until that host switches (guess). Lorenzo picks.
+Grace window. 14 days, Lorenzo's call, for extra safety since S3 is cheap. It must stay above the 3 h builder uptime cap so a session never loses its own outputs. Over the 3-day suggestion it keeps about 11 more days of weekly pushes, about 4 GB or $0.10 a month more (inferred from the 1.96 GB weekly delta at $0.023/GB-month). `push` re-PUTs the narinfo of every path it finds already present, so the window counts from the last push that needed a path, not its first upload.
 
 ## Measured closure
 
@@ -126,7 +126,7 @@ Prototype spend today was under $0.001: about 30 PUTs, 100 GETs and 11 MB stored
 
 ## Prototype
 
-Bucket `nbh-cache-proto-845087560967` in eu-north-1, tags `nbh:managed=true` and `nbh:purpose=cache-prototype`, public access blocked (measured). Throwaway key `nbh-cache-proto-1`, public half in `tests/results/cache-proto/key.pub`. Test paths from `cache-gc/proto-paths.nix`.
+Bucket `nbh-cache-proto-845087560967` in eu-north-1, tags `nbh:managed=true` and `nbh:purpose=cache-prototype`, public access blocked (measured). Throwaway key `nbh-cache-proto-1`, public half in `tests/results/cache-proto/key.pub`. Test paths from `cache/proto-paths.nix`.
 
 - Pushed `nbh-proto-root` (references `mid` then `leaf`, plus `hello` and its glibc closure, 8 paths, 11.3 MB zstd) and `nbh-proto-unrelated` with zstd and signing in about 4 s (measured).
 - Wrote `roots/proto-host` with only the root toplevel, so the closure is found by walking references.
@@ -136,16 +136,42 @@ Bucket `nbh-cache-proto-845087560967` in eu-north-1, tags `nbh:managed=true` and
 - A plain `nix path-info --store s3://…` still printed the swept path from the local narinfo cache until run with `narinfo-cache-positive-ttl=0` (measured). That is the stale-cache case in the table.
 - Bucket emptied (0 versions, 0 delete markers), deleted, HeadBucket 404, no `nbh-cache*` bucket listed (measured).
 
-R2 was not prototyped, no Cloudflare resource was created. Nix 2.35 accepts `s3://<bucket>?endpoint=https://<account>.r2.cloudflarestorage.com&region=auto` and sends a path-style request to `https://<account>.r2.cloudflarestorage.com/<bucket>/nix-cache-info` (measured with a fake account id, which fails at TLS). R2 documents `auto` as the region, with `us-east-1` as an alias (read). The box egresses through Cloudflare in Amsterdam, so a box-to-R2 latency number would not represent Lorenzo's network and was not taken. To run the same prototype on R2: one bucket with location hint `weur`, one account-scoped API token with Object Read and Write on that bucket, the account id, and `--endpoint` on `nbh-cache-gc.py`.
+R2 was not prototyped, no Cloudflare resource was created. Nix 2.35 accepts `s3://<bucket>?endpoint=https://<account>.r2.cloudflarestorage.com&region=auto` and sends a path-style request to `https://<account>.r2.cloudflarestorage.com/<bucket>/nix-cache-info` (measured with a fake account id, which fails at TLS). R2 documents `auto` as the region, with `us-east-1` as an alias (read). The box egresses through Cloudflare in Amsterdam, so a box-to-R2 latency number would not represent Lorenzo's network and was not taken. To run the same prototype on R2: one bucket with location hint `weur`, one account-scoped API token with Object Read and Write on that bucket, the account id, and an `--endpoint` flag added back to `cache/nbh-cache.py`, which the deployed tool dropped.
 
-## Open decisions for Lorenzo
+## Decisions
 
-1. S3 or R2. By his own rule S3, since R2 saves $0.24 a month with policy A (inferred). Confirm.
-2. Push policy. A, built paths only (recommended), or B, the full closure as insurance against upstream dropping paths.
-3. Private bucket with a read credential on each host, or public reads. Public is simpler for hosts but publishes every path he builds.
-4. Grace window. 3 h minimum, 3 days suggested.
-5. Who signs. Client-side signing after a NarHash check (recommended) or a builder-held key.
-6. Whether hosts also push what they build locally, or only builders push.
+Settled by Lorenzo on 2026-10-21.
+
+1. S3, in eu-north-1 on account 845087560967.
+2. Push policy A. Only paths neither install.determinate.systems nor cache.nixos.org serves.
+3. Private bucket, one read key per host.
+4. Grace window 14 days.
+5. Signing by the weekly bot's machine after a NarHash check. Builders hold no signing key.
+6. Builders push. Hosts never push their own builds, and IAM enforces it.
+
+## Deployment
+
+Resources (measured, `tests/results/cache-deploy/apply.txt`, `bucket-settings.txt`):
+- Bucket `arn:aws:s3:::nbh-cache-845087560967`. SSE-S3 (AES256), all four public access blocks on, BucketOwnerEnforced, TLS-only bucket policy, versioning never enabled, no lifecycle rule. `nix-cache-info` with priority 50 is a tofu object.
+- IAM users `nbh-cache-DreamingDesk` and `nbh-cache-DreamingBlade`. Each can list, get, and put only `roots/<itself>`.
+- IAM user `nbh-cache-writer`. It can list, get, and put `*.narinfo`, `*.ls` and `nar/*`. An explicit deny stops it writing `roots/*` and `nix-cache-info`. It has no delete.
+- IAM user `nbh-cache-gc`. It can list, get, and delete `*.narinfo`, `*.ls` and `nar/*`. It cannot delete roots or `nix-cache-info` and cannot write.
+- Signing key `nbh-cache-845087560967-1`. Its public half is in `nix/cache.nix`.
+
+`infra/cache.nix` holds all of it, applied with `-target` so nothing else changed. The full plan had shown the same 22 additions and no other change (measured).
+
+Why a custom uploader. `nix copy --no-recursive` to the bucket refuses a path whose references are only upstream, with "cannot add ... because the reference ... is not valid" (measured, `tests/results/cache-deploy/nix-copy-policy-a.txt`). So `nbh-cache push` writes the nar and narinfo itself with `nix-store --dump` and zstd. It goes in reference order, nar before narinfo.
+
+Flow after a build session, `scripts/cache-publish.sh`:
+1. Over ssh, the builder runs `nbh-cache push`. It reads the writer key from stdin and stores nothing. It skips paths upstream serves and re-PUTs narinfos already present.
+2. The signer runs `nbh-cache sign`. It signs only narinfos whose store path is in the expect list from the bot's own evaluation and whose nar decompresses to NarHash and NarSize.
+3. `nbh-cache gc` runs with a stamp file, at most once per 24 h.
+
+Hosts use `services.nbh.cache` in `modules/client.nix`. It adds the `s3://` substituter at priority 50 and the public key, and points nix-daemon's `AWS_SHARED_CREDENTIALS_FILE` at the host key. It also adds a `nbh-cache-roots` unit, triggered by a path unit on `/nix/var/nix/profiles`, which writes the closure of the system profile, `/run/current-system` and `/run/booted-system` to `roots/<host>`.
+
+Builders. `modules/builder.nix` now lists only determinate and cache.nixos.org, with the flakehub -3 and -4 keys and the cache key. An assertion rejects any other substituter. Breaking it once with nixos-cuda failed eval (measured). The live AMI keeps the old list until a re-bake.
+
+Known gap. A builder holds the writer key while it pushes. A build sandbox cannot read nbh's environment (inferred), but a compromised builder could overwrite narinfos. Hosts would refuse them, since they carry no signature from our key (measured for unsigned and tampered paths). That is an availability risk, not an integrity one. Per-launch STS credentials from the gate would close it.
 
 ## Sources
 
