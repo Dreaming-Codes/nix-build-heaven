@@ -1,0 +1,3 @@
+nbh-net-fod-rb3c> 1.1.1.1 from a build: HTTP/1.1 403 Forbidden
+nbh-net-nochroot-rb3c> 1.1.1.1 from a build: HTTP/1.1 403 Forbidden
+imds as nbh, outside a build: HTTP/1.0 200 OK

@@ -1,0 +1,3 @@
+5	True	ami-028a6bddd61022087	arn:aws:iam::845087560967:instance-profile/nbh-builder	required
+lt-0ebe93cee4957ac08
+nbh-builder

@@ -1,0 +1,3 @@
+gate killed at 2026-10-21T13:45:14+02:00
+instance shutting-down 626 s after the gate was killed
+terminated	User initiated	Client.InstanceInitiatedShutdown	Client.InstanceInitiatedShutdown: Instance initiated shutdown

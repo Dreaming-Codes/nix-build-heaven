@@ -1,0 +1,1 @@
+i-053179be49d371a56	m7a.large	ami-028a6bddd61022087	arn:aws:iam::845087560967:instance-profile/nbh-builder	required	1

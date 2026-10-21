@@ -1,0 +1,6 @@
+this derivation will be built:
+  /nix/store/656hknw9pgnz1dagzy946sbw7z1xmf8y-vm-test-run-nbh-builder-image.drv
+/nix/store/gcxffa8j8vxm8hmhhshc3vz767cvfqv1-nbh-gate-0.2.0
+/nix/store/bgqa8adr62r3w30mva27z2b5fifq8dx0-nbh-cache
+/nix/store/a2bhcd7yz6v2y2madrmm162pal2dgadc-vm-test-run-nbh-builder-image
+rc=0

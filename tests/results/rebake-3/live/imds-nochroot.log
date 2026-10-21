@@ -1,0 +1,10 @@
+warning: ignoring the client-specified setting 'store', because it is a restricted setting and you are not a trusted user
+don't know how to build these paths:
+  /nix/store/l1zz4jdw6fn87hrdw0519lacldnhdv1g-nbh-imds-nochroot-rb3-1792582919.drv
+copying 1 paths...
+copying path '/nix/store/l1zz4jdw6fn87hrdw0519lacldnhdv1g-nbh-imds-nochroot-rb3-1792582919.drv' to 'ssh-ng://nbh@nbh-builder'...
+building '/nix/store/l1zz4jdw6fn87hrdw0519lacldnhdv1g-nbh-imds-nochroot-rb3-1792582919.drv'...
+nbh-imds-nochroot-rb3> sh: connect: Connection refused
+nbh-imds-nochroot-rb3> sh: line 1: /dev/tcp/169.254.169.254/80: Connection refused
+nbh-imds-nochroot-rb3> imds from a build: unreachable
+exit=0

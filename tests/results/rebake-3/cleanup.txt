@@ -1,0 +1,4 @@
+before: 9kvn4d658fc15a2mpyrfndy68k9xw4y3.narinfo	nar/0y2ny3x633v70aqzksrnprckfif634ljh5xdhlzqb005dgzbrsrf.nar.zst	nix-cache-info
+deleted 9kvn4d658fc15a2mpyrfndy68k9xw4y3.narinfo
+deleted nar/0y2ny3x633v70aqzksrnprckfif634ljh5xdhlzqb005dgzbrsrf.nar.zst
+after: nix-cache-info

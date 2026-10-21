@@ -1,0 +1,108 @@
+warning: Git tree '/workspace/nbh/nix-build-heaven' has uncommitted changes
+
+OpenTofu used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+
+OpenTofu will perform the following actions:
+
+  # aws_ami.builder[0] will be created
+  + resource "aws_ami" "builder" {
+      + architecture         = "x86_64"
+      + arn                  = (known after apply)
+      + boot_mode            = "legacy-bios"
+      + ena_support          = true
+      + hypervisor           = (known after apply)
+      + id                   = (known after apply)
+      + image_location       = (known after apply)
+      + image_owner_alias    = (known after apply)
+      + image_type           = (known after apply)
+      + imds_support         = "v2.0"
+      + last_launched_time   = (known after apply)
+      + manage_ebs_snapshots = (known after apply)
+      + name                 = "nbh-builder-26.11.20261012.6aa7ad7-vihskmvq"
+      + owner_id             = (known after apply)
+      + platform             = (known after apply)
+      + platform_details     = (known after apply)
+      + public               = (known after apply)
+      + region               = "eu-north-1"
+      + root_device_name     = "/dev/xvda"
+      + root_snapshot_id     = (known after apply)
+      + sriov_net_support    = "simple"
+      + tags                 = {
+          + "Name"        = "nbh-builder-26.11.20261012.6aa7ad7-vihskmvq"
+          + "nbh:managed" = "true"
+        }
+      + tags_all             = {
+          + "Name"        = "nbh-builder-26.11.20261012.6aa7ad7-vihskmvq"
+          + "nbh:managed" = "true"
+        }
+      + usage_operation      = (known after apply)
+      + virtualization_type  = "hvm"
+
+      + ebs_block_device {
+          + delete_on_termination = true
+          + device_name           = "/dev/xvda"
+          + snapshot_id           = "snap-0a9931804bce101fe"
+          + throughput            = (known after apply)
+          + volume_size           = (known after apply)
+          + volume_type           = "gp3"
+        }
+
+      + ephemeral_block_device (known after apply)
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  ~ ami_id = "ami-0dbc5c7676643380c" -> (known after apply)
+aws_ami.builder[0]: Creating...
+aws_ami.builder[0]: Creation complete after 7s [id=ami-028a6bddd61022087]
+
+Warning: Resource targeting is in effect
+
+You are creating a plan with either the -target option or the -exclude
+option, which means that the result of this plan may not represent all of the
+changes requested by the current configuration.
+
+The -target and -exclude options are not for routine use, and are provided
+only for exceptional situations such as recovering from errors or mistakes,
+or when OpenTofu specifically suggests to use it as part of an error message.
+
+Warning: Applied changes may be incomplete
+
+The plan was created with the -target or the -exclude option in effect, so
+some changes requested in the configuration may have been ignored and the
+output values may not be fully updated. Run the following command to verify
+that no other changes are pending:
+    tofu plan
+	
+Note that the -target and -exclude options are not suitable for routine use,
+and are provided only for exceptional situations such as recovering from
+errors or mistakes, or when OpenTofu specifically suggests to use it as part
+of an error message.
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+ami_id = "ami-028a6bddd61022087"
+builder_instance_profile_arn = "arn:aws:iam::845087560967:instance-profile/nbh-builder"
+builder_role_arn = "arn:aws:iam::845087560967:role/nbh-builder"
+cache_bucket_arn = "arn:aws:s3:::nbh-cache-845087560967"
+cache_user_arns = {
+  "DreamingBlade" = "arn:aws:iam::845087560967:user/nbh-cache-DreamingBlade"
+  "DreamingDesk" = "arn:aws:iam::845087560967:user/nbh-cache-DreamingDesk"
+  "gc" = "arn:aws:iam::845087560967:user/nbh-cache-gc"
+  "signer" = "arn:aws:iam::845087560967:user/nbh-cache-signer"
+}
+gate_access_key_id = "AKIA-REDACTED"
+gate_user_arn = "arn:aws:iam::845087560967:user/nbh-gate"
+launch_template_id = "lt-0bb3984ee8f600d51"
+security_group_id = "sg-0afedea8b7e30e3ce"
+subnet_ids = tolist([
+  "subnet-0ebcf4f2119aa3c62",
+  "subnet-0f9ca7385475d06a6",
+  "subnet-00478b20dc90a486b",
+])
+trail_arn = "arn:aws:cloudtrail:eu-north-1:845087560967:trail/account-audit"

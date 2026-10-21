@@ -1,0 +1,571 @@
+these 23 derivations will be built:
+  /nix/store/qn21yh0fg4nlhfazayqxanh4mkx8pzil-down.conf.drv
+  /nix/store/1af9sbfsxb1czimgvdmgb27fsb6m419c-test-script.drv
+  /nix/store/pagsdgc6f20v15rgwld6d6dnb6js3v0a-system-units.drv
+  /nix/store/h6livzgxqw7iq2f6pixj79s24h2h8kjy-etc.drv
+  /nix/store/8h7mbjmcx0mzk87ifmlrrlkkyd53vm8s-activate.drv
+  /nix/store/pb6c3ylky04aid2g8ika8a6b2ws8wfd8-nixos-system-builder-test.drv
+  /nix/store/i2ai1wnjl9vpwaw0fppw9421xgwld9sz-closure-info.drv
+  /nix/store/2m7nmd2c1sp0hccm3lwnj8djbhcrijfz-run-nixos-vm.drv
+  /nix/store/v9nc1p1m8yzh666i4zigdvxw6hrnzg8f-nix.conf.drv
+  /nix/store/g0hfyd9ysrba1ndm8a0iv4vb325y5v4j-X-Restart-Triggers-nix-daemon.drv
+  /nix/store/bzxpqnv6w13h75m63iz3c1vk3nqf3q60-unit-nix-daemon.service.drv
+  /nix/store/icn37f96z6cxs0pl4zdzdbn8xxnk2j4m-unit-nbh-gate.service.drv
+  /nix/store/60ycs04ms75z8vxiyym4h9phk4zxn17f-system-units.drv
+  /nix/store/hsla82cpx8bm1bri4q1r52kwv0miycd5-etc.drv
+  /nix/store/dbnbk3295jz13arkb0zih57nr5cqigfn-activate.drv
+  /nix/store/s8cq4kfbbq0axsgh66lqqddkni24h9nz-nixos-system-client-test.drv
+  /nix/store/bplkl2jqrjsh4hvggvh0zjcgy5q5b42a-closure-info.drv
+  /nix/store/i5liniihd3ygps4m1cgamqkzqgk3xr5x-run-nixos-vm.drv
+  /nix/store/amadlhwxj1hf42h86f0na4f95wv58ihx-nixos-vm.drv
+  /nix/store/samdpd5fb9amsrh7zf0lc7vxpnn6f263-nixos-vm.drv
+  /nix/store/abrbxs38zxdlvm13b59dsz8pna16lf9v-driverConfiguration.json.drv
+  /nix/store/nq9jl59xcxy1w38id62d56ywv8y1mdrm-nixos-test-driver-nbh-ssh-coldstart.drv
+  /nix/store/y4n5d8sjlr687acksw5n8jly5raak6kp-vm-test-run-nbh-ssh-coldstart.drv
+building '/nix/store/qn21yh0fg4nlhfazayqxanh4mkx8pzil-down.conf.drv'...
+down.conf> structuredAttrs is enabled
+building '/nix/store/v9nc1p1m8yzh666i4zigdvxw6hrnzg8f-nix.conf.drv'...
+building '/nix/store/pagsdgc6f20v15rgwld6d6dnb6js3v0a-system-units.drv'...
+nix.conf> structuredAttrs is enabled
+nix.conf> Validating generated nix.conf
+building '/nix/store/1af9sbfsxb1czimgvdmgb27fsb6m419c-test-script.drv'...
+building '/nix/store/icn37f96z6cxs0pl4zdzdbn8xxnk2j4m-unit-nbh-gate.service.drv'...
+test-script> structuredAttrs is enabled
+unit-nbh-gate.service> structuredAttrs is enabled
+building '/nix/store/g0hfyd9ysrba1ndm8a0iv4vb325y5v4j-X-Restart-Triggers-nix-daemon.drv'...
+X-Restart-Triggers-nix-daemon> structuredAttrs is enabled
+building '/nix/store/bzxpqnv6w13h75m63iz3c1vk3nqf3q60-unit-nix-daemon.service.drv'...
+unit-nix-daemon.service> structuredAttrs is enabled
+building '/nix/store/60ycs04ms75z8vxiyym4h9phk4zxn17f-system-units.drv'...
+building '/nix/store/h6livzgxqw7iq2f6pixj79s24h2h8kjy-etc.drv'...
+building '/nix/store/hsla82cpx8bm1bri4q1r52kwv0miycd5-etc.drv'...
+building '/nix/store/8h7mbjmcx0mzk87ifmlrrlkkyd53vm8s-activate.drv'...
+activate> structuredAttrs is enabled
+building '/nix/store/pb6c3ylky04aid2g8ika8a6b2ws8wfd8-nixos-system-builder-test.drv'...
+nixos-system-builder-test> structuredAttrs is enabled
+building '/nix/store/dbnbk3295jz13arkb0zih57nr5cqigfn-activate.drv'...
+building '/nix/store/i2ai1wnjl9vpwaw0fppw9421xgwld9sz-closure-info.drv'...
+activate> structuredAttrs is enabled
+building '/nix/store/s8cq4kfbbq0axsgh66lqqddkni24h9nz-nixos-system-client-test.drv'...
+closure-info> structuredAttrs is enabled
+building '/nix/store/2m7nmd2c1sp0hccm3lwnj8djbhcrijfz-run-nixos-vm.drv'...
+nixos-system-client-test> structuredAttrs is enabled
+building '/nix/store/bplkl2jqrjsh4hvggvh0zjcgy5q5b42a-closure-info.drv'...
+run-nixos-vm> structuredAttrs is enabled
+building '/nix/store/samdpd5fb9amsrh7zf0lc7vxpnn6f263-nixos-vm.drv'...
+closure-info> structuredAttrs is enabled
+building '/nix/store/i5liniihd3ygps4m1cgamqkzqgk3xr5x-run-nixos-vm.drv'...
+run-nixos-vm> structuredAttrs is enabled
+building '/nix/store/amadlhwxj1hf42h86f0na4f95wv58ihx-nixos-vm.drv'...
+building '/nix/store/abrbxs38zxdlvm13b59dsz8pna16lf9v-driverConfiguration.json.drv'...
+driverConfiguration.json> structuredAttrs is enabled
+building '/nix/store/nq9jl59xcxy1w38id62d56ywv8y1mdrm-nixos-test-driver-nbh-ssh-coldstart.drv'...
+nixos-test-driver-nbh-ssh-coldstart> Running type check (enable/disable: config.skipTypeCheck)
+nixos-test-driver-nbh-ssh-coldstart> See https://nixos.org/manual/nixos/stable/#test-opt-skipTypeCheck
+nixos-test-driver-nbh-ssh-coldstart> All checks passed!
+nixos-test-driver-nbh-ssh-coldstart> Linting test script (enable/disable: config.skipLint)
+nixos-test-driver-nbh-ssh-coldstart> See https://nixos.org/manual/nixos/stable/#test-opt-skipLint
+nixos-test-driver-nbh-ssh-coldstart> All checks passed!
+building '/nix/store/y4n5d8sjlr687acksw5n8jly5raak6kp-vm-test-run-nbh-ssh-coldstart.drv'...
+vm-test-run-nbh-ssh-coldstart> Machine state will be reset. To keep it, pass --keep-machine-state
+vm-test-run-nbh-ssh-coldstart> start all VLans
+vm-test-run-nbh-ssh-coldstart> (finished: start all VLans, in 0.00 seconds)
+vm-test-run-nbh-ssh-coldstart> Test will time out and terminate in 3600.0 seconds
+vm-test-run-nbh-ssh-coldstart> run the VM test script
+vm-test-run-nbh-ssh-coldstart> additionally exposed symbols:
+vm-test-run-nbh-ssh-coldstart>     builder, client,
+vm-test-run-nbh-ssh-coldstart>     vlan1,
+vm-test-run-nbh-ssh-coldstart>     start_all, test_script, machines, machines_qemu, machines_nspawn, vlans, driver, log, os, create_machine, subtest, run_tests, join_all, retry, serial_stdout_off, serial_stdout_on, polling_condition, BaseMachine, QemuMachine, NspawnMachine, t, debug, dump_machine_ssh
+vm-test-run-nbh-ssh-coldstart> client: starting vm
+vm-test-run-nbh-ssh-coldstart> client: QEMU running (pid 45)
+vm-test-run-nbh-ssh-coldstart> client: waiting for unit nbh-gate.service
+vm-test-run-nbh-ssh-coldstart> client # Disk image does not exist, creating the virtualisation disk image...
+vm-test-run-nbh-ssh-coldstart> client: waiting for the VM to finish booting
+vm-test-run-nbh-ssh-coldstart> client # Formatting '/build/vm-state-client/tmp.DTZNFD98fA', fmt=raw size=1073741824
+vm-test-run-nbh-ssh-coldstart> client # mke2fs 1.47.4 (6-Mar-2025)
+vm-test-run-nbh-ssh-coldstart> client # Discarding device blocks:      0/262144             done
+vm-test-run-nbh-ssh-coldstart> client # Creating filesystem with 262144 4k blocks and 65536 inodes
+vm-test-run-nbh-ssh-coldstart> client # Filesystem UUID: c6ec968b-e27c-4827-bac3-412655dfc2ec
+vm-test-run-nbh-ssh-coldstart> client # Superblock backups stored on blocks:
+vm-test-run-nbh-ssh-coldstart> client #         32768, 98304, 163840, 229376
+vm-test-run-nbh-ssh-coldstart> client # 
+vm-test-run-nbh-ssh-coldstart> client # Allocating group tables: 0/8   done
+vm-test-run-nbh-ssh-coldstart> client # Writing inode tables: 0/8   done
+vm-test-run-nbh-ssh-coldstart> client # Creating journal (8192 blocks): done
+vm-test-run-nbh-ssh-coldstart> client # Writing superblocks and filesystem accounting information: 0/8   done
+vm-test-run-nbh-ssh-coldstart> client # 
+vm-test-run-nbh-ssh-coldstart> client # Virtualisation disk image created.
+vm-test-run-nbh-ssh-coldstart> client # Starting virtiofs daemons...
+vm-test-run-nbh-ssh-coldstart> client # [2026-10-21T12:25:45Z WARN  virtiofsd::limits] Failure when trying to set the limit to 1000000, the hard limit (524288) of open file descriptors is used instead.
+vm-test-run-nbh-ssh-coldstart> client # [2026-10-21T12:25:45Z WARN  virtiofsd::limits] Failure when trying to set the limit to 1000000, the hard limit (524288) of open file descriptors is used instead.
+vm-test-run-nbh-ssh-coldstart> client # [2026-10-21T12:25:45Z WARN  virtiofsd::limits] Failure when trying to set the limit to 1000000, the hard limit (524288) of open file descriptors is used instead.
+vm-test-run-nbh-ssh-coldstart> client # [2026-10-21T12:25:45Z WARN  virtiofsd::passthrough] Failed to open file handle for the root node: Operation not permitted (os error 1)
+vm-test-run-nbh-ssh-coldstart> client # [2026-10-21T12:25:45Z WARN  virtiofsd::passthrough] File handles do not appear safe to use, disabling file handles altogether
+vm-test-run-nbh-ssh-coldstart> client # [2026-10-21T12:25:45Z WARN  virtiofsd::passthrough] Failed to open file handle for the root node: Operation not permitted (os error 1)
+vm-test-run-nbh-ssh-coldstart> client # [2026-10-21T12:25:45Z WARN  virtiofsd::passthrough] File handles do not appear safe to use, disabling file handles altogether
+vm-test-run-nbh-ssh-coldstart> client # [2026-10-21T12:25:45Z INFO  virtiofsd] Waiting for vhost-user socket connection...
+vm-test-run-nbh-ssh-coldstart> client # [2026-10-21T12:25:45Z INFO  virtiofsd] Waiting for vhost-user socket connection...
+vm-test-run-nbh-ssh-coldstart> client # [2026-10-21T12:25:45Z WARN  virtiofsd::passthrough] Failed to open file handle for the root node: Operation not permitted (os error 1)
+vm-test-run-nbh-ssh-coldstart> client # [2026-10-21T12:25:45Z WARN  virtiofsd::passthrough] File handles do not appear safe to use, disabling file handles altogether
+vm-test-run-nbh-ssh-coldstart> client # [2026-10-21T12:25:45Z INFO  virtiofsd] Waiting for vhost-user socket connection...
+vm-test-run-nbh-ssh-coldstart> client # [2026-10-21T12:25:45Z INFO  virtiofsd] Client connected, servicing requests
+vm-test-run-nbh-ssh-coldstart> client # [2026-10-21T12:25:45Z INFO  virtiofsd] Client connected, servicing requests
+vm-test-run-nbh-ssh-coldstart> client # [2026-10-21T12:25:45Z INFO  virtiofsd] Client connected, servicing requests
+vm-test-run-nbh-ssh-coldstart> client # qemu-system-x86_64: Could not access KVM kernel module: Permission denied
+vm-test-run-nbh-ssh-coldstart> client # qemu-system-x86_64: failed to initialize kvm: Permission denied
+vm-test-run-nbh-ssh-coldstart> client # qemu-system-x86_64: falling back to tcg
+vm-test-run-nbh-ssh-coldstart> client # cSeaBIOS (version rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org)
+vm-test-run-nbh-ssh-coldstart> client # 
+vm-test-run-nbh-ssh-coldstart> client # 
+vm-test-run-nbh-ssh-coldstart> client # iPXE (http://ipxe.org) 00:02.0 CA00 PCI2.10 PnP PMM+7EFCC750+7EF2C750 CA00
+vm-test-run-nbh-ssh-coldstart> client # Press Ctrl-B to configure iPXE (PCI 00:02.0)...
+vm-test-run-nbh-ssh-coldstart> client # 
+vm-test-run-nbh-ssh-coldstart> client # 
+vm-test-run-nbh-ssh-coldstart> client # 
+vm-test-run-nbh-ssh-coldstart> client # 
+vm-test-run-nbh-ssh-coldstart> client # iPXE (http://ipxe.org) 00:05.0 CB00 PCI2.10 PnP PMM 7EFCC750 7EF2C750 CB00
+vm-test-run-nbh-ssh-coldstart> client # Press Ctrl-B to configure iPXE (PCI 00:05.0)...
+vm-test-run-nbh-ssh-coldstart> client # 
+vm-test-run-nbh-ssh-coldstart> client # 
+vm-test-run-nbh-ssh-coldstart> client # Booting from ROM...
+vm-test-run-nbh-ssh-coldstart> client # Probing EDD (edd=off to disable)... oc[    0.000000] Linux version 6.18.56 (nixbld@localhost) (gcc (GCC) 16.2.0, GNU ld (GNU Binutils) 2.46) #1-NixOS SMP PREEMPT_DYNAMIC @1791725172
+vm-test-run-nbh-ssh-coldstart> client # [    0.000000] Command line: console=ttyS0 console=tty0 panic=1 boot.panic_on_fail clocksource=acpi_pm root=fstab loglevel=7 net.ifnames=0 lsm=landlock,yama,bpf init=/nix/store/fhdq0w6m7lr5frc6y9b3hfhb1khk6mr7-nixos-system-client-test/init regInfo=/nix/.ro-store/fzrik9zgj40kbwjvm0c6ycsd6kfp49w4-closure-info/registration console=ttyS0,115200n8 console=tty0
+vm-test-run-nbh-ssh-coldstart> client # [    0.000000] BIOS-provided physical RAM map:
+vm-test-run-nbh-ssh-coldstart> client # [    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009fbff] usable
+vm-test-run-nbh-ssh-coldstart> client # [    0.000000] BIOS-e820: [mem 0x000000000009fc00-0x000000000009ffff] reserved
+vm-test-run-nbh-ssh-coldstart> client # [    0.000000] BIOS-e820: [mem 0x00000000000f0000-0x00000000000fffff] reserved
+vm-test-run-nbh-ssh-coldstart> client # [    0.000000] BIOS-e820: [mem 0x0000000000100000-0x000000007ffd7fff] usable
+vm-test-run-nbh-ssh-coldstart> client # [    0.000000] BIOS-e820: [mem 0x000000007ffd8000-0x000000007fffffff] reserved
+vm-test-run-nbh-ssh-coldstart> client # [    0.000000] BIOS-e820: [mem 0x00000000b0000000-0x00000000bfffffff] reserved
+vm-test-run-nbh-ssh-coldstart> client # [    0.000000] BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
+vm-test-run-nbh-ssh-coldstart> client # [    0.000000] BIOS-e820: [mem 0x00000000fffc0000-0x00000000ffffffff] reserved
+vm-test-run-nbh-ssh-coldstart> client # [    0.000000] BIOS-e820: [mem 0x000000fd00000000-0x000000ffffffffff] reserved
+vm-test-run-nbh-ssh-coldstart> client # [    0.000000] NX (Execute Disable) protection: active
+vm-test-run-nbh-ssh-coldstart> client # [    0.000000] APIC: Static calls initialized
+vm-test-run-nbh-ssh-coldstart> client # [    0.000000] SMBIOS 2.8 present.
+vm-test-run-nbh-ssh-coldstart> client # [    0.000000] DMI: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org 04/01/2014
+vm-test-run-nbh-ssh-coldstart> client # [    0.000000] DMI: Memory slots populated: 1/1
+vm-test-run-nbh-ssh-coldstart> client # [    0.000000] tsc: Fast TSC calibration using PIT
+vm-test-run-nbh-ssh-coldstart> client # [    0.000000] tsc: Detected 2400.026 MHz processor
+vm-test-run-nbh-ssh-coldstart> client # [    0.015155] last_pfn = 0x7ffd8 max_arch_pfn = 0x10000000000
+vm-test-run-nbh-ssh-coldstart> client # [    0.015881] MTRR map: 4 entries (3 fixed + 1 variable; max 19), built from 8 variable MTRRs
+vm-test-run-nbh-ssh-coldstart> client # [    0.016068] x86/PAT: Configuration [0-7]: WB  WC  UC- UC  WB  WP  UC- WT
+vm-test-run-nbh-ssh-coldstart> client # [    0.040041] found SMP MP-table at [mem 0x000f5450-0x000f545f]
+vm-test-run-nbh-ssh-coldstart> client # [    0.042248] Using GB pages for direct mapping
+vm-test-run-nbh-ssh-coldstart> client # [    0.045990] RAMDISK: [mem 0x7e2e4000-0x7ffcffff]
+vm-test-run-nbh-ssh-coldstart> client # [    0.046486] ACPI: Early table checksum verification disabled
+vm-test-run-nbh-ssh-coldstart> client # [    0.046927] ACPI: RSDP 0x00000000000F5270 000014 (v00 BOCHS )
+vm-test-run-nbh-ssh-coldstart> client # [    0.047248] ACPI: RSDT 0x000000007FFE2422 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+vm-test-run-nbh-ssh-coldstart> client # [    0.047938] ACPI: FACP 0x000000007FFE221A 0000F4 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+vm-test-run-nbh-ssh-coldstart> client # [    0.048568] ACPI: DSDT 0x000000007FFE0040 0021DA (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+vm-test-run-nbh-ssh-coldstart> client # [    0.048662] ACPI: FACS 0x000000007FFE0000 000040
+vm-test-run-nbh-ssh-coldstart> client # [    0.048724] ACPI: APIC 0x000000007FFE230E 000078 (v03 BOCHS  BXPC     00000001 BXPC 00000001)
+vm-test-run-nbh-ssh-coldstart> client # [    0.048752] ACPI: HPET 0x000000007FFE2386 000038 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+vm-test-run-nbh-ssh-coldstart> client # [    0.048776] ACPI: MCFG 0x000000007FFE23BE 00003C (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+vm-test-run-nbh-ssh-coldstart> client # [    0.048799] ACPI: WAET 0x000000007FFE23FA 000028 (v01 BOCHS  BXPC     00000001 BXPC 00000001)
+vm-test-run-nbh-ssh-coldstart> client # [    0.048896] ACPI: Reserving FACP table memory at [mem 0x7ffe221a-0x7ffe230d]
+vm-test-run-nbh-ssh-coldstart> client # [    0.048925] ACPI: Reserving DSDT table memory at [mem 0x7ffe0040-0x7ffe2219]
+vm-test-run-nbh-ssh-coldstart> client # [    0.048934] ACPI: Reserving FACS table memory at [mem 0x7ffe0000-0x7ffe003f]
+vm-test-run-nbh-ssh-coldstart> client # [    0.048941] ACPI: Reserving APIC table memory at [mem 0x7ffe230e-0x7ffe2385]
+vm-test-run-nbh-ssh-coldstart> client # [    0.048947] ACPI: Reserving HPET table memory at [mem 0x7ffe2386-0x7ffe23bd]
+vm-test-run-nbh-ssh-coldstart> client # [    0.048954] ACPI: Reserving MCFG table memory at [mem 0x7ffe23be-0x7ffe23f9]
+vm-test-run-nbh-ssh-coldstart> client # [    0.048960] ACPI: Reserving WAET table memory at [mem 0x7ffe23fa-0x7ffe2421]
+vm-test-run-nbh-ssh-coldstart> client # [    0.055306] No NUMA configuration found
+vm-test-run-nbh-ssh-coldstart> client # [    0.055342] Faking a node at [mem 0x0000000000000000-0x000000007ffd7fff]
+vm-test-run-nbh-ssh-coldstart> client # [    0.055993] NODE_DATA(0) allocated [mem 0x7ffd2780-0x7ffd7cff]
+vm-test-run-nbh-ssh-coldstart> client # [    0.060217] Zone ranges:
+vm-test-run-nbh-ssh-coldstart> client # [    0.060253]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+vm-test-run-nbh-ssh-coldstart> client # [    0.060339]   DMA32    [mem 0x0000000001000000-0x000000007ffd7fff]
+vm-test-run-nbh-ssh-coldstart> client # [    0.060352]   Normal   empty
+vm-test-run-nbh-ssh-coldstart> client # [    0.060369]   Device   empty
+vm-test-run-nbh-ssh-coldstart> client # [    0.060382] Movable zone start for each node
+vm-test-run-nbh-ssh-coldstart> client # [    0.060415] Early memory node ranges
+vm-test-run-nbh-ssh-coldstart> client # [    0.060445]   node   0: [mem 0x0000000000001000-0x000000000009efff]
+vm-test-run-nbh-ssh-coldstart> client # [    0.060616]   node   0: [mem 0x0000000000100000-0x000000007ffd7fff]
+vm-test-run-nbh-ssh-coldstart> client # [    0.060775] Initmem setup node 0 [mem 0x0000000000001000-0x000000007ffd7fff]
+vm-test-run-nbh-ssh-coldstart> client # [    0.062035] On node 0, zone DMA: 1 pages in unavailable ranges
+vm-test-run-nbh-ssh-coldstart> client # [    0.062466] On node 0, zone DMA: 97 pages in unavailable ranges
+vm-test-run-nbh-ssh-coldstart> client # [    0.088720] On node 0, zone DMA32: 40 pages in unavailable ranges
+vm-test-run-nbh-ssh-coldstart> client # [    0.089391] ACPI: PM-Timer IO Port: 0x608
+vm-test-run-nbh-ssh-coldstart> client # [    0.090019] ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+vm-test-run-nbh-ssh-coldstart> client # [    0.090600] IOAPIC[0]: apic_id 0, version 32, address 0xfec00000, GSI 0-23
+vm-test-run-nbh-ssh-coldstart> client # [    0.090767] ACPI: INT_SRC_OVR (bus 0 bus_irq 0 global_irq 2 dfl dfl)
+vm-test-run-nbh-ssh-coldstart> client # [    0.095808] ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+vm-test-run-nbh-ssh-coldstart> client # [    0.095895] ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+vm-test-run-nbh-ssh-coldstart> client # [    0.096059] ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+vm-test-run-nbh-ssh-coldstart> client # [    0.096072] ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+vm-test-run-nbh-ssh-coldstart> client # [    0.096294] ACPI: Using ACPI (MADT) for SMP configuration information
+vm-test-run-nbh-ssh-coldstart> client # [    0.096351] ACPI: HPET id: 0x8086a201 base: 0xfed00000
+vm-test-run-nbh-ssh-coldstart> client # [    0.096803] CPU topo: Max. logical packages:   1
+vm-test-run-nbh-ssh-coldstart> client # [    0.096817] CPU topo: Max. logical dies:       1
+vm-test-run-nbh-ssh-coldstart> client # [    0.096827] CPU topo: Max. dies per package:   1
+vm-test-run-nbh-ssh-coldstart> client # [    0.096881] CPU topo: Max. threads per core:   1
+vm-test-run-nbh-ssh-coldstart> client # [    0.097037] CPU topo: Num. cores per package:     1
+vm-test-run-nbh-ssh-coldstart> client # [    0.097054] CPU topo: Num. threads per package:   1
+vm-test-run-nbh-ssh-coldstart> client # [    0.097063] CPU topo: Allowing 1 present CPUs plus 0 hotplug CPUs
+vm-test-run-nbh-ssh-coldstart> client # [    0.097916] PM: hibernation: Registered nosave memory: [mem 0x00000000-0x00000fff]
+vm-test-run-nbh-ssh-coldstart> client # [    0.097948] PM: hibernation: Registered nosave memory: [mem 0x0009f000-0x000fffff]
+vm-test-run-nbh-ssh-coldstart> client # [    0.098055] [mem 0xc0000000-0xfed1bfff] available for PCI devices
+vm-test-run-nbh-ssh-coldstart> client # [    0.098106] Booting paravirtualized kernel on bare hardware
+vm-test-run-nbh-ssh-coldstart> client # [    0.098654] clocksource: refined-jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1910969940391419 ns
+vm-test-run-nbh-ssh-coldstart> client # [    0.112068] setup_percpu: NR_CPUS:512 nr_cpumask_bits:1 nr_cpu_ids:1 nr_node_ids:1
+vm-test-run-nbh-ssh-coldstart> client # [    0.115641] percpu: Embedded 98 pages/cpu s278528 r8192 d114688 u2097152
+vm-test-run-nbh-ssh-coldstart> client # [    0.117097] Kernel command line: console=ttyS0 console=tty0 panic=1 boot.panic_on_fail clocksource=acpi_pm root=fstab loglevel=7 net.ifnames=0 lsm=landlock,yama,bpf init=/nix/store/fhdq0w6m7lr5frc6y9b3hfhb1khk6mr7-nixos-system-client-test/init regInfo=/nix/.ro-store/fzrik9zgj40kbwjvm0c6ycsd6kfp49w4-closure-info/registration console=ttyS0,115200n8 console=tty0
+vm-test-run-nbh-ssh-coldstart> client # [    0.119096] Unknown kernel command line parameters "regInfo=/nix/.ro-store/fzrik9zgj40kbwjvm0c6ycsd6kfp49w4-closure-info/registration", will be passed to user space.
+vm-test-run-nbh-ssh-coldstart> client # [    0.119847] random: crng init done
+vm-test-run-nbh-ssh-coldstart> client # [    0.119940] printk: log buffer data + meta data: 262144 + 917504 = 1179648 bytes
+vm-test-run-nbh-ssh-coldstart> client # [    0.122118] Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+vm-test-run-nbh-ssh-coldstart> client # [    0.122471] Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+vm-test-run-nbh-ssh-coldstart> client # [    0.126089] Fallback order for Node 0: 0
+vm-test-run-nbh-ssh-coldstart> client # [    0.126412] Built 1 zonelists, mobility grouping on.  Total pages: 524150
+vm-test-run-nbh-ssh-coldstart> client # [    0.126432] Policy zone: DMA32
+vm-test-run-nbh-ssh-coldstart> client # [    0.129550] mem auto-init: stack:all(zero), heap alloc:on, heap free:off
+vm-test-run-nbh-ssh-coldstart> client # [    0.164658] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+vm-test-run-nbh-ssh-coldstart> client # [    0.171068] allocated 4194304 bytes of page_ext
+vm-test-run-nbh-ssh-coldstart> client # [    0.220840] ftrace: allocating 48842 entries in 192 pages
+vm-test-run-nbh-ssh-coldstart> client # [    0.221120] ftrace: allocated 192 pages with 2 groups
+vm-test-run-nbh-ssh-coldstart> client # [    0.236380] Dynamic Preempt: lazy
+vm-test-run-nbh-ssh-coldstart> client # [    0.241043] rcu: Preemptible hierarchical RCU implementation.
+vm-test-run-nbh-ssh-coldstart> client # [    0.241060] rcu:     RCU event tracing is enabled.
+vm-test-run-nbh-ssh-coldstart> client # [    0.241087] rcu:     RCU restricting CPUs from NR_CPUS=512 to nr_cpu_ids=1.
+vm-test-run-nbh-ssh-coldstart> client # [    0.241239]  Trampoline variant of Tasks RCU enabled.
+vm-test-run-nbh-ssh-coldstart> client # [    0.241250]  Rude variant of Tasks RCU enabled.
+vm-test-run-nbh-ssh-coldstart> client # [    0.241259]  Tracing variant of Tasks RCU enabled.
+vm-test-run-nbh-ssh-coldstart> client # [    0.241382] rcu: RCU calculated value of scheduler-enlistment delay is 100 jiffies.
+vm-test-run-nbh-ssh-coldstart> client # [    0.241432] rcu: Adjusting geometry for rcu_fanout_leaf=16, nr_cpu_ids=1
+vm-test-run-nbh-ssh-coldstart> client # [    0.242975] RCU Tasks: Setting shift to 0 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=1.
+vm-test-run-nbh-ssh-coldstart> client # [    0.243001] RCU Tasks Rude: Setting shift to 0 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=1.
+vm-test-run-nbh-ssh-coldstart> client # [    0.243015] RCU Tasks Trace: Setting shift to 0 and lim to 1 rcu_task_cb_adjust=1 rcu_task_cpu_ids=1.
+vm-test-run-nbh-ssh-coldstart> client # [    0.299673] NR_IRQS: 33024, nr_irqs: 256, preallocated irqs: 16
+vm-test-run-nbh-ssh-coldstart> client # [    0.313426] rcu: srcu_init: Setting srcu_struct sizes based on contention.
+vm-test-run-nbh-ssh-coldstart> client # [    0.314279] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1911260446275000 ns
+vm-test-run-nbh-ssh-coldstart> client # [    0.319174] kfence: initialized - using 2097152 bytes for 255 objects at 0x(____ptrval____)-0x(____ptrval____)
+vm-test-run-nbh-ssh-coldstart> client # [    0.325367] Console: colour VGA+ 80x25
+vm-test-run-nbh-ssh-coldstart> client # [    0.325842] printk: legacy console [tty0] enabled
+vm-test-run-nbh-ssh-coldstart> client # [    0.334927] printk: legacy console [ttyS0] enabled
+vm-test-run-nbh-ssh-coldstart> client # [    0.347569] ACPI: Core revision 20250807
+vm-test-run-nbh-ssh-coldstart> client # [    0.355731] clocksource: hpet: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604467 ns
+vm-test-run-nbh-ssh-coldstart> client # [    0.360835] APIC: Switch to symmetric I/O mode setup
+vm-test-run-nbh-ssh-coldstart> client # [    0.362326] x2apic: IRQ remapping doesn't support X2APIC mode
+vm-test-run-nbh-ssh-coldstart> client # [    0.367086] ..TIMER: vector=0x30 apic1=0 pin1=2 apic2=-1 pin2=-1
+vm-test-run-nbh-ssh-coldstart> client # [    0.375569] clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x229850030f8, max_idle_ns: 440795254466 ns
+vm-test-run-nbh-ssh-coldstart> client # [    0.376224] Calibrating delay loop (skipped), value calculated using timer frequency.. 4800.05 BogoMIPS (lpj=2400026)
+vm-test-run-nbh-ssh-coldstart> client # [    0.379778] x86/cpu: User Mode Instruction Prevention (UMIP) activated
+vm-test-run-nbh-ssh-coldstart> client # [    0.393381] Last level iTLB entries: 4KB 0, 2MB 0, 4MB 0
+vm-test-run-nbh-ssh-coldstart> client # [    0.393743] Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
+vm-test-run-nbh-ssh-coldstart> client # [    0.396091] mitigations: Enabled attack vectors: user_kernel, user_user, guest_host, guest_guest, SMT mitigations: auto
+vm-test-run-nbh-ssh-coldstart> client # [    0.397620] Speculative Store Bypass: Vulnerable
+vm-test-run-nbh-ssh-coldstart> client # [    0.398533] Spectre V2 : Mitigation: Retpolines
+vm-test-run-nbh-ssh-coldstart> client # [    0.399336] Spectre V1 : Mitigation: usercopy/swapgs barriers and __user pointer sanitization
+vm-test-run-nbh-ssh-coldstart> client # [    0.399772] Spectre V2 : Spectre v2 / SpectreRSB: Filling RSB on context switch and VMEXIT
+vm-test-run-nbh-ssh-coldstart> client # [    0.407225] x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+vm-test-run-nbh-ssh-coldstart> client # [    0.409724] x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+vm-test-run-nbh-ssh-coldstart> client # [    0.410074] x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+vm-test-run-nbh-ssh-coldstart> client # [    0.410232] x86/fpu: Supporting XSAVE feature 0x008: 'MPX bounds registers'
+vm-test-run-nbh-ssh-coldstart> client # [    0.410366] x86/fpu: Supporting XSAVE feature 0x010: 'MPX CSR'
+vm-test-run-nbh-ssh-coldstart> client # [    0.410551] x86/fpu: Supporting XSAVE feature 0x200: 'Protection Keys User registers'
+vm-test-run-nbh-ssh-coldstart> client # [    0.410857] x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+vm-test-run-nbh-ssh-coldstart> client # [    0.411189] x86/fpu: xstate_offset[3]:  960, xstate_sizes[3]:   64
+vm-test-run-nbh-ssh-coldstart> client # [    0.411326] x86/fpu: xstate_offset[4]: 1024, xstate_sizes[4]:   64
+vm-test-run-nbh-ssh-coldstart> client # [    0.411963] x86/fpu: xstate_offset[9]: 2688, xstate_sizes[9]:    8
+vm-test-run-nbh-ssh-coldstart> client # [    0.412124] x86/fpu: Enabled xstate features 0x21f, context size is 2696 bytes, using 'standard' format.
+vm-test-run-nbh-ssh-coldstart> client # [    0.814557] Freeing SMP alternatives memory: 48K
+vm-test-run-nbh-ssh-coldstart> client # [    0.816398] pid_max: default: 32768 minimum: 301
+vm-test-run-nbh-ssh-coldstart> client # [    0.826241] LSM: initializing lsm=capability,landlock,yama,bpf,ima
+vm-test-run-nbh-ssh-coldstart> client # [    0.829384] landlock: Up and running.
+vm-test-run-nbh-ssh-coldstart> client # [    0.829515] Yama: becoming mindful.
+vm-test-run-nbh-ssh-coldstart> client # [    0.830420] LSM support for eBPF active
+vm-test-run-nbh-ssh-coldstart> client # [    0.834749] Mount-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+vm-test-run-nbh-ssh-coldstart> client # [    0.835142] Mountpoint-cache hash table entries: 4096 (order: 3, 32768 bytes, linear)
+vm-test-run-nbh-ssh-coldstart> client # [    0.969944] smpboot: CPU0: AMD QEMU TCG CPU version 2.5+ (family: 0x6, model: 0x6, stepping: 0x3)
+vm-test-run-nbh-ssh-coldstart> client # [    0.987215] Performance Events: PMU not available due to virtualization, using software events only.
+vm-test-run-nbh-ssh-coldstart> client # [    0.988707] signal: max sigframe size: 3632
+vm-test-run-nbh-ssh-coldstart> client # [    0.990554] rcu: Hierarchical SRCU implementation.
+vm-test-run-nbh-ssh-coldstart> client # [    0.990762] rcu:     Max phase no-delay instances is 400.
+vm-test-run-nbh-ssh-coldstart> client # [    0.999290] NMI watchdog: Perf NMI watchdog permanently disabled
+vm-test-run-nbh-ssh-coldstart> client # [    1.004873] smp: Bringing up secondary CPUs ...
+vm-test-run-nbh-ssh-coldstart> client # [    1.006632] smp: Brought up 1 node, 1 CPU
+vm-test-run-nbh-ssh-coldstart> client # [    1.006822] smpboot: Total of 1 processors activated (4800.05 BogoMIPS)
+vm-test-run-nbh-ssh-coldstart> client # [    1.016735] Memory: 1969084K/2096600K available (18132K kernel code, 2734K rwdata, 13652K rodata, 3660K init, 3620K bss, 118060K reserved, 0K cma-reserved)
+vm-test-run-nbh-ssh-coldstart> client # [    1.028164] devtmpfs: initialized
+vm-test-run-nbh-ssh-coldstart> client # [    1.033856] x86/mm: Memory block size: 128MB
+vm-test-run-nbh-ssh-coldstart> client # [    1.048679] posixtimers hash table entries: 512 (order: 1, 8192 bytes, linear)
+vm-test-run-nbh-ssh-coldstart> client # [    1.049457] futex hash table entries: 256 (16384 bytes on 1 NUMA nodes, total 16 KiB, linear).
+vm-test-run-nbh-ssh-coldstart> client # [    1.053894] pinctrl core: initialized pinctrl subsystem
+vm-test-run-nbh-ssh-coldstart> client # [    1.063414] PM: RTC time: 12:25:47, date: 2026-10-21
+vm-test-run-nbh-ssh-coldstart> client # [    1.084511] NET: Registered PF_NETLINK/PF_ROUTE protocol family
+vm-test-run-nbh-ssh-coldstart> client # [    1.090335] DMA: preallocated 256 KiB GFP_KERNEL pool for atomic allocations
+vm-test-run-nbh-ssh-coldstart> client # [    1.092301] DMA: preallocated 256 KiB GFP_KERNEL|GFP_DMA pool for atomic allocations
+vm-test-run-nbh-ssh-coldstart> client # [    1.093358] DMA: preallocated 256 KiB GFP_KERNEL|GFP_DMA32 pool for atomic allocations
+vm-test-run-nbh-ssh-coldstart> client # [    1.093739] audit: initializing netlink subsys (disabled)
+vm-test-run-nbh-ssh-coldstart> client # [    1.096269] audit: type=2000 audit(1792585546.733:1): state=initialized audit_enabled=0 res=1
+vm-test-run-nbh-ssh-coldstart> client # [    1.102705] thermal_sys: Registered thermal governor 'fair_share'
+vm-test-run-nbh-ssh-coldstart> client # [    1.102753] thermal_sys: Registered thermal governor 'bang_bang'
+vm-test-run-nbh-ssh-coldstart> client # [    1.102969] thermal_sys: Registered thermal governor 'step_wise'
+vm-test-run-nbh-ssh-coldstart> client # [    1.103093] thermal_sys: Registered thermal governor 'user_space'
+vm-test-run-nbh-ssh-coldstart> client # [    1.103208] thermal_sys: Registered thermal governor 'power_allocator'
+vm-test-run-nbh-ssh-coldstart> client # [    1.103897] cpuidle: using governor menu
+vm-test-run-nbh-ssh-coldstart> client # [    1.106183] acpiphp: ACPI Hot Plug PCI Controller Driver version: 0.5
+vm-test-run-nbh-ssh-coldstart> client # [    1.110358] PCI: ECAM [mem 0xb0000000-0xbfffffff] (base 0xb0000000) for domain 0000 [bus 00-ff]
+vm-test-run-nbh-ssh-coldstart> client # [    1.111429] PCI: ECAM [mem 0xb0000000-0xbfffffff] reserved as E820 entry
+vm-test-run-nbh-ssh-coldstart> client # [    1.113554] PCI: Using configuration type 1 for base access
+vm-test-run-nbh-ssh-coldstart> client # [    1.117591] kprobes: kprobe jump-optimization is enabled. All kprobes are optimized if possible.
+vm-test-run-nbh-ssh-coldstart> client # [    1.139166] HugeTLB: registered 1.00 GiB page size, pre-allocated 0 pages
+vm-test-run-nbh-ssh-coldstart> client # [    1.139391] HugeTLB: 16380 KiB vmemmap can be freed for a 1.00 GiB page
+vm-test-run-nbh-ssh-coldstart> client # [    1.139537] HugeTLB: registered 2.00 MiB page size, pre-allocated 0 pages
+vm-test-run-nbh-ssh-coldstart> client # [    1.139662] HugeTLB: 28 KiB vmemmap can be freed for a 2.00 MiB page
+vm-test-run-nbh-ssh-coldstart> client # [    1.199862] ACPI: Added _OSI(Module Device)
+vm-test-run-nbh-ssh-coldstart> client # [    1.200084] ACPI: Added _OSI(Processor Device)
+vm-test-run-nbh-ssh-coldstart> client # [    1.200200] ACPI: Added _OSI(Processor Aggregator Device)
+vm-test-run-nbh-ssh-coldstart> client # [    1.290247] ACPI: 1 ACPI AML tables successfully acquired and loaded
+vm-test-run-nbh-ssh-coldstart> client # [    1.348385] ACPI: Interpreter enabled
+vm-test-run-nbh-ssh-coldstart> client # [    1.352087] ACPI: PM: (supports S0 S3 S4 S5)
+vm-test-run-nbh-ssh-coldstart> client # [    1.352271] ACPI: Using IOAPIC for interrupt routing
+vm-test-run-nbh-ssh-coldstart> client # [    1.357908] PCI: Using host bridge windows from ACPI; if necessary, use "pci=nocrs" and report a bug
+vm-test-run-nbh-ssh-coldstart> client # [    1.359986] PCI: Using E820 reservations for host bridge windows
+vm-test-run-nbh-ssh-coldstart> client # [    1.362041] ACPI: Enabled 2 GPEs in block 00 to 3F
+vm-test-run-nbh-ssh-coldstart> client # [    1.424793] ACPI: PCI Root Bridge [PCI0] (domain 0000 [bus 00-ff])
+vm-test-run-nbh-ssh-coldstart> client # [    1.425721] acpi PNP0A08:00: _OSC: OS supports [ExtendedConfig ASPM ClockPM Segments MSI HPX-Type3]
+vm-test-run-nbh-ssh-coldstart> client # [    1.427858] acpi PNP0A08:00: _OSC: platform does not support [PCIeHotplug LTR]
+vm-test-run-nbh-ssh-coldstart> client # [    1.429222] acpi PNP0A08:00: _OSC: OS now controls [PME AER PCIeCapability]
+vm-test-run-nbh-ssh-coldstart> client # [    1.435676] PCI host bridge to bus 0000:00
+vm-test-run-nbh-ssh-coldstart> client # [    1.436296] pci_bus 0000:00: root bus resource [io  0x0000-0x0cf7 window]
+vm-test-run-nbh-ssh-coldstart> client # [    1.436581] pci_bus 0000:00: root bus resource [io  0x0d00-0xffff window]
+vm-test-run-nbh-ssh-coldstart> client # [    1.436738] pci_bus 0000:00: root bus resource [mem 0x000a0000-0x000bffff window]
+vm-test-run-nbh-ssh-coldstart> client # [    1.436935] pci_bus 0000:00: root bus resource [mem 0x80000000-0xafffffff window]
+vm-test-run-nbh-ssh-coldstart> client # [    1.437127] pci_bus 0000:00: root bus resource [mem 0xc0000000-0xfebfffff window]
+vm-test-run-nbh-ssh-coldstart> client # [    1.437304] pci_bus 0000:00: root bus resource [mem 0x100000000-0x8ffffffff window]
+vm-test-run-nbh-ssh-coldstart> client # [    1.437651] pci_bus 0000:00: root bus resource [bus 00-ff]
+vm-test-run-nbh-ssh-coldstart> client # [    1.441819] pci 0000:00:00.0: [8086:29c0] type 00 class 0x060000 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.447148] pci 0000:00:01.0: [1234:1111] type 00 class 0x030000 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.449147] pci 0000:00:01.0: BAR 0 [mem 0xfd000000-0xfdffffff pref]
+vm-test-run-nbh-ssh-coldstart> client # [    1.449400] pci 0000:00:01.0: BAR 2 [mem 0xfebd0000-0xfebd0fff]
+vm-test-run-nbh-ssh-coldstart> client # [    1.449532] pci 0000:00:01.0: ROM [mem 0xfebc0000-0xfebcffff pref]
+vm-test-run-nbh-ssh-coldstart> client # [    1.450003] pci 0000:00:01.0: Video device with shadowed ROM at [mem 0x000c0000-0x000dffff]
+vm-test-run-nbh-ssh-coldstart> client # [    1.451292] pci 0000:00:02.0: [1af4:1000] type 00 class 0x020000 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.452944] pci 0000:00:02.0: BAR 0 [io  0xc100-0xc11f]
+vm-test-run-nbh-ssh-coldstart> client # [    1.452989] pci 0000:00:02.0: BAR 1 [mem 0xfebd1000-0xfebd1fff]
+vm-test-run-nbh-ssh-coldstart> client # [    1.453206] pci 0000:00:02.0: BAR 4 [mem 0xfe000000-0xfe003fff 64bit pref]
+vm-test-run-nbh-ssh-coldstart> client # [    1.454057] pci 0000:00:02.0: ROM [mem 0xfeb40000-0xfeb7ffff pref]
+vm-test-run-nbh-ssh-coldstart> client # [    1.456441] pci 0000:00:03.0: [1af4:1005] type 00 class 0x00ff00 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.457989] pci 0000:00:03.0: BAR 0 [io  0xc120-0xc13f]
+vm-test-run-nbh-ssh-coldstart> client # [    1.458166] pci 0000:00:03.0: BAR 1 [mem 0xfebd2000-0xfebd2fff]
+vm-test-run-nbh-ssh-coldstart> client # [    1.458282] pci 0000:00:03.0: BAR 4 [mem 0xfe004000-0xfe007fff 64bit pref]
+vm-test-run-nbh-ssh-coldstart> client # [    1.459485] pci 0000:00:04.0: [1af4:1001] type 00 class 0x010000 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.459944] pci 0000:00:04.0: BAR 0 [io  0xc000-0xc07f]
+vm-test-run-nbh-ssh-coldstart> client # [    1.460067] pci 0000:00:04.0: BAR 1 [mem 0xfebd3000-0xfebd3fff]
+vm-test-run-nbh-ssh-coldstart> client # [    1.460748] pci 0000:00:04.0: BAR 4 [mem 0xfe008000-0xfe00bfff 64bit pref]
+vm-test-run-nbh-ssh-coldstart> client # [    1.462104] pci 0000:00:05.0: [1af4:1000] type 00 class 0x020000 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.463994] pci 0000:00:05.0: BAR 0 [io  0xc140-0xc15f]
+vm-test-run-nbh-ssh-coldstart> client # [    1.464200] pci 0000:00:05.0: BAR 1 [mem 0xfebd4000-0xfebd4fff]
+vm-test-run-nbh-ssh-coldstart> client # [    1.464351] pci 0000:00:05.0: BAR 4 [mem 0xfe00c000-0xfe00ffff 64bit pref]
+vm-test-run-nbh-ssh-coldstart> client # [    1.464529] pci 0000:00:05.0: ROM [mem 0xfeb80000-0xfebbffff pref]
+vm-test-run-nbh-ssh-coldstart> client # [    1.466043] pci 0000:00:06.0: [1af4:1052] type 00 class 0x090000 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.467935] pci 0000:00:06.0: BAR 1 [mem 0xfebd5000-0xfebd5fff]
+vm-test-run-nbh-ssh-coldstart> client # [    1.467944] pci 0000:00:06.0: BAR 4 [mem 0xfe010000-0xfe013fff 64bit pref]
+vm-test-run-nbh-ssh-coldstart> client # [    1.469239] pci 0000:00:07.0: [1af4:105a] type 00 class 0x018000 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.470522] pci 0000:00:07.0: BAR 1 [mem 0xfebd6000-0xfebd6fff]
+vm-test-run-nbh-ssh-coldstart> client # [    1.470726] pci 0000:00:07.0: BAR 4 [mem 0xfe014000-0xfe017fff 64bit pref]
+vm-test-run-nbh-ssh-coldstart> client # [    1.472010] pci 0000:00:08.0: [1af4:105a] type 00 class 0x018000 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.473596] pci 0000:00:08.0: BAR 1 [mem 0xfebd7000-0xfebd7fff]
+vm-test-run-nbh-ssh-coldstart> client # [    1.473807] pci 0000:00:08.0: BAR 4 [mem 0xfe018000-0xfe01bfff 64bit pref]
+vm-test-run-nbh-ssh-coldstart> client # [    1.475002] pci 0000:00:09.0: [1af4:105a] type 00 class 0x018000 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.476987] pci 0000:00:09.0: BAR 1 [mem 0xfebd8000-0xfebd8fff]
+vm-test-run-nbh-ssh-coldstart> client # [    1.477160] pci 0000:00:09.0: BAR 4 [mem 0xfe01c000-0xfe01ffff 64bit pref]
+vm-test-run-nbh-ssh-coldstart> client # [    1.478466] pci 0000:00:0a.0: [1af4:1003] type 00 class 0x078000 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.480021] pci 0000:00:0a.0: BAR 0 [io  0xc080-0xc0bf]
+vm-test-run-nbh-ssh-coldstart> client # [    1.480200] pci 0000:00:0a.0: BAR 1 [mem 0xfebd9000-0xfebd9fff]
+vm-test-run-nbh-ssh-coldstart> client # [    1.480324] pci 0000:00:0a.0: BAR 4 [mem 0xfe020000-0xfe023fff 64bit pref]
+vm-test-run-nbh-ssh-coldstart> client # [    1.482092] pci 0000:00:0b.0: [1af4:1005] type 00 class 0x00ff00 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.483987] pci 0000:00:0b.0: BAR 0 [io  0xc160-0xc17f]
+vm-test-run-nbh-ssh-coldstart> client # [    1.484144] pci 0000:00:0b.0: BAR 1 [mem 0xfebda000-0xfebdafff]
+vm-test-run-nbh-ssh-coldstart> client # [    1.484257] pci 0000:00:0b.0: BAR 4 [mem 0xfe024000-0xfe027fff 64bit pref]
+vm-test-run-nbh-ssh-coldstart> client # [    1.485793] pci 0000:00:1d.0: [8086:2934] type 00 class 0x0c0300 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.486991] pci 0000:00:1d.0: BAR 4 [io  0xc180-0xc19f]
+vm-test-run-nbh-ssh-coldstart> client # [    1.489032] pci 0000:00:1d.1: [8086:2935] type 00 class 0x0c0300 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.490990] pci 0000:00:1d.1: BAR 4 [io  0xc1a0-0xc1bf]
+vm-test-run-nbh-ssh-coldstart> client # [    1.492282] pci 0000:00:1d.2: [8086:2936] type 00 class 0x0c0300 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.492994] pci 0000:00:1d.2: BAR 4 [io  0xc1c0-0xc1df]
+vm-test-run-nbh-ssh-coldstart> client # [    1.494689] pci 0000:00:1d.7: [8086:293a] type 00 class 0x0c0320 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.495611] pci 0000:00:1d.7: BAR 0 [mem 0xfebdb000-0xfebdbfff]
+vm-test-run-nbh-ssh-coldstart> client # [    1.497423] pci 0000:00:1f.0: [8086:2918] type 00 class 0x060100 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.498266] pci 0000:00:1f.0: quirk: [io  0x0600-0x067f] claimed by ICH6 ACPI/GPIO/TCO
+vm-test-run-nbh-ssh-coldstart> client # [    1.500228] pci 0000:00:1f.2: [8086:2922] type 00 class 0x010601 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.501992] pci 0000:00:1f.2: BAR 4 [io  0xc1e0-0xc1ff]
+vm-test-run-nbh-ssh-coldstart> client # [    1.502965] pci 0000:00:1f.2: BAR 5 [mem 0xfebdc000-0xfebdcfff]
+vm-test-run-nbh-ssh-coldstart> client # [    1.504000] pci 0000:00:1f.3: [8086:2930] type 00 class 0x0c0500 conventional PCI endpoint
+vm-test-run-nbh-ssh-coldstart> client # [    1.505027] pci 0000:00:1f.3: BAR 4 [io  0x0700-0x073f]
+vm-test-run-nbh-ssh-coldstart> client # [    1.514772] ACPI: PCI: Interrupt link LNKA configured for IRQ 10
+vm-test-run-nbh-ssh-coldstart> client # [    1.515825] ACPI: PCI: Interrupt link LNKB configured for IRQ 10
+vm-test-run-nbh-ssh-coldstart> client # [    1.516628] ACPI: PCI: Interrupt link LNKC configured for IRQ 11
+vm-test-run-nbh-ssh-coldstart> client # [    1.517470] ACPI: PCI: Interrupt link LNKD configured for IRQ 11
+vm-test-run-nbh-ssh-coldstart> client # [    1.518421] ACPI: PCI: Interrupt link LNKE configured for IRQ 10
+vm-test-run-nbh-ssh-coldstart> client # [    1.519305] ACPI: PCI: Interrupt link LNKF configured for IRQ 10
+vm-test-run-nbh-ssh-coldstart> client # [    1.520089] ACPI: PCI: Interrupt link LNKG configured for IRQ 11
+vm-test-run-nbh-ssh-coldstart> client # [    1.520877] ACPI: PCI: Interrupt link LNKH configured for IRQ 11
+vm-test-run-nbh-ssh-coldstart> client # [    1.521226] ACPI: PCI: Interrupt link GSIA configured for IRQ 16
+vm-test-run-nbh-ssh-coldstart> client # [    1.521468] ACPI: PCI: Interrupt link GSIB configured for IRQ 17
+vm-test-run-nbh-ssh-coldstart> client # [    1.521676] ACPI: PCI: Interrupt link GSIC configured for IRQ 18
+vm-test-run-nbh-ssh-coldstart> client # [    1.522342] ACPI: PCI: Interrupt link GSID configured for IRQ 19
+vm-test-run-nbh-ssh-coldstart> client # [    1.523115] ACPI: PCI: Interrupt link GSIE configured for IRQ 20
+vm-test-run-nbh-ssh-coldstart> client # [    1.523309] ACPI: PCI: Interrupt link GSIF configured for IRQ 21
+vm-test-run-nbh-ssh-coldstart> client # [    1.523505] ACPI: PCI: Interrupt link GSIG configured for IRQ 22
+vm-test-run-nbh-ssh-coldstart> client # [    1.523701] ACPI: PCI: Interrupt link GSIH configured for IRQ 23
+vm-test-run-nbh-ssh-coldstart> client # [    1.529438] iommu: Default domain type: Translated
+vm-test-run-nbh-ssh-coldstart> client # [    1.529614] iommu: DMA domain TLB invalidation policy: lazy mode
+vm-test-run-nbh-ssh-coldstart> client # [    1.531474] ACPI: bus type USB registered
+vm-test-run-nbh-ssh-coldstart> client # [    1.532299] usbcore: registered new interface driver usbfs
+vm-test-run-nbh-ssh-coldstart> client # [    1.532740] usbcore: registered new interface driver hub
+vm-test-run-nbh-ssh-coldstart> client # [    1.533088] usbcore: registered new device driver usb
+vm-test-run-nbh-ssh-coldstart> client # [    1.546456] NetLabel: Initializing
+vm-test-run-nbh-ssh-coldstart> client # [    1.546590] NetLabel:  domain hash size = 128
+vm-test-run-nbh-ssh-coldstart> client # [    1.546700] NetLabel:  protocols = UNLABELED CIPSOv4 CALIPSO
+vm-test-run-nbh-ssh-coldstart> client # [    1.547856] NetLabel:  unlabeled traffic allowed by default
+vm-test-run-nbh-ssh-coldstart> client # [    1.548135] PCI: Using ACPI for IRQ routing
+vm-test-run-nbh-ssh-coldstart> client # [    1.557483] pci 0000:00:01.0: vgaarb: setting as boot VGA device
+vm-test-run-nbh-ssh-coldstart> client # [    1.557781] pci 0000:00:01.0: vgaarb: bridge control possible
+vm-test-run-nbh-ssh-coldstart> client # [    1.557944] pci 0000:00:01.0: vgaarb: VGA device added: decodes=io+mem,owns=io+mem,locks=none
+vm-test-run-nbh-ssh-coldstart> client # [    1.558014] vgaarb: loaded
+vm-test-run-nbh-ssh-coldstart> client # [    1.559244] hpet0: at MMIO 0xfed00000, IRQs 2, 8, 0
+vm-test-run-nbh-ssh-coldstart> client # [    1.559480] hpet0: 3 comparators, 64-bit 100.000000 MHz counter
+vm-test-run-nbh-ssh-coldstart> client # [    1.564520] clocksource: Switched to clocksource tsc-early
+vm-test-run-nbh-ssh-coldstart> client # [    1.581908] VFS: Disk quotas dquot_6.6.0
+vm-test-run-nbh-ssh-coldstart> client # [    1.582340] VFS: Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
+vm-test-run-nbh-ssh-coldstart> client # [    1.589205] pnp: PnP ACPI init
+vm-test-run-nbh-ssh-coldstart> client # [    1.593222] ACPI: IRQ 4 override to edge(!), high(!)
+vm-test-run-nbh-ssh-coldstart> client # [    1.595167] system 00:04: [mem 0xb0000000-0xbfffffff window] has been reserved
+vm-test-run-nbh-ssh-coldstart> client # [    1.598788] pnp: PnP ACPI: found 5 devices
+vm-test-run-nbh-ssh-coldstart> client # [    1.632986] clocksource: acpi_pm: mask: 0xffffff max_cycles: 0xffffff, max_idle_ns: 2085701024 ns
+vm-test-run-nbh-ssh-coldstart> client # [    1.633597] clocksource: Switched to clocksource acpi_pm
+vm-test-run-nbh-ssh-coldstart> client # [    1.634986] NET: Registered PF_INET protocol family
+vm-test-run-nbh-ssh-coldstart> client # [    1.637312] IP idents hash table entries: 32768 (order: 6, 262144 bytes, linear)
+vm-test-run-nbh-ssh-coldstart> client # [    1.715265] tcp_listen_portaddr_hash hash table entries: 1024 (order: 2, 16384 bytes, linear)
+vm-test-run-nbh-ssh-coldstart> client # [    1.716151] Table-perturb hash table entries: 65536 (order: 6, 262144 bytes, linear)
+vm-test-run-nbh-ssh-coldstart> client # [    1.716795] TCP established hash table entries: 16384 (order: 5, 131072 bytes, linear)
+vm-test-run-nbh-ssh-coldstart> client # [    1.718330] TCP bind hash table entries: 16384 (order: 7, 524288 bytes, linear)
+vm-test-run-nbh-ssh-coldstart> client # [    1.718819] TCP: Hash tables configured (established 16384 bind 16384)
+vm-test-run-nbh-ssh-coldstart> client # [    1.721172] MPTCP token hash table entries: 2048 (order: 4, 49152 bytes, linear)
+vm-test-run-nbh-ssh-coldstart> client # [    1.721809] UDP hash table entries: 1024 (order: 4, 65536 bytes, linear)
+vm-test-run-nbh-ssh-coldstart> client # [    1.722421] UDP-Lite hash table entries: 1024 (order: 4, 65536 bytes, linear)
+vm-test-run-nbh-ssh-coldstart> client # [    1.725809] NET: Registered PF_UNIX/PF_LOCAL protocol family
+vm-test-run-nbh-ssh-coldstart> client # [    1.726610] NET: Registered PF_XDP protocol family
+vm-test-run-nbh-ssh-coldstart> client # [    1.728563] pci_bus 0000:00: resource 4 [io  0x0000-0x0cf7 window]
+vm-test-run-nbh-ssh-coldstart> client # [    1.728772] pci_bus 0000:00: resource 5 [io  0x0d00-0xffff window]
+vm-test-run-nbh-ssh-coldstart> client # [    1.728968] pci_bus 0000:00: resource 6 [mem 0x000a0000-0x000bffff window]
+vm-test-run-nbh-ssh-coldstart> client # [    1.729115] pci_bus 0000:00: resource 7 [mem 0x80000000-0xafffffff window]
+vm-test-run-nbh-ssh-coldstart> client # [    1.729249] pci_bus 0000:00: resource 8 [mem 0xc0000000-0xfebfffff window]
+vm-test-run-nbh-ssh-coldstart> client # [    1.729378] pci_bus 0000:00: resource 9 [mem 0x100000000-0x8ffffffff window]
+vm-test-run-nbh-ssh-coldstart> client # [    1.735528] ACPI: \_SB_.GSIA: Enabled at IRQ 16
+vm-test-run-nbh-ssh-coldstart> client # [    1.744235] pci 0000:00:1d.0: quirk_usb_early_handoff+0x0/0x870 took 13694 usecs
+vm-test-run-nbh-ssh-coldstart> client # [    1.747179] ACPI: \_SB_.GSIB: Enabled at IRQ 17
+vm-test-run-nbh-ssh-coldstart> client # [    1.752772] ACPI: \_SB_.GSIC: Enabled at IRQ 18
+vm-test-run-nbh-ssh-coldstart> client # [    1.758034] ACPI: \_SB_.GSID: Enabled at IRQ 19
+vm-test-run-nbh-ssh-coldstart> client # [    1.762489] PCI: CLS 0 bytes, default 64
+vm-test-run-nbh-ssh-coldstart> client # [    1.770103] Trying to unpack rootfs image as initramfs...
+vm-test-run-nbh-ssh-coldstart> client # [    1.969596] Initialise system trusted keyrings
+vm-test-run-nbh-ssh-coldstart> client # [    1.976351] workingset: timestamp_bits=40 max_order=19 bucket_order=0
+vm-test-run-nbh-ssh-coldstart> client # [    2.135486] Key type asymmetric registered
+vm-test-run-nbh-ssh-coldstart> client # [    2.138080] Asymmetric key parser 'x509' registered
+vm-test-run-nbh-ssh-coldstart> client # [    2.138762] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 248)
+vm-test-run-nbh-ssh-coldstart> client # [    2.142400] io scheduler mq-deadline registered
+vm-test-run-nbh-ssh-coldstart> client # [    2.142638] io scheduler kyber registered
+vm-test-run-nbh-ssh-coldstart> client # [    2.161265] Serial: 8250/16550 driver, 4 ports, IRQ sharing enabled
+vm-test-run-nbh-ssh-coldstart> client # [    2.170039] 00:03: ttyS0 at I/O 0x3f8 (irq = 4, base_baud = 115200) is a 16550A
+vm-test-run-nbh-ssh-coldstart> client # [    2.195083] Linux agpgart interface v0.103
+vm-test-run-nbh-ssh-coldstart> client # [    2.197958] ACPI: bus type drm_connector registered
+vm-test-run-nbh-ssh-coldstart> client # [    2.209612] usbcore: registered new interface driver usbserial_generic
+vm-test-run-nbh-ssh-coldstart> client # [    2.212309] usbserial: USB Serial support registered for generic
+vm-test-run-nbh-ssh-coldstart> client # [    2.212635] amd_pstate: the _CPC object is not present in SBIOS or ACPI disabled
+vm-test-run-nbh-ssh-coldstart> client # [    2.216964] drop_monitor: Initializing network drop monitor service
+vm-test-run-nbh-ssh-coldstart> client # [    2.220785] NET: Registered PF_INET6 protocol family
+vm-test-run-nbh-ssh-coldstart> client # [    2.244158] Segment Routing with IPv6
+vm-test-run-nbh-ssh-coldstart> client # [    2.244525] In-situ OAM (IOAM) with IPv6
+vm-test-run-nbh-ssh-coldstart> client # [    2.252958] IPI shorthand broadcast: enabled
+vm-test-run-nbh-ssh-coldstart> client # [    2.304073] sched_clock: Marking stable (2256044018, 47818499)->(2387425152, -83562635)
+vm-test-run-nbh-ssh-coldstart> client # [    2.309705] registered taskstats version 1
+vm-test-run-nbh-ssh-coldstart> client # [    2.316703] Loading compiled-in X.509 certificates
+vm-test-run-nbh-ssh-coldstart> client # [    2.421080] Demotion targets for Node 0: null
+vm-test-run-nbh-ssh-coldstart> client # [    2.422984] Key type .fscrypt registered
+vm-test-run-nbh-ssh-coldstart> client # [    2.423133] Key type fscrypt-provisioning registered
+vm-test-run-nbh-ssh-coldstart> client # [    2.430765] ima: No TPM chip found, activating TPM-bypass!
+vm-test-run-nbh-ssh-coldstart> client # [    2.433009] ima: Allocated hash algorithm: sha1
+vm-test-run-nbh-ssh-coldstart> client # [    2.439421] ima: No architecture policies found
+vm-test-run-nbh-ssh-coldstart> client # [    2.450117] PM:   Magic number: 14:250:431
+vm-test-run-nbh-ssh-coldstart> client # [    2.459703] RAS: Correctable Errors collector initialized.
+vm-test-run-nbh-ssh-coldstart> client # [    2.510284] clk: Disabling unused clocks
+vm-test-run-nbh-ssh-coldstart> client # [    2.510759] PM: genpd: Disabling unused power domains
+vm-test-run-nbh-ssh-coldstart> client # [    2.828137] tsc: Refined TSC clocksource calibration: 2400.001 MHz
+vm-test-run-nbh-ssh-coldstart> client # [    2.828934] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x22983858435, max_idle_ns: 440795258295 ns
+vm-test-run-nbh-ssh-coldstart> client # [    3.839436] Freeing initrd memory: 29616K
+vm-test-run-nbh-ssh-coldstart> client # [    3.924939] Freeing unused decrypted memory: 2028K
+vm-test-run-nbh-ssh-coldstart> client # [    4.314637] Freeing unused kernel image (initmem) memory: 3660K
+vm-test-run-nbh-ssh-coldstart> client # [    4.315342] Write protecting the kernel read-only data: 32768k
+vm-test-run-nbh-ssh-coldstart> client # [    4.318221] Freeing unused kernel image (text/rodata gap) memory: 296K
+vm-test-run-nbh-ssh-coldstart> client # [    4.320819] Freeing unused kernel image (rodata/data gap) memory: 684K
+vm-test-run-nbh-ssh-coldstart> client # [    4.538434] x86/mm: Checked W+X mappings: passed, no W+X pages found.
+vm-test-run-nbh-ssh-coldstart> client # [    4.539749] Run /init as init process
+vm-test-run-nbh-ssh-coldstart> client # [    4.801912] systemd[1]: Inserted module 'autofs4'
+vm-test-run-nbh-ssh-coldstart> client # [    4.957503] fuse: init (API version 7.45)
+vm-test-run-nbh-ssh-coldstart> client # [    5.015671] ACPI: \_SB_.GSIG: Enabled at IRQ 22
+vm-test-run-nbh-ssh-coldstart> client # [    5.022669] ACPI: \_SB_.GSIH: Enabled at IRQ 23
+vm-test-run-nbh-ssh-coldstart> client # [    5.037561] ACPI: \_SB_.GSIE: Enabled at IRQ 20
+vm-test-run-nbh-ssh-coldstart> client # [    5.041503] ACPI: \_SB_.GSIF: Enabled at IRQ 21
+vm-test-run-nbh-ssh-coldstart> client # [    5.051141] virtiofs virtio5: discovered new tag: nix-store
+vm-test-run-nbh-ssh-coldstart> client # [    5.055221] virtiofs virtio5: virtio_fs_setup_dax: No cache capability
+vm-test-run-nbh-ssh-coldstart> client # [    5.066255] virtiofs virtio6: discovered new tag: shared
+vm-test-run-nbh-ssh-coldstart> client # [    5.067816] virtiofs virtio6: virtio_fs_setup_dax: No cache capability
+vm-test-run-nbh-ssh-coldstart> client # [    5.073033] virtiofs virtio7: discovered new tag: xchg
+vm-test-run-nbh-ssh-coldstart> client # [    5.074665] virtiofs virtio7: virtio_fs_setup_dax: No cache capability
+vm-test-run-nbh-ssh-coldstart> client # [    5.169735] systemd[1]: Successfully made /usr/ read-only.
+vm-test-run-nbh-ssh-coldstart> client # [    5.526277] systemd[1]: systemd 261.3 running in system mode (+PAM +AUDIT -SELINUX +APPARMOR +IMA +IPE +SMACK +SECCOMP +GCRYPT -GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 +KMOD +LIBCRYPTSETUP +LIBCRYPTSETUP_PLUGINS +LIBFDISK +PCRE2 +PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD +BPF_FRAMEWORK -BTF -XKBCOMMON +UTMP +LIBARCHIVE)
+vm-test-run-nbh-ssh-coldstart> client # [    5.527248] systemd[1]: Detected virtualization qemu.
+vm-test-run-nbh-ssh-coldstart> client # [    5.535026] systemd[1]: Detected architecture x86-64.
+vm-test-run-nbh-ssh-coldstart> client # [    5.535222] systemd[1]: Running in initrd.
+vm-test-run-nbh-ssh-coldstart> client # [    5.545448] systemd[1]: Initializing machine ID from random generator.
+vm-test-run-nbh-ssh-coldstart> client # [    5.550364] systemd[1]: Hostname set to <client>.
+vm-test-run-nbh-ssh-coldstart> client # [    6.717952] systemd[1]: bpf-restrict-fs: LSM BPF program attached
+vm-test-run-nbh-ssh-coldstart> client # [    7.678152] systemd[1]: Queued start job for default target Initrd Default Target.
+vm-test-run-nbh-ssh-coldstart> client # [    7.733116] systemd[1]: Created slice Slice /system/modprobe.
+vm-test-run-nbh-ssh-coldstart> client # [    7.738700] systemd[1]: Started Dispatch Password Requests to Console Directory Watch.
+vm-test-run-nbh-ssh-coldstart> client # [    7.740181] systemd[1]: Expecting device /dev/disk/by-label/nixos...
+vm-test-run-nbh-ssh-coldstart> client # [    7.741072] systemd[1]: Reached target Path Units.
+vm-test-run-nbh-ssh-coldstart> client # [    7.741448] systemd[1]: Reached target Slice Units.
+vm-test-run-nbh-ssh-coldstart> client # [    7.741768] systemd[1]: Reached target Swaps.
+vm-test-run-nbh-ssh-coldstart> client # [    7.742248] systemd[1]: Reached target Timer Units.
+vm-test-run-nbh-ssh-coldstart> client # [    7.748705] systemd[1]: Listening on D-Bus System Message Bus Socket.
+vm-test-run-nbh-ssh-coldstart> client # [    7.751335] systemd[1]: Listening on Journal Socket (/dev/log).
+vm-test-run-nbh-ssh-coldstart> client # [    7.752733] systemd[1]: Listening on Journal Sockets.
+vm-test-run-nbh-ssh-coldstart> client # [    7.754467] systemd[1]: Listening on udev Control Socket.
+vm-test-run-nbh-ssh-coldstart> client # [    7.755686] systemd[1]: Listening on udev Kernel Socket.
+vm-test-run-nbh-ssh-coldstart> client # [    7.756206] systemd[1]: Reached target Socket Units.
+vm-test-run-nbh-ssh-coldstart> client # [    7.787573] systemd[1]: Starting Create List of Static Device Nodes...
+vm-test-run-nbh-ssh-coldstart> client # [    7.817750] systemd[1]: Starting Load Kernel Module configfs...
+vm-test-run-nbh-ssh-coldstart> client # [    7.934374] systemd[1]: Starting Journal Service...
+vm-test-run-nbh-ssh-coldstart> client # [    8.052716] systemd[1]: Starting Load Kernel Modules...
+vm-test-run-nbh-ssh-coldstart> client # [    8.123464] systemd[1]: Early TPM SRK Setup skipped, unmet condition check ConditionSecurity=measured-os
+vm-test-run-nbh-ssh-coldstart> client # [    8.185752] systemd[1]: Starting Coldplug All udev Devices...
+vm-test-run-nbh-ssh-coldstart> client # [    8.342552] systemd[1]: Finished Create List of Static Device Nodes.
+vm-test-run-nbh-ssh-coldstart> client # [    8.464685] systemd[1]: modprobe@configfs.service: Deactivated successfully.
+vm-test-run-nbh-ssh-coldstart> client # [    8.510212] systemd[1]: Finished Load Kernel Module configfs.
+vm-test-run-nbh-ssh-coldstart> client # [    8.572774] systemd[1]: Kernel Configuration File System skipped, unmet condition check ConditionPathExists=/sys/kernel/config
+vm-test-run-nbh-ssh-coldstart> client # [    8.630760] systemd[1]: Starting Create Static Device Nodes in /dev gracefully...
+vm-test-run-nbh-ssh-coldstart> client # [    8.723814] device-mapper: core: CONFIG_IMA_DISABLE_HTABLE is disabled. Duplicate IMA measurements will not be recorded in the IMA log.
+vm-test-run-nbh-ssh-coldstart> client # [    8.741102] device-mapper: ioctl: 4.50.0-ioctl (2025-04-28) initialised: dm-devel@lists.linux.dev
+vm-test-run-nbh-ssh-coldstart> client # [    9.036682] systemd[1]: Finished Load Kernel Modules.
+vm-test-run-nbh-ssh-coldstart> client # [    9.109941] systemd[1]: Starting Apply Kernel Variables...
+vm-test-run-nbh-ssh-coldstart> client # [    9.295187] systemd[1]: Finished Create Static Device Nodes in /dev gracefully.
+vm-test-run-nbh-ssh-coldstart> client # [    9.381731] systemd[1]: Starting Create Static Device Nodes in /dev...
+vm-test-run-nbh-ssh-coldstart> client # [    9.401717] systemd-journald[66]: Collecting audit messages is disabled.
+vm-test-run-nbh-ssh-coldstart> client # [    9.706130] systemd[1]: Finished Apply Kernel Variables.
+vm-test-run-nbh-ssh-coldstart> client # [    9.895285] systemd[1]: Finished Create Static Device Nodes in /dev.
+vm-test-run-nbh-ssh-coldstart> client # [    9.905664] systemd[1]: Reached target Preparation for Local File Systems.
+vm-test-run-nbh-ssh-coldstart> client # [    9.910538] systemd[1]: Reached target Local File Systems.
+vm-test-run-nbh-ssh-coldstart> client # [    9.972797] systemd[1]: Starting Rule-based Manager for Device Events and Files...
+vm-test-run-nbh-ssh-coldstart> client # [   10.985153] systemd[1]: Started Journal Service.
+vm-test-run-nbh-ssh-coldstart> client # [   10.962323] systemd-modules-load[67]: Inserted module 'dm_mod'
+vm-test-run-nbh-ssh-coldstart> client # [   11.033818] systemd-modules-load[67]: Inserted module 'virtio_balloon'
+vm-test-run-nbh-ssh-coldstart> client # [   11.054783] systemd-modules-load[67]: Inserted module 'virtio_gpu'
+vm-test-run-nbh-ssh-coldstart> client # [   11.090514] systemd[1]: Starting Create System Files and Directories...
+vm-test-run-nbh-ssh-coldstart> client # [   11.158674] systemd-udevd[73]: Using default interface naming scheme 'v261'.
+vm-test-run-nbh-ssh-coldstart> client # [   11.650533] systemd[1]: Finished Create System Files and Directories.
+vm-test-run-nbh-ssh-coldstart> client # [   11.943634] systemd[1]: Started Rule-based Manager for Device Events and Files.

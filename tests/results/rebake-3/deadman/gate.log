@@ -1,0 +1,10 @@
+nbh-gate: 2026-10-21T11:44:32.512150Z aws account 845087560967 matches --aws-account, profile nbh-gate
+nbh-gate: 2026-10-21T11:44:32.514101Z machines file: builder available=true
+nbh-gate: 2026-10-21T11:44:33.074982Z launch grok-bot-vm-145538761-1792583072-1
+nbh-gate: 2026-10-21T11:44:35.159498Z launched i-053179be49d371a56 m7a.large in eu-north-1c at spot $0.0144/h
+nbh-gate: 2026-10-21T11:44:35.159554Z launched grok-bot-vm-145538761-1792583072-1 as i-053179be49d371a56
+nbh-gate: 2026-10-21T11:45:05.624118Z probe grok-bot-vm-145538761-1792583072-1 ok, 13.53.172.192:22 is listening
+nbh-gate: 2026-10-21T11:45:05.624337Z splice connection 1 to 13.53.172.192:22
+nbh-gate: 2026-10-21T11:45:08.231809Z splice connection 2 to 13.53.172.192:22
+nbh-gate: 2026-10-21T11:45:11.047657Z splice connection 3 to 13.53.172.192:22
+nbh-gate: 2026-10-21T11:45:13.347796Z splice connection 4 to 13.53.172.192:22
