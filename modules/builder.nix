@@ -8,6 +8,7 @@ let
   cfg = config.services.nbh.builder;
   keys = "/run/nbh-ssh";
   userDataFields = lib.importJSON ../gate/user-data-fields.json;
+  cache = import ../nix/cache.nix;
   field =
     name:
     if lib.elem name userDataFields then
@@ -42,6 +43,10 @@ in
   config = lib.mkIf cfg.enable {
     assertions = [
       {
+        assertion = lib.all (s: lib.any (u: lib.hasPrefix u s) cache.upstream) config.nix.settings.substituters;
+        message = "services.nbh.builder: substituters must be install.determinate.systems or cache.nixos.org only. Any other cache's key can sign any path the builder uploads to ours.";
+      }
+      {
         assertion = !lib.elem "kvm" config.nix.settings.system-features;
         message = "services.nbh.builder: no kvm in nix.settings.system-features. Non-metal EC2 instances have no /dev/kvm, so VM tests must stay local.";
       }
@@ -54,6 +59,7 @@ in
     };
     users.groups.nbh = { };
     nix.settings.trusted-users = [ "nbh" ];
+    environment.systemPackages = [ (pkgs.callPackage ../nix/nbh-cache.nix { }) ];
     services.openssh = {
       enable = true;
       openFirewall = true;
@@ -146,17 +152,8 @@ in
       substituters = [
         "https://install.determinate.systems?priority=20"
         "https://cache.nixos.org?priority=40"
-        "https://nix-community.cachix.org?priority=41"
-        "https://numtide.cachix.org?priority=43"
-        "https://cache.nixos-cuda.org?priority=45"
       ];
-      trusted-public-keys = [
-        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-        "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
-        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-        "numtide.cachix.org-1:2ps1kLBUWjxIneOy1Ik6cQjb41X0iXVXeHigGmycPPE="
-        "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
-      ];
+      trusted-public-keys = cache.upstreamKeys ++ [ cache.publicKey ];
       # Matches the client hosts, so __noChroot derivations build remotely too.
       sandbox = "relaxed";
       max-jobs = "auto";
