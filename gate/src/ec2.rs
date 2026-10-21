@@ -1,9 +1,10 @@
-//! Five EC2 Query API calls, signed here (SigV4) because the AWS SDK's EC2
+//! Five EC2 Query API calls and STS GetCallerIdentity, signed here (SigV4) because the AWS SDK's EC2
 //! crate alone needs more than 3.4 GB of memory to build.
 
 use std::collections::HashMap;
 use std::future::Future;
 use std::net::{IpAddr, SocketAddr};
+use std::path::Path;
 use std::time::{Duration, SystemTime};
 
 use base64ct::{Base64, Encoding};
@@ -19,6 +20,7 @@ const TAG_MANAGED: &str = "nbh:managed";
 const TAG_OWNER: &str = "nbh:owner";
 const TAG_KEY: &str = "nbh:key";
 const API_VERSION: &str = "2016-11-15";
+const STS_VERSION: &str = "2011-06-15";
 
 #[derive(Clone)]
 pub struct Credentials {
@@ -28,23 +30,18 @@ pub struct Credentials {
 }
 
 impl Credentials {
-    pub fn from_env() -> Result<Self, Error> {
-        let env = |k| std::env::var(k).ok().filter(|v: &String| !v.is_empty());
-        if let (Some(access_key), Some(secret_key)) = (env("AWS_ACCESS_KEY_ID"), env("AWS_SECRET_ACCESS_KEY")) {
-            return Ok(Credentials { access_key, secret_key, session_token: env("AWS_SESSION_TOKEN") });
-        }
-        let file = env("AWS_SHARED_CREDENTIALS_FILE")
-            .or_else(|| env("HOME").map(|h| format!("{h}/.aws/credentials")))
-            .ok_or("no AWS credentials: set AWS_SHARED_CREDENTIALS_FILE or AWS_ACCESS_KEY_ID")?;
-        let profile = env("AWS_PROFILE").unwrap_or_else(|| "default".into());
-        let text = std::fs::read_to_string(&file).map_err(|e| format!("{file}: {e}"))?;
-        let section = parse_ini_section(&text, &profile);
+    /// Only this file and profile. The environment and ~/.aws are never read,
+    /// so an ambient key of another account cannot reach the gate.
+    pub fn from_file(file: &Path, profile: &str) -> Result<Self, Error> {
+        let shown = file.display();
+        let text = std::fs::read_to_string(file).map_err(|e| format!("{shown}: {e}"))?;
+        let section = parse_ini_section(&text, profile);
         let get = |k: &str| section.get(k).cloned();
         match (get("aws_access_key_id"), get("aws_secret_access_key")) {
             (Some(access_key), Some(secret_key)) => {
                 Ok(Credentials { access_key, secret_key, session_token: get("aws_session_token") })
             }
-            _ => Err(format!("{file}: profile [{profile}] has no access key").into()),
+            _ => Err(format!("{shown}: profile [{profile}] has no access key").into()),
         }
     }
 }
@@ -90,12 +87,22 @@ impl Api {
         Api { region, creds, agent }
     }
 
-    async fn call(&self, action: &str, mut params: Vec<(String, String)>) -> Result<String, ApiError> {
+    async fn call(&self, action: &str, params: Vec<(String, String)>) -> Result<String, ApiError> {
+        self.post("ec2", API_VERSION, action, params).await
+    }
+
+    async fn post(
+        &self,
+        service: &'static str,
+        version: &str,
+        action: &str,
+        mut params: Vec<(String, String)>,
+    ) -> Result<String, ApiError> {
         params.insert(0, ("Action".into(), action.into()));
-        params.insert(1, ("Version".into(), API_VERSION.into()));
+        params.insert(1, ("Version".into(), version.into()));
         let body = form(&params);
-        let host = format!("ec2.{}.amazonaws.com", self.region);
-        let headers = sign(&self.creds, &self.region, &host, &body, SystemTime::now());
+        let host = format!("{service}.{}.amazonaws.com", self.region);
+        let headers = sign(&self.creds, &self.region, service, &host, &body, SystemTime::now());
         let api = self.clone();
         let response = tokio::task::spawn_blocking(move || {
             let mut req = api.agent.post(format!("https://{host}/"));
@@ -121,6 +128,65 @@ impl Api {
         let shown = code.as_deref().unwrap_or("no code");
         Err(ApiError(code.clone(), format!("{action}: {status} {shown}: {message}")))
     }
+
+    /// GetCallerIdentity needs no IAM permission, so the gate's policy stays
+    /// EC2 only.
+    pub async fn caller_account(&self) -> Result<AccountId, Error> {
+        let xml = self.post("sts", STS_VERSION, "GetCallerIdentity", Vec::new()).await?;
+        caller_account(&xml)
+    }
+}
+
+fn caller_account(xml: &str) -> Result<AccountId, Error> {
+    let doc = parse(xml)?;
+    let account = doc.descendants().find(|n| n.has_tag_name("Account")).and_then(|n| n.text());
+    Ok(account.ok_or("GetCallerIdentity returned no Account")?.trim().parse()?)
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct AccountId(String);
+
+impl std::str::FromStr for AccountId {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, String> {
+        match s.len() == 12 && s.bytes().all(|b| b.is_ascii_digit()) {
+            true => Ok(AccountId(s.to_string())),
+            false => Err(format!("{s:?} is not a 12 digit AWS account id")),
+        }
+    }
+}
+
+impl std::fmt::Display for AccountId {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        f.write_str(&self.0)
+    }
+}
+
+#[derive(Debug, PartialEq)]
+pub struct WrongAccount {
+    pub expected: AccountId,
+    pub actual: AccountId,
+}
+
+impl std::fmt::Display for WrongAccount {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let WrongAccount { expected, actual } = self;
+        write!(f, "AWS credentials belong to account {actual}, not --aws-account {expected}; refusing to start")
+    }
+}
+
+impl std::error::Error for WrongAccount {}
+
+pub async fn guard_account<F>(expected: &AccountId, whoami: F) -> Result<AccountId, Error>
+where
+    F: Future<Output = Result<AccountId, Error>>,
+{
+    let actual = whoami.await?;
+    if actual != *expected {
+        return Err(Box::new(WrongAccount { expected: expected.clone(), actual }));
+    }
+    Ok(actual)
 }
 
 /// RFC 3986 encoding, as SigV4 requires for form bodies.
@@ -147,7 +213,14 @@ fn hmac(key: &[u8], data: &str) -> Vec<u8> {
     mac.finalize().into_bytes().to_vec()
 }
 
-fn sign(creds: &Credentials, region: &str, host: &str, body: &str, now: SystemTime) -> Vec<(String, String)> {
+fn sign(
+    creds: &Credentials,
+    region: &str,
+    service: &str,
+    host: &str,
+    body: &str,
+    now: SystemTime,
+) -> Vec<(String, String)> {
     let amz_date: String =
         humantime::format_rfc3339_seconds(now).to_string().chars().filter(|c| *c != '-' && *c != ':').collect();
     let date = &amz_date[..8];
@@ -163,10 +236,10 @@ fn sign(creds: &Credentials, region: &str, host: &str, body: &str, now: SystemTi
     let signed = signed.join(";");
     let canonical_headers: String = headers.iter().map(|(k, v)| format!("{k}:{v}\n")).collect();
     let canonical = format!("POST\n/\n\n{canonical_headers}\n{signed}\n{}", hex(&Sha256::digest(body)));
-    let scope = format!("{date}/{region}/ec2/aws4_request");
+    let scope = format!("{date}/{region}/{service}/aws4_request");
     let to_sign = format!("AWS4-HMAC-SHA256\n{amz_date}\n{scope}\n{}", hex(&Sha256::digest(&canonical)));
     let mut key = hmac(format!("AWS4{}", creds.secret_key).as_bytes(), date);
-    for part in [region, "ec2", "aws4_request"] {
+    for part in [region, service, "aws4_request"] {
         key = hmac(&key, part);
     }
     let signature = hex(&hmac(&key, &to_sign));
@@ -538,6 +611,60 @@ mod tests {
         assert_eq!((p["aws_access_key_id"].as_str(), p["aws_secret_access_key"].as_str()), ("AK", "SK"));
     }
 
+    #[test]
+    fn credentials_read_only_the_given_file_and_profile() {
+        let dir = crate::testutil::TempDir::new();
+        let file = dir.path().join("creds");
+        std::fs::write(&file, "[default]\naws_access_key_id = A\naws_secret_access_key = B\n").unwrap();
+        let err = Credentials::from_file(&file, "nbh-gate").err().unwrap().to_string();
+        assert!(err.contains("profile [nbh-gate] has no access key"), "{err}");
+        assert!(Credentials::from_file(&dir.path().join("missing"), "default").is_err());
+    }
+
+    fn id(v: &str) -> AccountId {
+        v.parse().unwrap()
+    }
+
+    #[test]
+    fn account_id_is_twelve_digits() {
+        assert_eq!(id("845087560967").to_string(), "845087560967");
+        for bad in ["84508756096", "8450875609671", "84508756096x", ""] {
+            assert!(bad.parse::<AccountId>().is_err(), "{bad:?} accepted");
+        }
+    }
+
+    #[test]
+    fn caller_account_reads_the_sts_response() {
+        let xml = r#"<GetCallerIdentityResponse xmlns="https://sts.amazonaws.com/doc/2011-06-15/">
+          <GetCallerIdentityResult><Arn>arn:aws:iam::845087560967:user/nbh-gate</Arn>
+          <UserId>AIDAEXAMPLE</UserId><Account>845087560967</Account></GetCallerIdentityResult>
+          <ResponseMetadata><RequestId>r</RequestId></ResponseMetadata></GetCallerIdentityResponse>"#;
+        assert_eq!(caller_account(xml).unwrap(), id("845087560967"));
+        assert!(caller_account("<GetCallerIdentityResponse/>").is_err());
+    }
+
+    #[tokio::test]
+    async fn guard_refuses_credentials_of_another_account() {
+        let mine = id("845087560967");
+        let err = guard_account(&mine, async { Ok::<_, Error>(id("111122223333")) }).await.unwrap_err();
+        let wrong = err.downcast_ref::<WrongAccount>().expect("a WrongAccount error");
+        assert_eq!(wrong, &WrongAccount { expected: mine.clone(), actual: id("111122223333") });
+        let ok = guard_account(&mine, async { Ok::<_, Error>(id("845087560967")) }).await;
+        assert_eq!(ok.unwrap(), mine);
+        let down = guard_account(&mine, async { Err::<AccountId, Error>("sts unreachable".into()) }).await;
+        assert!(down.unwrap_err().downcast_ref::<WrongAccount>().is_none());
+    }
+
+    #[test]
+    fn sts_signature_scope_names_the_service() {
+        let creds = Credentials { access_key: s("AKID"), secret_key: s("SK"), session_token: None };
+        let now = humantime::parse_rfc3339("2026-10-21T00:00:00Z").unwrap();
+        let headers =
+            sign(&creds, "eu-north-1", "sts", "sts.eu-north-1.amazonaws.com", "Action=GetCallerIdentity", now);
+        let auth = &headers.iter().find(|(k, _)| k == "authorization").unwrap().1;
+        assert!(auth.contains("Credential=AKID/20261021/eu-north-1/sts/aws4_request"), "{auth}");
+    }
+
     /// Expected value computed by botocore's SigV4Auth for the same request.
     #[test]
     fn signature_matches_botocore() {
@@ -548,7 +675,7 @@ mod tests {
         };
         let now = humantime::parse_rfc3339("2026-10-20T22:10:41Z").unwrap();
         let body = "Action=DescribeRegions&Version=2016-11-15";
-        let headers = sign(&creds, "us-east-1", "ec2.us-east-1.amazonaws.com", body, now);
+        let headers = sign(&creds, "us-east-1", "ec2", "ec2.us-east-1.amazonaws.com", body, now);
         let auth = headers.iter().find(|(k, _)| k == "authorization").map(|(_, v)| v.as_str());
         assert_eq!(
             auth,

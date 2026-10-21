@@ -31,8 +31,8 @@ build() {
     --builders "$entry"
 }
 
-AWS_SHARED_CREDENTIALS_FILE=/home/box/secrets/nbh-gate.credentials AWS_PROFILE=nbh-gate \
-  "$gate" run --backend aws --pki "$pki" --owner "${NBH_OWNER:-box-smoke}" \
+"$gate" run --backend aws --aws-account 845087560967 \
+  --credentials-file /home/box/secrets/nbh-gate.credentials --profile nbh-gate --pki "$pki" --owner "${NBH_OWNER:-box-smoke}" \
   --instance-types "${NBH_TYPES:-m7a.large,c7a.large}" --max-price "${NBH_MAX_PRICE:-0.05}" \
   --listen 127.0.0.1:2222 --machines-file "$out/machines" --machines-entry "$entry" >"$out/gate.log" 2>&1 &
 gpid=$!

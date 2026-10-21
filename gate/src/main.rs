@@ -37,6 +37,10 @@ enum Backend {
     Fake,
 }
 
+/// EX_CONFIG. The NixOS unit does not restart on it, since a key of the wrong
+/// account stays wrong.
+const EXIT_WRONG_ACCOUNT: i32 = 78;
+
 fn duration(s: &str) -> std::result::Result<Duration, humantime::DurationError> {
     humantime::parse_duration(s)
 }
@@ -63,6 +67,17 @@ struct RunArgs {
     /// Fake backend: every call fails, like an unreachable region.
     #[arg(long)]
     fake_down: bool,
+    /// AWS account the credentials must belong to, checked with STS before
+    /// anything launches. Required with --backend aws.
+    #[arg(long)]
+    aws_account: Option<ec2::AccountId>,
+    /// AWS shared credentials file. The only source of AWS credentials: the
+    /// environment and ~/.aws are never read. Required with --backend aws.
+    #[arg(long)]
+    credentials_file: Option<PathBuf>,
+    /// Profile in --credentials-file.
+    #[arg(long, default_value = "nbh-gate")]
+    profile: String,
     #[arg(long, default_value = "eu-north-1")]
     region: String,
     #[arg(long, default_value = "nbh-builder")]
@@ -141,8 +156,20 @@ async fn run(a: Box<RunArgs>) -> Result<()> {
                 gate::run(opt, Arc::new(fake), listener).await;
             }
             Backend::Aws => {
+                let (Some(expected), Some(file)) = (&a.aws_account, &a.credentials_file) else {
+                    return Err("--backend aws needs --aws-account and --credentials-file".into());
+                };
+                let api = ec2::Api::new(a.region, ec2::Credentials::from_file(file, &a.profile)?);
+                match ec2::guard_account(expected, api.caller_account()).await {
+                    Ok(account) => log!("aws account {account} matches --aws-account, profile {}", a.profile),
+                    Err(e) if e.is::<ec2::WrongAccount>() => {
+                        log!("{e}");
+                        std::process::exit(EXIT_WRONG_ACCOUNT);
+                    }
+                    Err(e) => return Err(format!("aws account check: {e}").into()),
+                }
                 let ec2 = ec2::Ec2 {
-                    api: ec2::Api::new(a.region, ec2::Credentials::from_env()?),
+                    api,
                     launch_template: a.launch_template,
                     instance_types: a.instance_types,
                     owner: a.owner.unwrap_or(host),
@@ -186,6 +213,13 @@ mod tests {
         );
         let set = run_args(&["--idle-grace", "15s"]).fleet("k".into());
         assert_eq!(set.idle_grace, Duration::from_secs(15));
+    }
+
+    #[test]
+    fn aws_account_is_validated_at_the_cli() {
+        assert!(run_args(&["--aws-account", "845087560967"]).aws_account.is_some());
+        let argv = ["nbh-gate", "run", "--machines-entry", "e", "--aws-account", "8450875609"];
+        assert!(Cli::try_parse_from(argv).is_err());
     }
 
     #[test]

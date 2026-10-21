@@ -1,0 +1,10 @@
+test result: ok. 53 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.21s
+    Finished `dev` profile [unoptimized] target(s) in 1.23s
+FMT_OK
+== bite: guard check disabled (if false && actual != *expected)
+1
+test ec2::tests::guard_refuses_credentials_of_another_account ... FAILED
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 52 filtered out; finished in 0.00s
+== reverted
+0
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 52 filtered out; finished in 0.00s

@@ -1,0 +1,21 @@
+# Live STS checks, 2026-10-21T02:38:45+02:00, debug build of the working tree. Only GetCallerIdentity and DescribeInstances are called; nothing connects to :2299, so nothing launches.
+== 1. right account, ambient AWS_* env set to a bogus key (must be ignored)
+nbh-gate: 2026-10-21T00:38:45.734547Z aws account 845087560967 matches --aws-account, profile nbh-gate
+nbh-gate: 2026-10-21T00:38:45.745073Z machines file: builder available=true
+exit=124 (124 = still running at timeout, so it started)
+== 2. bogus expected account
+nbh-gate: 2026-10-21T00:38:51.734559Z AWS credentials belong to account 845087560967, not --aws-account 111122223333; refusing to start
+exit=78
+== 3. malformed account id
+error: invalid value '8450875609' for '--aws-account <AWS_ACCOUNT>': "8450875609" is not a 12 digit AWS account id
+
+exit=2
+== 4. no --aws-account
+Error: "--backend aws needs --aws-account and --credentials-file"
+exit=1
+== 5. no --credentials-file, env points at the right file (no fallback to env or ~/.aws)
+Error: "--backend aws needs --aws-account and --credentials-file"
+exit=1
+== 6. profile absent from the gate file
+Error: "/home/box/secrets/nbh-gate.credentials: profile [grok-bot] has no access key"
+exit=1
