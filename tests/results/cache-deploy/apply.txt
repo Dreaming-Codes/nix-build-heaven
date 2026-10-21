@@ -1,0 +1,81 @@
+warning: Git tree '/workspace/nbh/nbh-cache-design' has uncommitted changes
+aws_iam_user.writer: Creating...
+aws_iam_user.gc: Creating...
+aws_iam_user.DreamingDesk: Creating...
+aws_iam_user.DreamingBlade: Creating...
+aws_s3_bucket.cache: Creating...
+aws_iam_user.DreamingBlade: Creation complete after 0s [id=nbh-cache-DreamingBlade]
+aws_iam_access_key.DreamingBlade: Creating...
+aws_iam_user_policy.DreamingBlade: Creating...
+aws_iam_user.writer: Creation complete after 0s [id=nbh-cache-writer]
+aws_iam_user.DreamingDesk: Creation complete after 0s [id=nbh-cache-DreamingDesk]
+aws_iam_access_key.writer: Creating...
+aws_iam_user_policy.writer: Creating...
+aws_iam_access_key.DreamingDesk: Creating...
+aws_iam_user_policy.DreamingDesk: Creating...
+aws_iam_user.gc: Creation complete after 0s [id=nbh-cache-gc]
+aws_iam_access_key.gc: Creating...
+aws_iam_user_policy.gc: Creating...
+aws_iam_access_key.DreamingDesk: Creation complete after 0s [id=AKIA<redacted>]
+local_sensitive_file.cache_DreamingDesk: Creating...
+aws_iam_access_key.DreamingBlade: Creation complete after 0s [id=AKIA<redacted>]
+aws_iam_access_key.writer: Creation complete after 0s [id=AKIA<redacted>]
+local_sensitive_file.cache_DreamingDesk: Creation complete after 0s [id=9b7b40d5e341ad9860329c8ecd2c7b5031b58fda]
+local_sensitive_file.cache_DreamingBlade: Creating...
+local_sensitive_file.cache_DreamingBlade: Creation complete after 0s [id=4774e97c719ee776d7890ebf926448fe0212d69c]
+local_sensitive_file.cache_writer: Creating...
+local_sensitive_file.cache_writer: Creation complete after 0s [id=54fd9dcf4d015f846b93174269b1a26751a7630c]
+aws_iam_access_key.gc: Creation complete after 0s [id=AKIA<redacted>]
+local_sensitive_file.cache_gc: Creating...
+local_sensitive_file.cache_gc: Creation complete after 0s [id=499a12b11081a5f381f6b773d2ae2731314b3ac5]
+aws_iam_user_policy.gc: Creation complete after 0s [id=nbh-cache-gc:nbh-cache-gc-s3]
+aws_iam_user_policy.writer: Creation complete after 0s [id=nbh-cache-writer:nbh-cache-writer-s3]
+aws_iam_user_policy.DreamingBlade: Creation complete after 0s [id=nbh-cache-DreamingBlade:nbh-cache-DreamingBlade-s3]
+aws_iam_user_policy.DreamingDesk: Creation complete after 0s [id=nbh-cache-DreamingDesk:nbh-cache-DreamingDesk-s3]
+aws_s3_bucket.cache: Creation complete after 3s [id=nbh-cache-845087560967]
+aws_s3_bucket_ownership_controls.cache: Creating...
+aws_s3_bucket_server_side_encryption_configuration.cache: Creating...
+aws_s3_bucket_public_access_block.cache: Creating...
+aws_s3_object.cache_info: Creating...
+aws_s3_object.cache_info: Creation complete after 1s [id=nbh-cache-845087560967/nix-cache-info]
+aws_s3_bucket_server_side_encryption_configuration.cache: Creation complete after 1s [id=nbh-cache-845087560967]
+aws_s3_bucket_public_access_block.cache: Creation complete after 1s [id=nbh-cache-845087560967]
+aws_s3_bucket_policy.cache: Creating...
+aws_s3_bucket_ownership_controls.cache: Creation complete after 1s [id=nbh-cache-845087560967]
+aws_s3_bucket_policy.cache: Creation complete after 0s [id=nbh-cache-845087560967]
+
+Warning: Applied changes may be incomplete
+
+The plan was created with the -target or the -exclude option in effect, so
+some changes requested in the configuration may have been ignored and the
+output values may not be fully updated. Run the following command to verify
+that no other changes are pending:
+    tofu plan
+	
+Note that the -target and -exclude options are not suitable for routine use,
+and are provided only for exceptional situations such as recovering from
+errors or mistakes, or when OpenTofu specifically suggests to use it as part
+of an error message.
+
+Apply complete! Resources: 22 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+ami_id = "ami-0dbc5c7676643380c"
+cache_bucket_arn = "arn:aws:s3:::nbh-cache-845087560967"
+cache_user_arns = {
+  "DreamingBlade" = "arn:aws:iam::845087560967:user/nbh-cache-DreamingBlade"
+  "DreamingDesk" = "arn:aws:iam::845087560967:user/nbh-cache-DreamingDesk"
+  "gc" = "arn:aws:iam::845087560967:user/nbh-cache-gc"
+  "writer" = "arn:aws:iam::845087560967:user/nbh-cache-writer"
+}
+gate_access_key_id = "AKIA<redacted>"
+gate_user_arn = "arn:aws:iam::845087560967:user/nbh-gate"
+launch_template_id = "lt-0bb3984ee8f600d51"
+security_group_id = "sg-0afedea8b7e30e3ce"
+subnet_ids = tolist([
+  "subnet-0ebcf4f2119aa3c62",
+  "subnet-0f9ca7385475d06a6",
+  "subnet-00478b20dc90a486b",
+])
+trail_arn = "arn:aws:cloudtrail:eu-north-1:845087560967:trail/account-audit"
