@@ -26,6 +26,7 @@
     {
       packages.${system} = {
         gate = pkgs.callPackage ./nix/gate.nix { };
+        nbh-cache = pkgs.callPackage ./nix/nbh-cache.nix { };
         determinateNix = determinate.inputs.nix.packages.${system}.default;
         ami = self.nixosConfigurations.builder-ami.config.system.build.amazonImage;
         infra = terranix.lib.terranixConfiguration {
@@ -49,7 +50,7 @@
       };
 
       checks.${system} = {
-        inherit (self.packages.${system}) gate;
+        inherit (self.packages.${system}) gate nbh-cache;
         builder-image = import ./tests/builder-image.nix { inherit self pkgs; };
         ssh-coldstart = import ./tests/ssh-coldstart.nix { inherit self pkgs; };
       };
