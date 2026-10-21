@@ -1,8 +1,11 @@
 # Nix Build Heaven
 
+> [!WARNING]
+> This is an experiment in active development. Expect breaking changes, rough edges and missing docs. Don't rely on it for anything important yet.
+
 One elastic AWS Spot builder per build session for Dreaming-Codes/nixos. `nh os switch` stays the same command. When a rebuild misses the binary caches, the nix-daemon's ssh-ng connection to `nbh-builder` reaches a local gate, which launches a builder and holds the connection, silent, while it boots. ssh waits for the server banner with no deadline, so the first attempt is spliced through once the builder's sshd answers. The gate terminates the builder when the session goes idle. When AWS is unreachable the gate empties the machines file and closes held connections, and Nix builds locally.
 
-See `/workspace/nbh/DESIGN.md` for the design, `SSH-NG.md` for why ssh-ng replaced grpc, and `TRAIL.md` for what was checked and how.
+See `SSH-NG.md` for why ssh-ng replaced grpc, and `TRAIL.md` for what was checked and how.
 
 ## Layout
 
