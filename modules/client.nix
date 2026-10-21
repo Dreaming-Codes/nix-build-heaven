@@ -197,6 +197,7 @@ in
               (lib.getExe cfg.gate.package)
               "run"
               "--listen" "127.0.0.1:${toString cfg.port}"
+              "--pki" cfg.pkiDir
               "--machines-file" cfg.machinesFile
               "--machines-entry" entry
             ]
