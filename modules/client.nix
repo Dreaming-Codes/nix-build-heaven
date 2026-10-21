@@ -8,6 +8,8 @@
 }:
 let
   cfg = config.services.nbh;
+  cache = import ../nix/cache.nix;
+  cc = cfg.cache;
   features = lib.concatStringsSep "," cfg.features;
   # The host key column stays "-": ssh_config below trusts the gate's host CA
   # for nbh-builder, and a pinned key could not change per boot.
@@ -42,6 +44,41 @@ in
       type = lib.types.str;
       readOnly = true;
       default = entry;
+    };
+    cache = {
+      enable = lib.mkEnableOption "the Nix Build Heaven S3 cache as a substituter, with this host's roots kept in it";
+      host = lib.mkOption {
+        type = lib.types.enum cache.hosts;
+        default = config.networking.hostName;
+        description = "Host name of the read key, and of the roots/<host> object only that key may write.";
+      };
+      credentialsFile = lib.mkOption {
+        type = lib.types.str;
+        description = "AWS shared credentials file with the [nbh-cache-<host>] profile, readable by root only.";
+      };
+      priority = lib.mkOption {
+        type = lib.types.int;
+        default = cache.priority;
+        description = "Substituter priority. cache.nixos.org is 40, so upstream wins for paths both serve.";
+      };
+      publicKey = lib.mkOption {
+        type = lib.types.str;
+        default = cache.publicKey;
+      };
+      url = lib.mkOption {
+        type = lib.types.str;
+        readOnly = true;
+        default = "s3://${cache.bucket}?region=${cache.region}&profile=nbh-cache-${cc.host}&priority=${toString cc.priority}";
+      };
+      roots = lib.mkOption {
+        type = lib.types.bool;
+        default = true;
+        description = "Write this host's system closure to roots/<host> whenever the system profile changes, so the cache GC keeps it.";
+      };
+      package = lib.mkOption {
+        type = lib.types.package;
+        default = self.packages.${pkgs.stdenv.hostPlatform.system}.nbh-cache;
+      };
     };
     gate = {
       enable = lib.mkOption {
@@ -80,7 +117,46 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable (lib.mkMerge [
+  config = lib.mkMerge [
+    (lib.mkIf cc.enable (lib.mkMerge [
+      {
+        nix.settings.extra-substituters = [ cc.url ];
+        nix.settings.extra-trusted-public-keys = [ cc.publicKey ];
+        systemd.services.nix-daemon.environment.AWS_SHARED_CREDENTIALS_FILE = cc.credentialsFile;
+      }
+      (lib.mkIf cc.roots {
+        systemd.services.nbh-cache-roots = {
+          description = "Write this host's system closure to the Nix Build Heaven cache roots";
+          wantedBy = [ "multi-user.target" ];
+          after = [ "network-online.target" ];
+          wants = [ "network-online.target" ];
+          path = [ config.nix.package ];
+          serviceConfig = {
+            Type = "oneshot";
+            ExecStart = lib.escapeShellArgs [
+              (lib.getExe cc.package)
+              "--bucket" cache.bucket
+              "--region" cache.region
+              "--aws-account" cache.account
+              "--credentials-file" cc.credentialsFile
+              "--profile" "nbh-cache-${cc.host}"
+              "roots"
+              "--host" cc.host
+              "/nix/var/nix/profiles/system"
+              "/run/current-system"
+              "/run/booted-system"
+            ];
+            Restart = "on-failure";
+            RestartSec = 60;
+          };
+        };
+        systemd.paths.nbh-cache-roots = {
+          wantedBy = [ "multi-user.target" ];
+          pathConfig.PathChanged = "/nix/var/nix/profiles";
+        };
+      })
+    ]))
+    (lib.mkIf cfg.enable (lib.mkMerge [
     {
       assertions = [
         {
@@ -142,5 +218,6 @@ in
         };
       };
     })
-  ]);
+  ]))
+  ];
 }
