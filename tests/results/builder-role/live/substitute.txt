@@ -1,0 +1,6 @@
+box store has it before: no
+copying 1 paths...
+copying path '/nix/store/6rpr6hl1l3qq70nxl2pl39apxxwxnz31-nbh-proof-role-role-1792556050' from 's3://nbh-cache-845087560967?profile=nbh-cache-DreamingBlade&region=eu-north-1'...
+copy exit=0
+/nix/store/6rpr6hl1l3qq70nxl2pl39apxxwxnz31-nbh-proof-role-role-1792556050	nbh-cache-845087560967-1:oDLZ33Drmb26iDjdugNz0x3BfXukAOjKqJvEIb9RYcwF4sTovs+ao12Cefth3FafYNMtO4ZTZI2wixC1ogxfCw==
+content: role-1792556050

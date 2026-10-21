@@ -154,7 +154,9 @@ Settled by Lorenzo on 2026-10-21.
 Resources (measured, `tests/results/cache-deploy/apply.txt`, `bucket-settings.txt`):
 - Bucket `arn:aws:s3:::nbh-cache-845087560967`. SSE-S3 (AES256), all four public access blocks on, BucketOwnerEnforced, TLS-only bucket policy, versioning never enabled, no lifecycle rule. `nix-cache-info` with priority 50 is a tofu object.
 - IAM users `nbh-cache-DreamingDesk` and `nbh-cache-DreamingBlade`. Each can list, get, and put only `roots/<itself>`.
-- IAM user `nbh-cache-writer`. It can list, get, and put `*.narinfo`, `*.ls` and `nar/*`. An explicit deny stops it writing `roots/*` and `nix-cache-info`. It has no delete.
+- IAM role `nbh-builder` with instance profile `nbh-builder`, on launch template version 4 (measured, `tests/results/builder-role/lt-and-role.txt`). It trusts ec2.amazonaws.com with `aws:SourceAccount` 845087560967. Its only policy lists the bucket and gets and puts `*.narinfo` and `nar/*`. Get is there because push skips existing nars and refreshes existing narinfos. An explicit deny stops it writing `roots/*` and `nix-cache-info`. It has no delete. IMDSv2 is required with hop limit 1.
+- `nbh-gate` may pass only that role, and only to ec2.amazonaws.com, through the managed policy `nbh-gate-pass-builder-role`. Its inline policy is at the 2048-byte limit, so the grant could not go there (measured).
+- IAM user `nbh-cache-signer`, which replaced `nbh-cache-writer`. Signing on the box is the only push-side job left off the builder, and it only rewrites narinfos. So the signer can list, get `*.narinfo` and `nar/*`, and put `*.narinfo`. It cannot put nars, write roots or `nix-cache-info`, or delete.
 - IAM user `nbh-cache-gc`. It can list, get, and delete `*.narinfo`, `*.ls` and `nar/*`. It cannot delete roots or `nix-cache-info` and cannot write.
 - Signing key `nbh-cache-845087560967-1`. Its public half is in `nix/cache.nix`.
 
@@ -163,15 +165,15 @@ Resources (measured, `tests/results/cache-deploy/apply.txt`, `bucket-settings.tx
 Why a custom uploader. `nix copy --no-recursive` to the bucket refuses a path whose references are only upstream, with "cannot add ... because the reference ... is not valid" (measured, `tests/results/cache-deploy/nix-copy-policy-a.txt`). So `nbh-cache push` writes the nar and narinfo itself with `nix-store --dump` and zstd. It goes in reference order, nar before narinfo.
 
 Flow after a build session, `scripts/cache-publish.sh`:
-1. Over ssh, the builder runs `nbh-cache push`. It reads the writer key from stdin and stores nothing. It skips paths upstream serves and re-PUTs narinfos already present.
-2. The signer runs `nbh-cache sign`. It signs only narinfos whose store path is in the expect list from the bot's own evaluation and whose nar decompresses to NarHash and NarSize.
+1. Over ssh, the builder runs `nbh-cache push` with no credentials file. boto3's default chain takes the `nbh-builder` role from IMDS. No key exists on the builder. It skips paths upstream serves and re-PUTs narinfos already present.
+2. The signer runs `nbh-cache sign` with the `nbh-cache-signer` key. It signs only narinfos whose store path is in the expect list from the bot's own evaluation and whose nar decompresses to NarHash and NarSize.
 3. `nbh-cache gc` runs with a stamp file, at most once per 24 h.
 
 Hosts use `services.nbh.cache` in `modules/client.nix`. It adds the `s3://` substituter at priority 50 and the public key, and points nix-daemon's `AWS_SHARED_CREDENTIALS_FILE` at the host key. It also adds a `nbh-cache-roots` unit, triggered by a path unit on `/nix/var/nix/profiles`, which writes the closure of the system profile, `/run/current-system` and `/run/booted-system` to `roots/<host>`.
 
 Builders. `modules/builder.nix` now lists only determinate and cache.nixos.org, with the flakehub -3 and -4 keys and the cache key. An assertion rejects any other substituter. Breaking it once with nixos-cuda failed eval (measured). The live AMI keeps the old list until a re-bake.
 
-Known gap. A builder holds the writer key while it pushes. A build sandbox cannot read nbh's environment (inferred), but a compromised builder could overwrite narinfos. Hosts would refuse them, since they carry no signature from our key (measured for unsigned and tampered paths). That is an availability risk, not an integrity one. Per-launch STS credentials from the gate would close it.
+Known gap. A fixed-output or `__noChroot` build shares the builder's network. On the live AMI such a build got an IMDSv2 token (measured, `tests/results/builder-role/live/imds-from-build.txt`), so it could take the role. `modules/builder.nix` now rejects IMDS traffic from the nixbld group. That rule is evaluated but not yet tested on a builder, since it needs a re-bake (inferred). Until then a build could overwrite narinfos or nars. Hosts would refuse the result, since it carries no signature from our key (measured for unsigned and tampered paths). That is an availability risk, not an integrity one. No credential is stored on or sent to the builder any more.
 
 ## Sources
 

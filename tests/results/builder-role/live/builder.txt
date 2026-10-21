@@ -1,0 +1,11 @@
+== identity on builder (no key on disk or env)
+AWS_ env vars: 0
+  ls: cannot access '/var/empty/.aws': No such file or directory
+  ls: cannot access '/root/.aws': Permission denied
+files naming a secret key: 0
+error: creating directory "/var/empty/.cache/nix": Operation not permitted
+{
+    "UserId": "AROA4JQZE2UDYZTR6LETC:i-0c2f221d735d268bd",
+    "Account": "845087560967",
+    "Arn": "arn:aws:sts::845087560967:assumed-role/nbh-builder/i-0c2f221d735d268bd"
+}

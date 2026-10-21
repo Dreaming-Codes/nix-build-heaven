@@ -1,0 +1,10 @@
+AccessDenied : aws s3api delete-object --region eu-north-1 --bucket nbh-cache-845087560967 --key 6rpr6hl1l3qq70nxl2pl39apxxwxnz31.narinfo
+AccessDenied : aws s3api delete-object --region eu-north-1 --bucket nbh-cache-845087560967 --key nix-cache-info
+AccessDenied : aws s3api put-object --region eu-north-1 --bucket nbh-cache-845087560967 --key roots/DreamingDesk --body p
+AccessDenied : aws s3api put-object --region eu-north-1 --bucket nbh-cache-845087560967 --key roots/x.narinfo --body p
+AccessDenied : aws s3api put-object --region eu-north-1 --bucket nbh-cache-845087560967 --key nix-cache-info --body p
+AccessDenied : aws s3api put-object --region eu-north-1 --bucket nbh-cache-845087560967 --key other/p --body p
+AccessDenied : aws s3api put-object --region eu-north-1 --bucket nbh-images-845087560967 --key nbh-role-probe --body p
+NoSuchKey : aws s3api get-object --region eu-north-1 --bucket nbh-cache-845087560967 --key roots/DreamingDesk /tmp/r
+allowed : aws s3api head-object --region eu-north-1 --bucket nbh-cache-845087560967 --key 6rpr6hl1l3qq70nxl2pl39apxxwxnz31.narinfo
+Not Found : aws s3api head-object --region eu-north-1 --bucket nbh-cache-845087560967 --key 00000000000000000000000000000000.narinfo

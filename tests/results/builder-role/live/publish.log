@@ -1,0 +1,41 @@
+== publish
+warning: Git tree '/workspace/nbh/nix-build-heaven' has uncommitted changes
+these 2 derivations will be built:
+  /nix/store/pm3q81g5aiqikczhjv67v3i735x97plg-python3-3.14.7-env.drv
+  /nix/store/g6xpv2jmjihbq1l9bmwkbvvjq6aicng1-nbh-cache.drv
+this path will be fetched (827.0 KiB download, 2.7 MiB unpacked):
+  /nix/store/bw676n175kifw7d7703rb3n0s5nbhwhi-python3.14-zstandard-0.25.0
+copying path '/nix/store/bw676n175kifw7d7703rb3n0s5nbhwhi-python3.14-zstandard-0.25.0' from 'https://cache.nixos.org'...
+building '/nix/store/pm3q81g5aiqikczhjv67v3i735x97plg-python3-3.14.7-env.drv'...
+building '/nix/store/g6xpv2jmjihbq1l9bmwkbvvjq6aicng1-nbh-cache.drv'...
+{
+ "closure": 1,
+ "upstream": 0,
+ "refreshed": [],
+ "uploaded": [
+  "/nix/store/6rpr6hl1l3qq70nxl2pl39apxxwxnz31-nbh-proof-role-role-1792556050"
+ ],
+ "bytes": 102
+}
+{
+ "signed": [
+  "/nix/store/6rpr6hl1l3qq70nxl2pl39apxxwxnz31-nbh-proof-role-role-1792556050"
+ ],
+ "already": 0,
+ "unexpected": [],
+ "rejected": {}
+}
+{
+ "now": "2026-10-21T04:14:32.819507+00:00",
+ "grace_days": 14,
+ "objects": 3,
+ "roots": 0,
+ "narinfos": 1,
+ "live": 1,
+ "recent": 1,
+ "deleted_narinfos": [],
+ "deleted_nars": [],
+ "kept_bytes": 702,
+ "dry_run": false
+}
+publish exit=0

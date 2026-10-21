@@ -1,0 +1,117 @@
+{
+ "all_as_expected": true,
+ "cases": [
+  {
+   "identity": "DreamingDesk",
+   "op": "put_object",
+   "key": "nar/iam-probe-1792555914.nar.zst",
+   "want": "AccessDenied",
+   "got": "AccessDenied"
+  },
+  {
+   "identity": "DreamingDesk",
+   "op": "put_object",
+   "key": "00000000000000000000000000000000.narinfo",
+   "want": "AccessDenied",
+   "got": "AccessDenied"
+  },
+  {
+   "identity": "DreamingDesk",
+   "op": "delete_object",
+   "key": "nix-cache-info",
+   "want": "AccessDenied",
+   "got": "AccessDenied"
+  },
+  {
+   "identity": "DreamingDesk",
+   "op": "put_object",
+   "key": "roots/DreamingBlade",
+   "want": "AccessDenied",
+   "got": "AccessDenied"
+  },
+  {
+   "identity": "DreamingBlade",
+   "op": "put_object",
+   "key": "roots/DreamingDesk",
+   "want": "AccessDenied",
+   "got": "AccessDenied"
+  },
+  {
+   "identity": "DreamingDesk",
+   "op": "get_object",
+   "key": "nix-cache-info",
+   "want": "allowed",
+   "got": "allowed"
+  },
+  {
+   "identity": "DreamingDesk",
+   "op": "head_object",
+   "key": "00000000000000000000000000000000.narinfo",
+   "want": "404",
+   "got": "404"
+  },
+  {
+   "identity": "signer",
+   "op": "delete_object",
+   "key": "nix-cache-info",
+   "want": "AccessDenied",
+   "got": "AccessDenied"
+  },
+  {
+   "identity": "signer",
+   "op": "put_object",
+   "key": "nar/iam-probe-1792555914.nar.zst",
+   "want": "AccessDenied",
+   "got": "AccessDenied"
+  },
+  {
+   "identity": "signer",
+   "op": "put_object",
+   "key": "roots/DreamingDesk",
+   "want": "AccessDenied",
+   "got": "AccessDenied"
+  },
+  {
+   "identity": "signer",
+   "op": "put_object",
+   "key": "roots/x.narinfo",
+   "want": "AccessDenied",
+   "got": "AccessDenied"
+  },
+  {
+   "identity": "signer",
+   "op": "put_object",
+   "key": "nix-cache-info",
+   "want": "AccessDenied",
+   "got": "AccessDenied"
+  },
+  {
+   "identity": "signer",
+   "op": "head_object",
+   "key": "00000000000000000000000000000000.narinfo",
+   "want": "404",
+   "got": "404"
+  },
+  {
+   "identity": "gc",
+   "op": "put_object",
+   "key": "nar/iam-probe-1792555914.nar.zst",
+   "want": "AccessDenied",
+   "got": "AccessDenied"
+  },
+  {
+   "identity": "gc",
+   "op": "delete_object",
+   "key": "roots/DreamingDesk",
+   "want": "AccessDenied",
+   "got": "AccessDenied"
+  },
+  {
+   "identity": "gc",
+   "op": "delete_object",
+   "key": "nix-cache-info",
+   "want": "AccessDenied",
+   "got": "AccessDenied"
+  }
+ ]
+}

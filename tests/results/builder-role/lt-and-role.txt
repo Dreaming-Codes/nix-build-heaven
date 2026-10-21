@@ -1,0 +1,31 @@
+[
+    [
+        4,
+        true,
+        "arn:aws:iam::845087560967:instance-profile/nbh-builder",
+        {
+            "HttpTokens": "required",
+            "HttpPutResponseHopLimit": 1,
+            "HttpEndpoint": "enabled"
+        },
+        "ami-0dbc5c7676643380c"
+    ]
+]
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "ec2.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole",
+            "Condition": {
+                "StringEquals": {
+                    "aws:SourceAccount": "845087560967"
+                }
+            }
+        }
+    ]
+}
+aws: [ERROR]: An error occurred (NoSuchEntity) when calling the ListUserPolicies operation: The user with name nbh-cache-writer cannot be found.

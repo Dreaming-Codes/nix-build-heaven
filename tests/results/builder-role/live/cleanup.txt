@@ -1,0 +1,9 @@
+before:
+6rpr6hl1l3qq70nxl2pl39apxxwxnz31.narinfo
+nar/1m9qdl09ailaz1yzms0x35kicwqwgb0iq8g6ynixars0n6dk6j2h.nar.zst
+nix-cache-info
+deleted 6rpr6hl1l3qq70nxl2pl39apxxwxnz31.narinfo
+deleted nar/1m9qdl09ailaz1yzms0x35kicwqwgb0iq8g6ynixars0n6dk6j2h.nar.zst
+after:
+nix-cache-info
+404
