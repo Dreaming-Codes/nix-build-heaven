@@ -1,0 +1,24 @@
+warning: ignoring untrusted flake configuration setting 'extra-trusted-public-keys'.
+Pass '--accept-flake-config' to trust it
+warning: ignoring untrusted flake configuration setting 'substituters'.
+Pass '--accept-flake-config' to trust it
+warning: ignoring untrusted flake configuration setting 'extra-trusted-public-keys'.
+Pass '--accept-flake-config' to trust it
+warning: ignoring untrusted flake configuration setting 'substituters'.
+Pass '--accept-flake-config' to trust it
+warning: ignoring untrusted flake configuration setting 'extra-trusted-public-keys'.
+Pass '--accept-flake-config' to trust it
+warning: ignoring untrusted flake configuration setting 'substituters'.
+Pass '--accept-flake-config' to trust it
+2026-10-21T15:04:26+02:00 ExecStartPre rc=0
+2026-10-21T15:04:26+02:00 pki-init wrote nothing (names, modes, owners, mtimes equal)
+2026-10-21T15:04:26+02:00 mismatch account rc=78 (want 78)
+2026-10-21T15:04:29+02:00 listener: LISTEN 0      128        127.0.0.1:2222       0.0.0.0:*    users:(("nbh-gate",pid=N,fd=N))    
+2026-10-21T15:04:29+02:00 machines file: ssh-ng://nbh@nbh-builder:2222 x86_64-linux ROOT/secrets/nbh-pki/ssh_client 192 1 big-parallel,benchmark - -
+2026-10-21T15:05:15+02:00 build exit=0 wall=45.5 s, remote lines: 1
+2026-10-21T15:05:15+02:00 last ssh closed at 2026-10-21T15:05:15+02:00
+2026-10-21T15:05:15+02:00 instance=i-0fcbfa9a74fbeae40
+2026-10-21T15:06:25+02:00 gate: nbh-gate: 2026-10-21T13:06:21.336796Z terminate grok-bot-vm-145538761-1792587866-1 (i-0fcbfa9a74fbeae40)
+i-0fcbfa9a74fbeae40	c7i.24xlarge	eu-north-1b	shutting-down	2026-10-21T13:04:32+00:00	User initiated (2026-10-21 13:06:21 GMT)	ami-028a6bddd61022087	DreamingDesk
+2026-10-21T15:06:57+02:00 gate exit=0
+2026-10-21T15:06:57+02:00 removed /run/nbh-proof

@@ -1,0 +1,8 @@
+Host nbh-builder
+  HostKeyAlias nbh-builder
+  UserKnownHostsFile /run/nbh-proof/secrets/nbh-pki/ssh_known_hosts
+  StrictHostKeyChecking yes
+  IdentitiesOnly yes
+  ServerAliveInterval 15
+  ServerAliveCountMax 4
+

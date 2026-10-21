@@ -1,0 +1,7 @@
+2026-10-21T14:55:15+02:00 ExecStartPre rc=0
+2026-10-21T14:55:15+02:00 pki-init wrote nothing (names, modes, owners, mtimes equal)
+2026-10-21T14:55:16+02:00 mismatch account rc=78 (want 78)
+2026-10-21T14:55:19+02:00 listener: 
+2026-10-21T14:55:19+02:00 machines file: 
+2026-10-21T14:55:20+02:00 build exit=1 wall=0.4 s, remote lines: 0
+2026-10-21T14:55:20+02:00 last ssh closed at 2026-10-21T14:55:20+02:00

@@ -1,0 +1,6 @@
+this derivation will be built:
+  /nix/store/pkphq1g4pipl73xibd24430d0hncaa8s-nbh-probe-host-proof-1792587320.drv
+❌ 
+error: Cannot build '/nix/store/pkphq1g4pipl73xibd24430d0hncaa8s-nbh-probe-host-proof-1792587320.drv'.
+       Reason: local builds are disabled (max-jobs = 0)
+       Hint: set 'max-jobs' to a non-zero value to enable local builds, or configure remote builders via 'builders'
