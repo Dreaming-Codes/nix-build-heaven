@@ -1,0 +1,13 @@
+{
+ "objects": 22,
+ "roots": 1,
+ "narinfos": 10,
+ "live": 9,
+ "recent": 1,
+ "deleted_narinfos": [
+  "hysfz5hgx1jhrpg7519vjaxrr14nbn5h.narinfo"
+ ],
+ "deleted_nars": 1,
+ "kept_bytes": 11340707,
+ "dry_run": false
+}

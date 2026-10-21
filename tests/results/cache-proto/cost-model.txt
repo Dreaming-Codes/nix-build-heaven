@@ -1,0 +1,13 @@
+scenario           design            storage     ops  aws dto    total
+light              S3 only             0.460   0.037    0.000    0.497
+light              R2 only             0.150   0.000    0.000    0.150
+light              S3 + R2 mirror      0.610   0.031    0.000    0.641
+typical            S3 only             1.150   0.165    0.000    1.315
+typical            R2 only             0.600   0.000    0.000    0.600
+typical            S3 + R2 mirror      1.750   0.143    0.000    1.893
+heavy              S3 only             3.450   0.945    0.000    4.395
+heavy              R2 only             2.100   0.000    0.000    2.100
+heavy              S3 + R2 mirror      5.550   0.833    0.000    6.383
+heavy-no-free-dto  S3 only             3.450   0.945    5.400    9.795
+heavy-no-free-dto  R2 only             2.100   0.000    5.400    7.500
+heavy-no-free-dto  S3 + R2 mirror      5.550   0.833    5.400   11.783

@@ -1,0 +1,11 @@
+{
+ "objects": 20,
+ "roots": 1,
+ "narinfos": 9,
+ "live": 9,
+ "recent": 1,
+ "deleted_narinfos": [],
+ "deleted_nars": 0,
+ "kept_bytes": 11340707,
+ "dry_run": false
+}

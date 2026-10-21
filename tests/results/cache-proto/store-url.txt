@@ -1,0 +1,1 @@
+s3://nbh-cache-proto-845087560967?region=eu-north-1&profile=grok-bot&compression=zstd&parallel-compression=true&secret-key=<key.sec>

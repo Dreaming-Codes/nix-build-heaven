@@ -1,0 +1,100 @@
+#!/usr/bin/env python3
+"""Monthly cost of the shared Nix cache on S3 eu-north-1, Cloudflare R2, or both.
+
+Prices were read on 2026-10-21 from the AWS Price List API (AmazonS3 and
+AWSDataTransfer, regionCode eu-north-1) and https://developers.cloudflare.com/r2/pricing/.
+"""
+import argparse
+import json
+import math
+
+S3_STORAGE_GB = 0.023
+S3_PUT_LIST_PER_1K = 0.005
+S3_GET_PER_1K = 0.0004
+AWS_DTO_PER_GB = 0.09
+AWS_DTO_FREE_GB = 100
+
+R2_STORAGE_GB = 0.015
+R2_CLASS_A_PER_M = 4.50
+R2_CLASS_B_PER_M = 0.36
+R2_FREE_STORAGE_GB = 10
+R2_FREE_CLASS_A = 1_000_000
+R2_FREE_CLASS_B = 10_000_000
+
+SCENARIOS = {
+    "light": dict(cache_gb=20, builder_push_gb=1, machine_pull_gb=1, builder_pull_gb=1,
+                  ssh_copyback_gb=1, other_aws_dto_gb=0, puts=4_000, gets=40_000, lists=200),
+    "typical": dict(cache_gb=50, builder_push_gb=5, machine_pull_gb=5, builder_pull_gb=5,
+                    ssh_copyback_gb=5, other_aws_dto_gb=0, puts=20_000, gets=150_000, lists=1_000),
+    "heavy": dict(cache_gb=150, builder_push_gb=30, machine_pull_gb=30, builder_pull_gb=30,
+                  ssh_copyback_gb=30, other_aws_dto_gb=0, puts=120_000, gets=800_000, lists=5_000),
+    "heavy-no-free-dto": dict(cache_gb=150, builder_push_gb=30, machine_pull_gb=30, builder_pull_gb=30,
+                              ssh_copyback_gb=30, other_aws_dto_gb=100, puts=120_000, gets=800_000, lists=5_000),
+}
+
+
+def aws_dto(gb, other):
+    """The 100 GB free tier is shared with every other AWS egress on the account."""
+    billable = max(0.0, gb + other - AWS_DTO_FREE_GB) - max(0.0, other - AWS_DTO_FREE_GB)
+    return billable * AWS_DTO_PER_GB
+
+
+def r2_billed(used, free, unit):
+    return math.ceil(max(0, used - free) / unit) if used > free else 0
+
+
+def s3_ops(puts, gets, lists):
+    return (puts + lists) / 1000 * S3_PUT_LIST_PER_1K + gets / 1000 * S3_GET_PER_1K
+
+
+def r2_ops(class_a, class_b):
+    return (r2_billed(class_a, R2_FREE_CLASS_A, 1_000_000) * R2_CLASS_A_PER_M
+            + r2_billed(class_b, R2_FREE_CLASS_B, 1_000_000) * R2_CLASS_B_PER_M)
+
+
+def r2_storage(gb):
+    return r2_billed(gb, R2_FREE_STORAGE_GB, 1) * R2_STORAGE_GB
+
+
+def model(s):
+    o = s["other_aws_dto_gb"]
+    base_dto = s["ssh_copyback_gb"]
+    out = {}
+
+    dto = aws_dto(base_dto + s["machine_pull_gb"], o)
+    out["S3 only"] = dict(storage=s["cache_gb"] * S3_STORAGE_GB, ops=s3_ops(s["puts"], s["gets"], s["lists"]), dto=dto)
+
+    dto = aws_dto(base_dto + s["builder_push_gb"], o)
+    out["R2 only"] = dict(storage=r2_storage(s["cache_gb"]), ops=r2_ops(s["puts"] + s["lists"], s["gets"]), dto=dto)
+
+    # Builders write and read S3 in-region; a mirror copies each new object to
+    # R2 once, so the internet leg is paid per GB pushed, not per machine pull.
+    dto = aws_dto(base_dto + s["builder_push_gb"], o)
+    out["S3 + R2 mirror"] = dict(
+        storage=s["cache_gb"] * S3_STORAGE_GB + r2_storage(s["cache_gb"]),
+        ops=s3_ops(s["puts"], s["gets"] // 2 + s["puts"], s["lists"]) + r2_ops(s["puts"] + s["lists"], s["gets"] // 2),
+        dto=dto,
+    )
+    for v in out.values():
+        v["total"] = round(sum(v.values()), 3)
+        for k in ("storage", "ops", "dto"):
+            v[k] = round(v[k], 3)
+    return out
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--json", action="store_true")
+    args = ap.parse_args()
+    results = {name: {"inputs": s, "cost": model(s)} for name, s in SCENARIOS.items()}
+    if args.json:
+        print(json.dumps(results, indent=1))
+        return
+    print(f"{'scenario':<18} {'design':<16} {'storage':>8} {'ops':>7} {'aws dto':>8} {'total':>8}")
+    for name, r in results.items():
+        for design, c in r["cost"].items():
+            print(f"{name:<18} {design:<16} {c['storage']:>8.3f} {c['ops']:>7.3f} {c['dto']:>8.3f} {c['total']:>8.3f}")
+
+
+if __name__ == "__main__":
+    main()
