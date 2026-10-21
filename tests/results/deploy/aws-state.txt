@@ -1,0 +1,21 @@
+# AWS state after the guard work, 2026-10-21T02:40:08+02:00. Read-only sweep with the grok-bot profile.
+ap-south-1 instances=0 volumes=0 open_spot_requests=0
+eu-north-1 instances=0 volumes=0 open_spot_requests=0
+eu-west-3 instances=0 volumes=0 open_spot_requests=0
+eu-west-2 instances=0 volumes=0 open_spot_requests=0
+eu-west-1 instances=0 volumes=0 open_spot_requests=0
+ap-northeast-3 instances=0 volumes=0 open_spot_requests=0
+ap-northeast-2 instances=0 volumes=0 open_spot_requests=0
+ap-northeast-1 instances=0 volumes=0 open_spot_requests=0
+ca-central-1 instances=0 volumes=0 open_spot_requests=0
+sa-east-1 instances=0 volumes=0 open_spot_requests=0
+ap-southeast-1 instances=0 volumes=0 open_spot_requests=0
+ap-southeast-2 instances=0 volumes=0 open_spot_requests=0
+eu-central-1 instances=0 volumes=0 open_spot_requests=0
+us-east-1 instances=0 volumes=0 open_spot_requests=0
+us-east-2 instances=0 volumes=0 open_spot_requests=0
+us-west-1 instances=0 volumes=0 open_spot_requests=0
+us-west-2 instances=0 volumes=0 open_spot_requests=0
+== eu-north-1 own AMIs and snapshots
+ami-0dbc5c7676643380c	nbh-builder-26.11.20261012.6aa7ad7-gmk4q99l	available
+snap-078826d508752975f	completed	100%	nbh-builder-26.11.20261012.6aa7ad7-gmk4q99l
