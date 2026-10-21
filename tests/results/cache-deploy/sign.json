@@ -1,0 +1,15 @@
+{
+ "signed": [
+  "/nix/store/6hxv41nsjjk06vsbwh3hpl8pbv3sy8c7-nbh-proof-script-1792552688",
+  "/nix/store/7ar7lam06x9iz5a9hiy23s0gf6qqk799-nbh-proof-recent-1792552688",
+  "/nix/store/ckb272ig8ylssqcz9ihn81mkh3yx5aa0-nbh-proof-root-1792552688",
+  "/nix/store/r2ij5xvrmh8d8b0j69n8q35vf4qhrw97-nbh-proof-leaf-1792552688"
+ ],
+ "already": 0,
+ "unexpected": [
+  "/nix/store/83abz8mhifq41jc5hns7ng9jxl7fyc9q-nbh-proof-old-1792552688"
+ ],
+ "rejected": {
+  "/nix/store/j9pic8hg1fsv6jwwmwzsfcwxk411lsd6-nbh-proof-tamper-1792552688": "nar is sha256:0c9cgicy9vxqisqvijdgj4v67pz2m8hck2n0fw4cv07hnbzxr4cq 128, narinfo says sha256:1wl64sy7n5wp8ky5yjzvlnlnhhas8nj70cm1clvclxpv00k6iz4p 136"
+ }
+}

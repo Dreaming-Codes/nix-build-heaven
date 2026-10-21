@@ -1,0 +1,10 @@
+{
+ "closure": 2,
+ "upstream": 0,
+ "refreshed": [
+  "/nix/store/r2ij5xvrmh8d8b0j69n8q35vf4qhrw97-nbh-proof-leaf-1792552688",
+  "/nix/store/ckb272ig8ylssqcz9ihn81mkh3yx5aa0-nbh-proof-root-1792552688"
+ ],
+ "uploaded": [],
+ "bytes": 0
+}

@@ -1,0 +1,34 @@
+== signed root, leaf, script from a clean store
+these 8 paths will be fetched (11.6 MiB download, 38.3 MiB unpacked):
+  /nix/store/10dxp0qxqxxsyiljrh2kp0xqhz6arhcx-bash-5.3p15
+  /nix/store/h4wfwic161kxrr74jlzla5lsm28hgary-glibc-2.44-25
+  /nix/store/q0lbdx5yv93a3md74kjhm0v2kljjii89-libidn2-2.3.8
+  /nix/store/jp8ql2fnd61xhvb4vsfp0bqwrzf16qrp-libunistring-1.4.2
+  /nix/store/r2ij5xvrmh8d8b0j69n8q35vf4qhrw97-nbh-proof-leaf-1792552688
+  /nix/store/ckb272ig8ylssqcz9ihn81mkh3yx5aa0-nbh-proof-root-1792552688
+  /nix/store/6hxv41nsjjk06vsbwh3hpl8pbv3sy8c7-nbh-proof-script-1792552688
+  /nix/store/g60m3aky9f59wgy1gi0y06xwmbw19d6m-xgcc-16.2.0-libgcc
+copying path '/nix/store/g60m3aky9f59wgy1gi0y06xwmbw19d6m-xgcc-16.2.0-libgcc' from 'https://cache.nixos.org'...
+copying path '/nix/store/jp8ql2fnd61xhvb4vsfp0bqwrzf16qrp-libunistring-1.4.2' from 'https://cache.nixos.org'...
+copying path '/nix/store/q0lbdx5yv93a3md74kjhm0v2kljjii89-libidn2-2.3.8' from 'https://cache.nixos.org'...
+copying path '/nix/store/r2ij5xvrmh8d8b0j69n8q35vf4qhrw97-nbh-proof-leaf-1792552688' from 's3://nbh-cache-845087560967?profile=nbh-cache-DreamingDesk&region=eu-north-1'...
+copying path '/nix/store/h4wfwic161kxrr74jlzla5lsm28hgary-glibc-2.44-25' from 'https://cache.nixos.org'...
+copying path '/nix/store/10dxp0qxqxxsyiljrh2kp0xqhz6arhcx-bash-5.3p15' from 'https://cache.nixos.org'...
+copying path '/nix/store/6hxv41nsjjk06vsbwh3hpl8pbv3sy8c7-nbh-proof-script-1792552688' from 's3://nbh-cache-845087560967?profile=nbh-cache-DreamingDesk&region=eu-north-1'...
+copying path '/nix/store/ckb272ig8ylssqcz9ihn81mkh3yx5aa0-nbh-proof-root-1792552688' from 's3://nbh-cache-845087560967?profile=nbh-cache-DreamingDesk&region=eu-north-1'...
+/nix/store/ckb272ig8ylssqcz9ihn81mkh3yx5aa0-nbh-proof-root-1792552688
+/nix/store/6hxv41nsjjk06vsbwh3hpl8pbv3sy8c7-nbh-proof-script-1792552688
+rc=0
+== unsigned old
+warning: ignoring substitute for '/nix/store/83abz8mhifq41jc5hns7ng9jxl7fyc9q-nbh-proof-old-1792552688' from 's3://nbh-cache-845087560967?profile=nbh-cache-DreamingDesk&region=eu-north-1', as it's not signed by any of the keys in 'trusted-public-keys'
+❌ /nix/store/83abz8mhifq41jc5hns7ng9jxl7fyc9q-nbh-proof-old-1792552688
+error: path '/nix/store/83abz8mhifq41jc5hns7ng9jxl7fyc9q-nbh-proof-old-1792552688' is required, but there is no substituter that can build it
+== tampered
+warning: ignoring substitute for '/nix/store/j9pic8hg1fsv6jwwmwzsfcwxk411lsd6-nbh-proof-tamper-1792552688' from 's3://nbh-cache-845087560967?profile=nbh-cache-DreamingDesk&region=eu-north-1', as it's not signed by any of the keys in 'trusted-public-keys'
+❌ /nix/store/j9pic8hg1fsv6jwwmwzsfcwxk411lsd6-nbh-proof-tamper-1792552688
+error: path '/nix/store/j9pic8hg1fsv6jwwmwzsfcwxk411lsd6-nbh-proof-tamper-1792552688' is required, but there is no substituter that can build it
+== content
+root 1792552688 /nix/store/r2ij5xvrmh8d8b0j69n8q35vf4qhrw97-nbh-proof-leaf-1792552688
+/nix/store/6hxv41nsjjk06vsbwh3hpl8pbv3sy8c7-nbh-proof-script-1792552688	nbh-cache-845087560967-1:63Sk6m3D1cU5SpJNFM0SHX3VTbLVefsHoX9xj6cc020abkUrNZgavLzNgM7XuaPOhROhgTX0ayBSwV0LO6NTBg==
+/nix/store/r2ij5xvrmh8d8b0j69n8q35vf4qhrw97-nbh-proof-leaf-1792552688  	nbh-cache-845087560967-1:q1xk8TtvFchbi2eVujOSS1jpjz1lDVyKHwXpYckQyGNRREug2/p2y8DRcz7XIwVXzu+tSrpIF3jn2H1hoJmMAA==
+/nix/store/ckb272ig8ylssqcz9ihn81mkh3yx5aa0-nbh-proof-root-1792552688  	nbh-cache-845087560967-1:ul35iVP19GWz2m/Tc1uu0sv0LJZsC/LnNSRMR63TT3u0LO7Vde48PvlXpe+kX7eLLvYAL2gR1ZFn1pA/mmJ4Cg==

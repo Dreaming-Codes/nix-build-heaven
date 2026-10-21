@@ -1,0 +1,22 @@
+{
+ "now": "2026-11-04T03:25:00+00:00",
+ "grace_days": 14,
+ "objects": 13,
+ "roots": 2,
+ "narinfos": 5,
+ "live": 2,
+ "recent": 0,
+ "deleted_narinfos": [
+  "6hxv41nsjjk06vsbwh3hpl8pbv3sy8c7.narinfo",
+  "7ar7lam06x9iz5a9hiy23s0gf6qqk799.narinfo",
+  "j9pic8hg1fsv6jwwmwzsfcwxk411lsd6.narinfo"
+ ],
+ "deleted_nars": [
+  "nar/0g0qqwppvlnz7093mywhdi316jzsrmi3dh74irhisa2z6ysava03.nar.zst",
+  "nar/0ybz287r1k2nmb0vsjl9pfyhsnbhk7lcwsq0mfzv7n6hwhj82c0g.nar.zst",
+  "nar/1nyw7wn6k2ywg3i1iisyab8cxx6w7as82jndq933f62ryg786lk9.nar.zst",
+  "nar/1sk6yq6zphs6i8i5bymnw9q7l2xdwfg62xk2mnqrnqgylwxphpa9.nar.zst"
+ ],
+ "kept_bytes": 1578,
+ "dry_run": false
+}

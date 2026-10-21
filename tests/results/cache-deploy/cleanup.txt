@@ -1,0 +1,6 @@
+deleted ckb272ig8ylssqcz9ihn81mkh3yx5aa0.narinfo
+deleted nar/0pr4z2g9pzfq39s9kcrbksnwvz1cmccnwpjr3z1ggnpq8vxhgyjg.nar.zst
+deleted nar/1p6xy7f8ldj5aibkq0cmll8icd5a7hr0vd0lr5dr3zph88dj9ij9.nar.zst
+deleted r2ij5xvrmh8d8b0j69n8q35vf4qhrw97.narinfo
+deleted roots/DreamingDesk
+nix-cache-info	51

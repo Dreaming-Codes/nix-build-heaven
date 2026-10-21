@@ -1,0 +1,13 @@
+{
+ "now": "2026-10-21T03:19:55.712749+00:00",
+ "grace_days": 14,
+ "objects": 6,
+ "roots": 2,
+ "narinfos": 2,
+ "live": 2,
+ "recent": 2,
+ "deleted_narinfos": [],
+ "deleted_nars": [],
+ "kept_bytes": 1578,
+ "dry_run": false
+}

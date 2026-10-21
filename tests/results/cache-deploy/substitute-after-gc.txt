@@ -1,0 +1,4 @@
+== after gc-2: rooted root and leaf
+2
+== swept script
+error: path '/nix/store/6hxv41nsjjk06vsbwh3hpl8pbv3sy8c7-nbh-proof-script-1792552688' is required, but there is no substituter that can build it
