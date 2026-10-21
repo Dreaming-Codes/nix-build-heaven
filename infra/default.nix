@@ -95,12 +95,12 @@ in
 
   variable.snapshot_id = {
     type = "string";
-    default = "snap-078826d508752975f";
+    default = "snap-0a9931804bce101fe";
     description = "EBS snapshot of the builder raw image, from scripts/upload-ami.sh";
   };
   variable.image_name = {
     type = "string";
-    default = "nbh-builder-26.11.20261012.6aa7ad7-gmk4q99l";
+    default = "nbh-builder-26.11.20261012.6aa7ad7-vihskmvq";
   };
   variable.gate_credentials_file = {
     type = "string";
