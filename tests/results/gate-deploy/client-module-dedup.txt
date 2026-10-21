@@ -1,0 +1,4 @@
+main 8a5ecdf, client module imported twice:
+       error: The option `services.nbh.cache.enable' in `/nix/store/3jpch3hm5xy8mlp7y0mqq3gxy1fwj721-source/flake.nix' is already declared in `/nix/store/3jpch3hm5xy8mlp7y0mqq3gxy1fwj721-source/flake.nix'.
+client-module-key, imported twice, RestartPreventExitStatus:
+78

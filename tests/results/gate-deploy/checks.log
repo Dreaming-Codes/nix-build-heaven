@@ -1,0 +1,11 @@
+warning: Git tree '/workspace/nbh/nix-build-heaven' has uncommitted changes
+warning: Git tree '/workspace/nbh/nix-build-heaven' has uncommitted changes
+warning: Git tree '/workspace/nbh/nix-build-heaven' has uncommitted changes
+warning: Git tree '/workspace/nbh/nix-build-heaven' has uncommitted changes
+warning: Git tree '/workspace/nbh/nix-build-heaven' has uncommitted changes
+/nix/store/gcxffa8j8vxm8hmhhshc3vz767cvfqv1-nbh-gate-0.2.0
+/nix/store/bgqa8adr62r3w30mva27z2b5fifq8dx0-nbh-cache
+/nix/store/sk66dzk3kcaggp0syfc3h6fcvp05brnv-client-imported-twice
+/nix/store/a2bhcd7yz6v2y2madrmm162pal2dgadc-vm-test-run-nbh-builder-image
+/nix/store/ivh2s5pvlz6k5bvyk1zkgsc0r0j0124c-vm-test-run-nbh-ssh-coldstart
+rc=0
