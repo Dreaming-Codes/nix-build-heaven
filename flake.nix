@@ -58,6 +58,24 @@
         inherit (self.packages.${system}) gate nbh-cache;
         builder-image = import ./tests/builder-image.nix { inherit self pkgs; };
         ssh-coldstart = import ./tests/ssh-coldstart.nix { inherit self pkgs; };
+        client-imported-twice =
+          let
+            host = nixpkgs.lib.nixosSystem {
+              inherit system;
+              modules = [
+                { imports = [ self.nixosModules.client ]; }
+                { imports = [ self.nixosModules.client ]; }
+                {
+                  boot.loader.grub.enable = false;
+                  fileSystems."/" = { device = "none"; fsType = "tmpfs"; };
+                  system.stateVersion = "26.05";
+                  services.nbh.enable = true;
+                  services.nbh.gate.aws.account = "845087560967";
+                }
+              ];
+            };
+          in
+          pkgs.writeText "client-imported-twice" host.config.systemd.services.nbh-gate.serviceConfig.ExecStart;
       };
     };
 }
