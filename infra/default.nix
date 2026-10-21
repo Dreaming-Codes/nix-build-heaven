@@ -295,6 +295,7 @@ in
     name = "nbh-builder";
     image_id = ref "aws_ami.builder[0].id";
     instance_initiated_shutdown_behavior = "terminate";
+    iam_instance_profile.arn = ref "aws_iam_instance_profile.builder.arn";
     update_default_version = true;
     metadata_options = {
       http_endpoint = "enabled";
@@ -329,6 +330,25 @@ in
     name = "nbh-gate-runtime";
     user = ref "aws_iam_user.gate.name";
     policy = builtins.toJSON gatePolicy;
+  };
+  # Inline user policies share a 2048-byte budget, which gatePolicy fills.
+  resource.aws_iam_policy.gate_pass_builder_role = {
+    name = "nbh-gate-pass-builder-role";
+    policy = builtins.toJSON {
+      Version = "2012-10-17";
+      Statement = [{
+        Sid = "PassBuilderRole";
+        Effect = "Allow";
+        Action = "iam:PassRole";
+        Resource = ref "aws_iam_role.builder.arn";
+        Condition.StringEquals."iam:PassedToService" = "ec2.amazonaws.com";
+      }];
+    };
+    inherit tags;
+  };
+  resource.aws_iam_user_policy_attachment.gate_pass_builder_role = {
+    user = ref "aws_iam_user.gate.name";
+    policy_arn = ref "aws_iam_policy.gate_pass_builder_role.arn";
   };
   resource.aws_iam_access_key.gate.user = ref "aws_iam_user.gate.name";
   resource.local_sensitive_file.gate_credentials = {

@@ -8,25 +8,33 @@ let
     { Sid = "List"; Effect = "Allow"; Action = "s3:ListBucket"; Resource = arn; }
     { Sid = "Read"; Effect = "Allow"; Action = "s3:GetObject"; Resource = "${arn}/*"; }
   ];
+  # The keys nbh-cache push writes. A wildcard spans "/", so roots/x.narinfo
+  # would match and needs the explicit deny.
+  cacheObjects = [ "${arn}/*.narinfo" "${arn}/nar/*" ];
+  noRoots = {
+    Sid = "NoRootsOrCacheInfo";
+    Effect = "Deny";
+    Action = "s3:PutObject";
+    Resource = [ "${arn}/roots/*" "${arn}/nix-cache-info" ];
+  };
+  builderStatements = [
+    { Sid = "List"; Effect = "Allow"; Action = "s3:ListBucket"; Resource = arn; }
+    { Sid = "SkipExisting"; Effect = "Allow"; Action = "s3:GetObject"; Resource = cacheObjects; }
+    { Sid = "Upload"; Effect = "Allow"; Action = [ "s3:PutObject" "s3:AbortMultipartUpload" ]; Resource = cacheObjects; }
+    noRoots
+  ];
   identities = lib.listToAttrs (map (h: {
     name = h;
     value = readStatements ++ [
       { Sid = "OwnRoot"; Effect = "Allow"; Action = "s3:PutObject"; Resource = "${arn}/roots/${h}"; }
     ];
   }) c.hosts) // {
-    writer = readStatements ++ [
-      {
-        Sid = "Upload";
-        Effect = "Allow";
-        Action = [ "s3:PutObject" "s3:AbortMultipartUpload" ];
-        Resource = [ "${arn}/*.narinfo" "${arn}/*.ls" "${arn}/nar/*" ];
-      }
-      {
-        Sid = "NoRootsOrCacheInfo";
-        Effect = "Deny";
-        Action = "s3:PutObject";
-        Resource = [ "${arn}/roots/*" "${arn}/nix-cache-info" ];
-      }
+    # Signs on the box. Only rewrites narinfos; nars come from the builder role.
+    signer = [
+      { Sid = "List"; Effect = "Allow"; Action = "s3:ListBucket"; Resource = arn; }
+      { Sid = "Read"; Effect = "Allow"; Action = "s3:GetObject"; Resource = cacheObjects; }
+      { Sid = "Sign"; Effect = "Allow"; Action = "s3:PutObject"; Resource = "${arn}/*.narinfo"; }
+      noRoots
     ];
     gc = readStatements ++ [
       {
@@ -106,6 +114,32 @@ in
     '';
   }) identities;
 
+  resource.aws_iam_role.builder = {
+    name = "nbh-builder";
+    assume_role_policy = builtins.toJSON {
+      Version = "2012-10-17";
+      Statement = [{
+        Effect = "Allow";
+        Principal.Service = "ec2.amazonaws.com";
+        Action = "sts:AssumeRole";
+        Condition.StringEquals."aws:SourceAccount" = c.account;
+      }];
+    };
+    tags = tags;
+  };
+  resource.aws_iam_role_policy.builder = {
+    name = "nbh-builder-cache-push";
+    role = ref "aws_iam_role.builder.id";
+    policy = builtins.toJSON { Version = "2012-10-17"; Statement = builderStatements; };
+  };
+  resource.aws_iam_instance_profile.builder = {
+    name = "nbh-builder";
+    role = ref "aws_iam_role.builder.name";
+    tags = tags;
+  };
+
   output.cache_bucket_arn.value = ref "aws_s3_bucket.cache.arn";
   output.cache_user_arns.value = lib.mapAttrs (id: _: ref "aws_iam_user.${id}.arn") identities;
+  output.builder_role_arn.value = ref "aws_iam_role.builder.arn";
+  output.builder_instance_profile_arn.value = ref "aws_iam_instance_profile.builder.arn";
 }
