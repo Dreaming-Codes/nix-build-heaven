@@ -26,7 +26,11 @@ enum Cli {
     /// Run the gate.
     Run(Box<RunArgs>),
     /// Create the SSH host CA, the client key and ssh_known_hosts in DIR, once.
-    PkiInit { dir: PathBuf, comment: String },
+    PkiInit {
+        dir: PathBuf,
+        #[arg(default_value = "nbh-gate")]
+        comment: String,
+    },
     /// Print builder user-data with a fresh host key and certificate.
     Userdata { dir: PathBuf },
 }

@@ -39,21 +39,22 @@ Writes. Builders push in their session with `post-build-hook` or a `nix copy` at
 
 ## Roots and GC
 
-Roots. One small object per thing to keep, `roots/<name>`, holding store paths one per line. GC treats every listed path as live and walks `References:` from it, so a root may list just a toplevel or a full `nix path-info -r` closure. The full closure is safer: it keeps a host's paths even if its toplevel itself was never pushed (inferred).
+Roots. One small object per system closure, `roots/<hash>`, keyed by the store hash of the path it roots and holding that path's closure, one store path per line. GC treats every listed path as live and walks `References:` from it. Two machines on the same system share one root, and nothing in a key names a machine.
 
-- `roots/DreamingDesk` and `roots/DreamingBlade` are rewritten on every switch from an activation hook or a small unit, from `/run/current-system`. Adding `/run/booted-system` to the same file keeps the reboot target. Old generations are not roots, which is the "only what the flake uses currently" rule.
-- `roots/builder-ami` is written by `upload-ami.sh` only if builders ever substitute their own image paths. The AMI itself is an EBS snapshot and does not need the cache.
+- `nbh-cache roots` writes one root per distinct store path that `/nix/var/nix/profiles/system`, `/run/current-system` and `/run/booted-system` resolve to. The `nbh-cache-roots` unit runs it at boot and on every profile change, and every run rewrites the objects, so a root in use stays fresh.
+- GC deletes a root whose LastModified is older than the roots window, 30 days by default (`rootsDays` in `nix/cache.nix`, `--roots-days`). A system not booted or switched to in that window loses its root, and its paths then age out under the grace window. Old generations are never roots, which is the "only what the flake uses currently" rule.
+- The builder AMI toplevel gets a root from `upload-ami.sh` only if builders ever substitute their own image paths. The AMI itself is an EBS snapshot and does not need the cache.
 - Session roots are not built. The 14-day grace window and push's narinfo refresh keep a session's outputs until the hosts switch and root them (inferred).
 
 Algorithm (`cache/nbh-cache.py gc`).
 
 1. Note the start time T. List every object with its LastModified.
-2. Seeds are every hash named in `roots/*` plus every narinfo newer than T minus grace.
+2. Seeds are every hash named in a `roots/*` newer than T minus the roots window, plus every narinfo newer than T minus grace.
 3. Walk `References:` of each seed narinfo. Everything reached is live, so a recent path keeps its whole closure, not just itself.
-4. Re-list `roots/*`. If any ETag changed, add the new roots and walk again. Give up and delete nothing if roots keep changing.
+4. Re-list `roots/*`. If any ETag or LastModified changed, add the new roots and walk again. Give up and delete nothing if roots keep changing.
 5. Drop from live any narinfo whose nar is missing. It is already broken and Nix treats a missing nar as never there.
 6. Delete dead `.narinfo` and their `.ls` first.
-7. Delete `nar/*` that no live narinfo names and that are older than the grace window. Nars are keyed by compressed-file hash, so two narinfos can share one (read, `uploadData`), which is why nars are swept by reference and never per dead narinfo.
+7. Delete `nar/*` that no live narinfo names and that are older than the grace window. Then delete the roots older than the roots window. Nars are keyed by compressed-file hash, so two narinfos can share one (read, `uploadData`), which is why nars are swept by reference and never per dead narinfo.
 
 Idempotent. A second run over the same roots deletes nothing (measured). Deleting a key that is already gone is not an error in S3 DeleteObjects (inferred from the API, and run 2 issued no deletes anyway).
 
@@ -144,7 +145,7 @@ Settled by Lorenzo on 2026-10-21.
 
 1. S3, in eu-north-1 on account 845087560967.
 2. Push policy A. Only paths neither install.determinate.systems nor cache.nixos.org serves.
-3. Private bucket, one read key per host.
+3. Private bucket, one read key shared by every host.
 4. Grace window 14 days.
 5. Signing by the weekly bot's machine after a NarHash check. Builders hold no signing key.
 6. Builders push. Hosts never push their own builds, and IAM enforces it.
@@ -153,11 +154,11 @@ Settled by Lorenzo on 2026-10-21.
 
 Resources (measured, `tests/results/cache-deploy/apply.txt`, `bucket-settings.txt`):
 - Bucket `arn:aws:s3:::nbh-cache-845087560967`. SSE-S3 (AES256), all four public access blocks on, BucketOwnerEnforced, TLS-only bucket policy, versioning never enabled, no lifecycle rule. `nix-cache-info` with priority 50 is a tofu object.
-- IAM users `nbh-cache-DreamingDesk` and `nbh-cache-DreamingBlade`. Each can list, get, and put only `roots/<itself>`.
+- IAM user `nbh-cache-client`, the read key every client shares. It can list, get, and put any `roots/*`. So a client can overwrite any root. The worst case is that GC sweeps that closure's paths and the next switch to it misses the cache. Signatures still guard integrity, and revoking the key cuts off every client.
 - IAM role `nbh-builder` with instance profile `nbh-builder`, on launch template version 4 (measured, `tests/results/builder-role/lt-and-role.txt`). It trusts ec2.amazonaws.com with `aws:SourceAccount` 845087560967. Its only policy lists the bucket and gets and puts `*.narinfo` and `nar/*`. Get is there because push skips existing nars and refreshes existing narinfos. An explicit deny stops it writing `roots/*` and `nix-cache-info`. It has no delete. IMDSv2 is required with hop limit 1.
 - `nbh-gate` may pass only that role, and only to ec2.amazonaws.com, through the managed policy `nbh-gate-pass-builder-role`. Its inline policy is at the 2048-byte limit, so the grant could not go there (measured).
 - IAM user `nbh-cache-signer`, which replaced `nbh-cache-writer`. Signing on the box is the only push-side job left off the builder, and it only rewrites narinfos. So the signer can list, get `*.narinfo` and `nar/*`, and put `*.narinfo`. It cannot put nars, write roots or `nix-cache-info`, or delete.
-- IAM user `nbh-cache-gc`. It can list, get, and delete `*.narinfo`, `*.ls` and `nar/*`. It cannot delete roots or `nix-cache-info` and cannot write.
+- IAM user `nbh-cache-gc`. It can list, get, and delete `*.narinfo`, `*.ls`, `nar/*` and `roots/*`, and gc deletes only roots past the window. It cannot delete `nix-cache-info` and cannot write.
 - Signing key `nbh-cache-845087560967-1`. Its public half is in `nix/cache.nix`.
 
 `infra/cache.nix` holds all of it, applied with `-target` so nothing else changed. The full plan had shown the same 22 additions and no other change (measured).
@@ -169,7 +170,7 @@ Flow after a build session, `scripts/cache-publish.sh`:
 2. The signer runs `nbh-cache sign` with the `nbh-cache-signer` key. It signs only narinfos whose store path is in the expect list from the bot's own evaluation and whose nar decompresses to NarHash and NarSize.
 3. `nbh-cache gc` runs with a stamp file, at most once per 24 h.
 
-Hosts use `services.nbh.cache` in `modules/client.nix`. The host sets `account`, `region`, `bucket`, `publicKey` and `credentialsFile`, which have no defaults, so a missing one fails eval. `profile` defaults to `nbh-cache-<host>`. The module adds the `s3://` substituter at priority 50 and the public key, and points nix-daemon's `AWS_SHARED_CREDENTIALS_FILE` at the host key. It also adds a `nbh-cache-roots` unit, triggered by a path unit on `/nix/var/nix/profiles`, which writes the closure of the system profile, `/run/current-system` and `/run/booted-system` to `roots/<host>`.
+Clients use `services.nbh.cache` in `modules/client.nix`. The config sets `account`, `region`, `bucket`, `publicKey` and `credentialsFile`, which have no defaults, so a missing one fails eval. `profile` defaults to `nbh-cache-client`, the shared key. The module adds the `s3://` substituter at priority 50 and the public key, and points nix-daemon's `AWS_SHARED_CREDENTIALS_FILE` at that key. It also adds a `nbh-cache-roots` unit, run at boot and by a path unit on `/nix/var/nix/profiles`, which writes `roots/<hash>` for the system profile, `/run/current-system` and `/run/booted-system`.
 
 Builders. `modules/builder.nix` now lists only determinate and cache.nixos.org, with the flakehub -3 and -4 keys and the cache key. An assertion rejects any other substituter. Breaking it once with nixos-cuda failed eval (measured). The re-baked AMI ami-028a6bddd61022087 (launch template version 5) carries it (measured, `tests/results/rebake-3/live/builder.txt`).
 
