@@ -1,0 +1,8 @@
+cur DreamingDesk /nix/store/y6qj6xl1n3y8w686kqzbh77l3lrrxj9x-nixos-system-DreamingDesk-26.11.20261012.6aa7ad7.drv
+cur DreamingBlade /nix/store/w31cy3nia3jwmdc80m1h4sdmzmp4639z-nixos-system-DreamingBlade-26.11.20261012.6aa7ad7.drv
+master DreamingDesk /nix/store/naymd2m64y96sgn863kkqk1iv3xjkcbh-nixos-system-DreamingDesk-26.11.20261012.6aa7ad7.drv
+master DreamingBlade /nix/store/vq58kf9r4sbqxg42sinlpx4k1yypd843-nixos-system-DreamingBlade-26.11.20261012.6aa7ad7.drv
+old DreamingDesk /nix/store/5wjba8vwimcfp4549nk84c4zd841krbn-nixos-system-DreamingDesk-26.11.20261009.91a5f61.drv
+old DreamingBlade /nix/store/zbw20n1yx617b5abd5chgrjj5x99llbs-nixos-system-DreamingBlade-26.11.20261009.91a5f61.drv
+new DreamingDesk /nix/store/zzavk46gfh20igqhdq7frxvsdg1823jz-nixos-system-DreamingDesk-26.11.20261015.8d71b6f.drv
+new DreamingBlade /nix/store/shsjdw9j7qa88faj2mkffcbgaxbq77ja-nixos-system-DreamingBlade-26.11.20261015.8d71b6f.drv

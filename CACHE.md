@@ -15,7 +15,7 @@ Prices: S3 Standard eu-north-1 $0.023/GB-month, PUT and LIST $0.005 per 1k, GET 
 | Design | Who writes | Who reads | GC | Always on | ~50 GB/month | His machines' egress |
 | --- | --- | --- | --- | --- | --- | --- |
 | Plain S3 bucket, `s3://` store | Builders in-region for free (instance profile or gate-minted session creds), or hosts with `nix copy` | Builders free in-region, hosts over the internet | None built in. Bring your own (this doc) | Nothing | $1.15 storage + cents of requests (inferred) | $0.09/GB after the shared 100 GB free (read) |
-| Plain R2 bucket, `s3://…?endpoint=…&region=auto` | Builders pay AWS egress $0.09/GB to push (read). Hosts push free | Everyone, egress free (read) | Same bring-your-own GC. R2 lifecycle exists but is age-based | Nothing | $0.60 (50 GB minus 10 free, inferred) | $0 (read) |
+| Plain R2 bucket, `s3://…?endpoint=…&region=auto` | Builders pay AWS egress $0.09/GB to push (read). Hosts push free | Everyone, egress free (read) | Same bring-your-own GC. R2 lifecycle exists but is age-based | Nothing | $0.60 (50 GB minus 10 free, inferred). His measured 6 GB is free | $0 (read) |
 | niks3 (Mic92) on S3 or R2 | `niks3 push` asks the server for presigned URLs, then PUTs to the bucket (read) | Straight from the bucket (read) | Closures older than `--older-than` (default 720h) and not pinned are dropped, reachability walked in Postgres, orphans marked then deleted after a grace period (read, `server/pg/query.sql`, `cmd/niks3/main.go`) | niks3 server plus PostgreSQL (read) | Bucket cost plus a host for the server (guess: $4+/month for the smallest VM) | Same as the bucket under it |
 | Attic | `attic push` to atticd, which chunks and dedups (read) | Through atticd, which signs on the fly (read) | Time-based retention per cache, run every 12 h by default, LRU by access (read, `config-template.toml`, README) | atticd plus a DB (read) | Bucket cost plus a host (guess, as niks3) | Through the server, so the server's egress |
 | Cachix | `cachix push` | cachix.org CDN | LRU eviction once the storage limit is hit (read, pricing FAQ) | Hosted | Starter plan is 50 GiB, price is "contact" on the page today (read) | Unlimited bandwidth (read) |
@@ -27,7 +27,9 @@ Why lifecycle alone is wrong here. Expiry counts from object creation (read). Ni
 
 A plain bucket plus our own root-based mark and sweep, run by the gate. No server.
 
-Bucket. R2, if a Cloudflare account and one more credential are acceptable. Otherwise S3 in eu-north-1. R2 wins on every modelled scenario (see Costs) because storage is 35% cheaper and the first 10 GB are free. AWS egress is identical in both: with S3 the hosts pay it on pull, with R2 the builders pay it on push, and in this setup one host pulls about what a builder pushes (inferred). The "S3 for builders plus R2 mirror for hosts" hybrid is always the most expensive since it stores everything twice (inferred from the model).
+Bucket. S3 in eu-north-1, account 845087560967. Lorenzo's rule is "everything on AWS unless R2 is importantly cheaper". Measured on his flake, R2 saves $0.24 a month with the recommended push policy and $0.61 a month if the full closure were pushed (see Costs). That is negligible, so S3 (inferred from the model). Builders read and write S3 in-region for free (read), and IAM stays in one account. R2 becomes worth a second look only if the whole AWS account goes past 100 GB of internet egress a month, and even then the gap is under $2 a month at these volumes (inferred).
+
+Push policy. Push only paths that no public cache has (policy A). Hosts keep pulling everything else from cache.nixos.org and install.determinate.systems for free. Pushing the full closure (policy B) multiplies the cache by 7 and the weekly push by 7 for no gain while upstream keeps old paths (inferred from the measured sizes).
 
 Why not niks3 or Attic. Both do the right GC, niks3 almost exactly the root model below with "pins", but both need an always-on server and a database, which this project rules out (read for the requirement, inferred for the fit). niks3 stays the fallback if the root files below turn out too fragile.
 
@@ -73,18 +75,54 @@ Where GC runs. In the gate after a session ends, at most once per 24 h, plus a m
 
 Grace window. At least the 3 h builder uptime cap so a session can never lose its own outputs. Suggested 3 days so a closure built for one host survives until that host switches (guess). Lorenzo picks.
 
+## Measured closure
+
+Workflow it models. A weekly bot runs `nix flake update`, builds DreamingDesk and DreamingBlade on the builders and pushes the lock. The hosts pull and switch, ideally building nothing.
+
+Method. `nix-instantiate` of each toplevel (no build), `nix derivation show -r`, then a walk from the toplevel that stops at any derivation whose needed outputs have a narinfo on install.determinate.systems, cache.nixos.org, nix-community.cachix.org, numtide.cachix.org or cache.nixos-cuda.org (the flake's own substituters). Everything the walk does not stop at must be built and is what our cache stores. Scripts are `bench/closure-split.py`, `bench/fod-sizes.py` and `bench/cache-sizes.py`. Output in `tests/results/cache-proto/sizes.json`.
+
+Locks. Current is `nbh-drop-xinux-kernel` (nixpkgs 6aa7ad7, 2026-10-12). The weekly pair is lock `aa2135b` (nixpkgs 91a5f61, 2026-10-09) against lock `cfc5996` from `auto-update-flake` (nixpkgs 8d71b6f, 2026-10-15), 6.7 days apart, both on the same config. `master` gives the same derivation counts as the branch (measured). It differs only in substituting the kernel from cache.xinux.uz.
+
+| Now (2026-10-12 lock) | DreamingDesk | DreamingBlade | Both, deduped |
+| --- | --- | --- | --- |
+| Derivations in the graph | 18,836 | 20,739 | |
+| Paths to build, our cache | 472 | 607 | 726 |
+| Of those, fixed-output downloads | 39 | 43 | |
+| Our cache, NAR | 7.4 GB | 7.2 GB | 7.7 GB |
+| Our cache, compressed | 3.4 GB | 3.9 GB | 4.1 GB |
+| Public-cache paths reachable (upper bound of the runtime closure) | 3,330 | 3,683 | 3,734 |
+| Their NAR / compressed | 41.4 / 14.7 GB | 48.7 / 21.7 GB | 52.7 / 24.0 GB |
+
+| Per week | Value |
+| --- | --- |
+| New paths to build | 272 |
+| New in our cache, NAR / compressed | 3.45 / 1.96 GB |
+| Of the compressed, measured | 0.84 GB |
+| New public-cache paths (upper bound) | 373, 12.4 GB compressed |
+| Each host pulls from our cache | DreamingDesk 1.11 GB, DreamingBlade 1.07 GB |
+
+What is measured and what is not. Counts and every public-cache size are measured from narinfo `NarSize` and `FileSize`. Fixed-output downloads (Cursor 307 MB, Zoom 303 MB, CachyOS source 266 MB, Helium 159 MB, two nix-index databases 107 MB each, Slack 94 MB, Discord parts) are measured by HTTP Content-Length. The kernel outputs we built are measured from the box store: `kxs8…` 25.8 MB, `vn1lzz4b…-modules` 162 MB, `z2wks294…-dev` 639 MB NAR. Every other built path is a guess. A package that unpacks a download is twice the download, anything else is 0.5 MB, and compression follows the measured public-cache ratio of 0.36 to 0.45. Most of the built set is unfree software cache.nixos.org never builds (Cursor, Zoom, Discord, Slack, Helium, Steam, saleae-logic, hplip), the kernel, and NixOS config and unit files.
+
+The kernel did not change in this week (measured). Its five output paths per host are identical in all three locks because `nix-cachyos-kernel` stayed at b1332396. A kernel bump costs about 0.85 GB NAR in our cache (0.83 GB of it measured) and about 0.19 GB per host to pull (measured kernel and modules NAR).
+
+The "public-cache paths reachable" rows are an upper bound. They are the reference closure of every public path that any built derivation consumes, so they include compilers. The true runtime closure is smaller (inferred). Only policy B depends on this number.
+
 ## Costs
 
-`bench/cache-cost.py` holds every input. Prices are read. Volumes are guesses anchored on one measured fact: the kernel copy-back was about 52 s at 16 MB/s, about 0.8 GB uncompressed per kernel build (measured earlier, `TRAIL.md`). `ssh_copyback_gb` is the existing remote-build copy-back, identical in every design.
+`bench/cache-cost.py` holds every price and input. Prices are read. Volumes come from the tables above, a month is 52/12 weeks, and GET counts are a guess (about 4k narinfo lookups per host switch and 20k per builder session, 210k a month). `ssh_copyback_gb` is the existing remote-build copy-back to wherever the weekly bot runs, 3.45 GB NAR a week (inferred from the built NAR delta), and is the same in every design.
 
-| Scenario | S3 only | R2 only | S3 + R2 mirror |
+| Monthly | S3 only | R2 only | S3 + R2 mirror |
 | --- | --- | --- | --- |
-| light, 20 GB cache, 1 kernel bump | $0.50 | $0.15 | $0.64 |
-| typical, 50 GB, about 5 GB pushed | $1.32 | $0.60 | $1.89 |
-| heavy, 150 GB, 30 GB pushed | $4.40 | $2.10 | $6.38 |
-| heavy with the 100 GB AWS free egress used up elsewhere | $9.80 | $7.50 | $11.78 |
+| A, push built only, 6.1 GB cache, 8.5 GB pushed, 9.4 GB pulled | $0.24 | $0.00 | $0.19 |
+| A plus 4 kernel bumps | $0.25 | $0.00 | $0.21 |
+| B, push full closure, 42.5 GB cache, 62 GB pushed, 75 GB pulled | $1.11 | $0.50 | $1.55 |
+| B with the 100 GB AWS free egress already used elsewhere | $9.18 | $7.45 | $8.51 |
 
-R2 saves $0.35 to $2.30 a month in these scenarios (inferred from the model). Egress is $0 until AWS egress for the whole account passes 100 GB a month (read). Today's prototype spend was under $0.001: about 30 PUTs, 100 GETs and 11 MB stored for 3 minutes (inferred from the commands run and the prices above).
+Verdict. Negligible. With policy A, S3 costs $0.24 a month more than R2, all of it S3 storage and requests. R2 is $0.00 because 6 GB fits its 10 GB free tier (inferred from the model). AWS egress is $0 in both because the account stays under 100 GB a month: S3 hosts pull 9.4 GB, R2 builders push 8.5 GB, plus the 15 GB copy-back (inferred). Policy B widens the gap to $0.61, or $1.73 past the free egress, still small. Policy B is the only case that gets near the 100 GB line, at 90 GB of S3 egress a month.
+
+Biggest egress lever. The 15 GB a month of ssh copy-back to the bot is larger than the cache traffic in policy A (inferred). If the bot builds with `--store ssh-ng://…` or pushes to the cache from the builder and never copies back, that flow goes away. Worth doing in phase 2, whichever bucket.
+
+Prototype spend today was under $0.001: about 30 PUTs, 100 GETs and 11 MB stored for 3 minutes (inferred from the commands run and the prices above).
 
 ## Prototype
 
@@ -102,11 +140,12 @@ R2 was not prototyped, no Cloudflare resource was created. Nix 2.35 accepts `s3:
 
 ## Open decisions for Lorenzo
 
-1. R2 or S3. R2 is cheaper by $0.35 to $2.30 a month but adds a Cloudflare credential to the gate. S3 keeps everything in account 845087560967.
-2. Private bucket with a read credential on each host, or public reads. Public is simpler for hosts but publishes every path he builds.
-3. Grace window. 3 h minimum, 3 days suggested.
-4. Who signs. Client-side signing after a NarHash check (recommended) or a builder-held key.
-5. Whether hosts also push what they build locally, or only builders push.
+1. S3 or R2. By his own rule S3, since R2 saves $0.24 a month with policy A (inferred). Confirm.
+2. Push policy. A, built paths only (recommended), or B, the full closure as insurance against upstream dropping paths.
+3. Private bucket with a read credential on each host, or public reads. Public is simpler for hosts but publishes every path he builds.
+4. Grace window. 3 h minimum, 3 days suggested.
+5. Who signs. Client-side signing after a NarHash check (recommended) or a builder-held key.
+6. Whether hosts also push what they build locally, or only builders push.
 
 ## Sources
 

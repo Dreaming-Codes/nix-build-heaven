@@ -1,0 +1,194 @@
+{
+ "cur": {
+  "per_host": {
+   "DreamingDesk": {
+    "built_paths": 472,
+    "built_nar": 7.36,
+    "built_file": 3.44,
+    "built_measured_nar": 4.0,
+    "built_runtime_file": 2.06,
+    "upstream_paths": 3330,
+    "upstream_nar": 41.38,
+    "upstream_file": 14.7,
+    "file_ratio": 0.355
+   },
+   "DreamingBlade": {
+    "built_paths": 607,
+    "built_nar": 7.21,
+    "built_file": 3.92,
+    "built_measured_nar": 4.01,
+    "built_runtime_file": 2.45,
+    "upstream_paths": 3683,
+    "upstream_nar": 48.69,
+    "upstream_file": 21.66,
+    "file_ratio": 0.445
+   }
+  },
+  "both_hosts": {
+   "built_paths": 726,
+   "built_nar_gb": 7.71,
+   "built_file_gb": 4.1,
+   "upstream_paths": 3734,
+   "upstream_nar_gb": 52.7,
+   "upstream_file_gb": 23.98
+  }
+ },
+ "old": {
+  "per_host": {
+   "DreamingDesk": {
+    "built_paths": 472,
+    "built_nar": 7.35,
+    "built_file": 3.43,
+    "built_measured_nar": 4.0,
+    "built_runtime_file": 2.05,
+    "upstream_paths": 3331,
+    "upstream_nar": 41.24,
+    "upstream_file": 14.64,
+    "file_ratio": 0.355
+   },
+   "DreamingBlade": {
+    "built_paths": 620,
+    "built_nar": 7.21,
+    "built_file": 3.82,
+    "built_measured_nar": 4.0,
+    "built_runtime_file": 2.37,
+    "upstream_paths": 3764,
+    "upstream_nar": 48.22,
+    "upstream_file": 20.67,
+    "file_ratio": 0.429
+   }
+  },
+  "both_hosts": {
+   "built_paths": 739,
+   "built_nar_gb": 7.7,
+   "built_file_gb": 4.0,
+   "upstream_paths": 3815,
+   "upstream_nar_gb": 52.23,
+   "upstream_file_gb": 22.99
+  }
+ },
+ "new": {
+  "per_host": {
+   "DreamingDesk": {
+    "built_paths": 470,
+    "built_nar": 7.26,
+    "built_file": 3.38,
+    "built_measured_nar": 3.97,
+    "built_runtime_file": 1.93,
+    "upstream_paths": 3288,
+    "upstream_nar": 41.25,
+    "upstream_file": 14.68,
+    "file_ratio": 0.356
+   },
+   "DreamingBlade": {
+    "built_paths": 614,
+    "built_nar": 7.12,
+    "built_file": 3.86,
+    "built_measured_nar": 3.97,
+    "built_runtime_file": 2.32,
+    "upstream_paths": 3681,
+    "upstream_nar": 48.75,
+    "upstream_file": 21.7,
+    "file_ratio": 0.445
+   }
+  },
+  "both_hosts": {
+   "built_paths": 733,
+   "built_nar_gb": 7.61,
+   "built_file_gb": 4.03,
+   "upstream_paths": 3732,
+   "upstream_nar_gb": 52.76,
+   "upstream_file_gb": 24.02
+  }
+ },
+ "weekly_delta": {
+  "built_paths": 272,
+  "built_nar_gb": 3.45,
+  "built_file_gb": 1.96,
+  "built_file_measured_gb": 0.84,
+  "upstream_paths": 373,
+  "upstream_nar_gb": 19.14,
+  "upstream_file_gb": 12.43,
+  "machine_pull_built_runtime_file_gb": {
+   "DreamingDesk": 1.11,
+   "DreamingBlade": 1.07
+  },
+  "top_new_built": [
+   [
+    "Cursor-3.24.9-x86_64.AppImage",
+    0.31,
+    "url"
+   ],
+   [
+    "cursor-3.24.9-extracted",
+    0.27,
+    "guess"
+   ],
+   [
+    "discord-unwrapped-1.0.161",
+    0.17,
+    "guess"
+   ],
+   [
+    "helium-0.19.3.1-x86_64.AppImage",
+    0.16,
+    "url"
+   ],
+   [
+    "helium-0.19.3.1-extracted",
+    0.14,
+    "guess"
+   ],
+   [
+    "index-x86_64-linux",
+    0.11,
+    "url"
+   ],
+   [
+    "nix-index-database",
+    0.1,
+    "guess"
+   ],
+   [
+    "home-manager-files",
+    0.1,
+    "guess"
+   ],
+   [
+    "full.distro",
+    0.09,
+    "url"
+   ],
+   [
+    "discord-1.0.161",
+    0.08,
+    "guess"
+   ],
+   [
+    "home-manager-files",
+    0.08,
+    "guess"
+   ],
+   [
+    "home-manager-files",
+    0.08,
+    "guess"
+   ],
+   [
+    "cloudflare-warp_2026.8.2110.0_amd64.deb",
+    0.07,
+    "url"
+   ],
+   [
+    "cloudflare-warp-2026.8.2110.0",
+    0.07,
+    "guess"
+   ],
+   [
+    "full.distro",
+    0.04,
+    "url"
+   ]
+  ]
+ }
+}

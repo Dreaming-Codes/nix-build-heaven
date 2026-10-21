@@ -21,16 +21,39 @@ R2_FREE_STORAGE_GB = 10
 R2_FREE_CLASS_A = 1_000_000
 R2_FREE_CLASS_B = 10_000_000
 
+WEEKS = 52 / 12
+
+# From tests/results/cache-proto/sizes.json: weekly `nix flake update` of /workspace/nbh/nixos,
+# lock aa2135b (nixpkgs 91a5f61, 2026-10-09) against cfc5996 (8d71b6f, 2026-10-15), both hosts.
+BUILT_NOW_GB = 4.10
+BUILT_WEEK_GB = 1.96
+PULL_BUILT_WEEK_GB = 1.11 + 1.07
+UPSTREAM_NOW_GB = 23.98
+UPSTREAM_WEEK_GB = 12.43
+PULL_UPSTREAM_WEEK_GB = 4.82 + 10.26
+NEW_PATHS_WEEK = 272 + 373
+COPYBACK_WEEK_GB = 3.45
+KERNEL_BUMP_PUSH_GB = 0.45
+KERNEL_BUMP_PULL_GB = 2 * 0.19
+
+
+def scenario(cache_gb, push_gb, pull_gb, paths_week, gets):
+    return dict(cache_gb=cache_gb, builder_push_gb=push_gb, machine_pull_gb=pull_gb, builder_pull_gb=0,
+                ssh_copyback_gb=COPYBACK_WEEK_GB * WEEKS, other_aws_dto_gb=0,
+                puts=int(2 * paths_week * WEEKS), gets=gets, lists=60)
+
+
 SCENARIOS = {
-    "light": dict(cache_gb=20, builder_push_gb=1, machine_pull_gb=1, builder_pull_gb=1,
-                  ssh_copyback_gb=1, other_aws_dto_gb=0, puts=4_000, gets=40_000, lists=200),
-    "typical": dict(cache_gb=50, builder_push_gb=5, machine_pull_gb=5, builder_pull_gb=5,
-                    ssh_copyback_gb=5, other_aws_dto_gb=0, puts=20_000, gets=150_000, lists=1_000),
-    "heavy": dict(cache_gb=150, builder_push_gb=30, machine_pull_gb=30, builder_pull_gb=30,
-                  ssh_copyback_gb=30, other_aws_dto_gb=0, puts=120_000, gets=800_000, lists=5_000),
-    "heavy-no-free-dto": dict(cache_gb=150, builder_push_gb=30, machine_pull_gb=30, builder_pull_gb=30,
-                              ssh_copyback_gb=30, other_aws_dto_gb=100, puts=120_000, gets=800_000, lists=5_000),
+    "A built only": scenario(BUILT_NOW_GB + BUILT_WEEK_GB, BUILT_WEEK_GB * WEEKS,
+                             PULL_BUILT_WEEK_GB * WEEKS, 272, 210_000),
+    "A + 4 kernel bumps": scenario(BUILT_NOW_GB + BUILT_WEEK_GB + KERNEL_BUMP_PUSH_GB,
+                                   BUILT_WEEK_GB * WEEKS + 4 * KERNEL_BUMP_PUSH_GB,
+                                   PULL_BUILT_WEEK_GB * WEEKS + 4 * KERNEL_BUMP_PULL_GB, 280, 210_000),
+    "B full closure": scenario(BUILT_NOW_GB + UPSTREAM_NOW_GB + BUILT_WEEK_GB + UPSTREAM_WEEK_GB,
+                               (BUILT_WEEK_GB + UPSTREAM_WEEK_GB) * WEEKS,
+                               (PULL_BUILT_WEEK_GB + PULL_UPSTREAM_WEEK_GB) * WEEKS, NEW_PATHS_WEEK, 250_000),
 }
+SCENARIOS["B, 100 GB free egress used elsewhere"] = dict(SCENARIOS["B full closure"], other_aws_dto_gb=100)
 
 
 def aws_dto(gb, other):
