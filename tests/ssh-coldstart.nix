@@ -49,7 +49,8 @@ pkgs.testers.runNixOSTest {
       client.start()
       client.wait_for_unit("nbh-gate.service")
       client.wait_until_succeeds(f"test -s {pki}/ssh_host_ca")
-      client.succeed(f"nbh-gate userdata {pki} > /var/lib/fake-imds/user-data")
+      # Atomic, like EC2 user-data: a half-written file reads as "not nbh v1" and nbh-keys exits.
+      client.succeed(f"nbh-gate userdata {pki} > /var/lib/fake-imds/user-data.tmp && mv /var/lib/fake-imds/user-data.tmp /var/lib/fake-imds/user-data")
       print(client.succeed("cat /run/nbh/machines"))
       builder.start()
       builder.wait_for_open_port(22, timeout=180)

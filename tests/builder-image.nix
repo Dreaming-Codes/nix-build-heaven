@@ -45,7 +45,8 @@ pkgs.testers.runNixOSTest {
           builder.wait_until_succeeds("journalctl -u nbh-keys.service | grep -q 'user-data not available yet'", timeout=120)
           builder.fail("nc -z 127.0.0.1 22")
           builder.fail("ls /etc/ssh/ssh_host_*")
-          client.succeed(f"nbh-gate userdata {pki} > /var/lib/fake-imds/user-data")
+          # Atomic, like EC2 user-data: a half-written file reads as "not nbh v1" and nbh-keys exits.
+          client.succeed(f"nbh-gate userdata {pki} > /var/lib/fake-imds/user-data.tmp && mv /var/lib/fake-imds/user-data.tmp /var/lib/fake-imds/user-data")
           builder.wait_for_open_port(22, timeout=60)
 
       with subtest("ssh material is this boot's, in a directory sshd reads as nbh"):
