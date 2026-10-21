@@ -59,6 +59,8 @@ pkgs.testers.runNixOSTest {
           out = blog.strip().splitlines()[-1]
           assert blog.count("on 'ssh-ng://nbh@nbh-builder") >= 2, blog
           builder.succeed(f"nix-store --check-validity {out}")
+          # The 3 s poll can miss a 1 s nix-daemon session under TCG; ssh-coldstart tests busy detection.
+          builder.succeed("touch /run/nbh-deadman/last-busy")
           build_done = time.monotonic()
 
       with subtest("dead-man: still up well inside the idle window, off after it"):
@@ -76,6 +78,8 @@ pkgs.testers.runNixOSTest {
           boot_to_serving = time.monotonic() - t0
           kernel_to_serving = float(capped.succeed("cut -d' ' -f1 /proc/uptime"))
           print(f"MEASURED boot_to_serving_s={boot_to_serving:.1f} uptime_at_serving_s={kernel_to_serving:.1f}")
+          # systemd-analyze fails until boot finishes, which can trail sshd under TCG.
+          capped.wait_until_succeeds("systemd-analyze", timeout=60)
           print(capped.succeed("systemd-analyze; systemd-analyze critical-chain sshd.service || true"))
 
       with subtest("dead-man: uptime cap powers off an idle-forever builder"):
