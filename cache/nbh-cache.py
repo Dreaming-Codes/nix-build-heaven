@@ -73,16 +73,20 @@ def render_narinfo(f, sigs):
 
 class Cache:
     def __init__(self, args):
-        cp = configparser.ConfigParser()
-        cp.read(args.credentials_file)
-        if args.profile not in cp:
-            sys.exit(f"profile {args.profile} not in {args.credentials_file}")
-        sec = cp[args.profile]
-        session = boto3.session.Session(
-            aws_access_key_id=sec["aws_access_key_id"],
-            aws_secret_access_key=sec["aws_secret_access_key"],
-            region_name=args.region,
-        )
+        if args.credentials_file:
+            cp = configparser.ConfigParser()
+            cp.read(args.credentials_file)
+            if args.profile not in cp:
+                sys.exit(f"profile {args.profile} not in {args.credentials_file}")
+            sec = cp[args.profile]
+            session = boto3.session.Session(
+                aws_access_key_id=sec["aws_access_key_id"],
+                aws_secret_access_key=sec["aws_secret_access_key"],
+                region_name=args.region,
+            )
+        else:
+            # A builder has no key of its own; its instance role comes from IMDS.
+            session = boto3.session.Session(region_name=args.region)
         account = session.client("sts", region_name=args.region).get_caller_identity()["Account"]
         if account != args.aws_account:
             print(f"credentials belong to account {account}, expected {args.aws_account}", file=sys.stderr)
@@ -362,8 +366,8 @@ def main():
     ap.add_argument("--bucket", required=True)
     ap.add_argument("--region", required=True)
     ap.add_argument("--aws-account", required=True, help="12-digit account the key must belong to; exit 78 otherwise")
-    ap.add_argument("--credentials-file", required=True, help="AWS shared credentials file; AWS_* env and ~/.aws are ignored")
-    ap.add_argument("--profile", required=True)
+    ap.add_argument("--credentials-file", help="AWS shared credentials file; AWS_* env and ~/.aws are ignored. Omit to use the default chain, as a builder does for its instance role")
+    ap.add_argument("--profile")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     p = sub.add_parser("push", help="upload unsigned the closure paths no upstream cache serves")
@@ -390,6 +394,8 @@ def main():
     args = ap.parse_args()
     if not re.fullmatch(r"[0-9]{12}", args.aws_account):
         ap.error("--aws-account must be 12 digits")
+    if bool(args.credentials_file) != bool(args.profile):
+        ap.error("--credentials-file and --profile go together")
     cache = Cache(args)
     {"push": cmd_push, "sign": cmd_sign, "roots": cmd_roots, "gc": cmd_gc}[args.cmd](cache, args)
 
