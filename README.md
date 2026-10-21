@@ -9,7 +9,7 @@ See `SSH-NG.md` for why ssh-ng replaced grpc, and `TRAIL.md` for what was checke
 
 ## Layout
 
-- `gate/` is `nbh-gate` in Rust. `fleet` is the pure state machine, `gate` is the proxy and effect executor, `cloud` is the cloud boundary with an in-memory fake, `ec2` signs the five EC2 calls the gate makes, `pki` is the SSH host CA that mints per-launch host certificates into user-data.
+- `gate/` is `nbh-gate` in Rust. `fleet` is the pure state machine, `gate` is the proxy and effect executor, `cloud` is the cloud boundary with an in-memory fake, `ec2` signs the five EC2 calls and the STS account check the gate makes, `pki` is the SSH host CA that mints per-launch host certificates into user-data.
 - `modules/builder.nix` is the builder NixOS module. `nix/ami.nix` turns it into the raw amazon image (`packages.ami`).
 - `modules/client.nix` is the client NixOS module: machines file, ssh options for `nbh-builder`, gate unit.
 - `infra/` is the AWS side in terranix, applied by `scripts/tofu.sh`. `scripts/upload-ami.sh` uploads the image with coldsnap.
@@ -28,4 +28,4 @@ bench/simulate.py bench/results/s2-libinput-oom
 
 `scripts/check.sh` exists because the shared box's nix-daemon does not advertise `kvm` and its nested KVM crashes on vCPU creation, so the VMs run under TCG and their timings are slower than EC2. On a normal NixOS host `nix build .#checks.x86_64-linux.<name>` is enough.
 
-The gate reads AWS credentials from `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, or from profile `AWS_PROFILE` in `AWS_SHARED_CREDENTIALS_FILE`.
+With `--backend aws` the gate reads AWS credentials only from `--credentials-file`, profile `--profile` (default `nbh-gate`). It never reads `AWS_*` variables or `~/.aws`. Before it can launch anything it asks STS GetCallerIdentity which account the key belongs to, and exits with status 78 if that is not `--aws-account`. The client module passes all three from `services.nbh.aws` and does not restart the unit on 78.

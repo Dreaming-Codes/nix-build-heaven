@@ -53,6 +53,26 @@ in
         type = lib.types.package;
         default = self.packages.${pkgs.stdenv.hostPlatform.system}.gate;
       };
+      aws = {
+        account = lib.mkOption {
+          type = lib.types.nullOr (lib.types.strMatching "[0-9]{12}");
+          default = null;
+          description = "AWS account the gate's key must belong to. Set means `--backend aws`; the gate checks it with STS and refuses to start on any other account.";
+        };
+        credentialsFile = lib.mkOption {
+          type = lib.types.str;
+          default = "/var/lib/nbh-gate/aws.credentials";
+          description = "AWS shared credentials file, readable by root. The gate reads no other credential source.";
+        };
+        profile = lib.mkOption {
+          type = lib.types.str;
+          default = "nbh-gate";
+        };
+        region = lib.mkOption {
+          type = lib.types.str;
+          default = "eu-north-1";
+        };
+      };
       extraArgs = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [ ];
@@ -104,10 +124,19 @@ in
               "--machines-file" cfg.machinesFile
               "--machines-entry" entry
             ]
+            ++ lib.optionals (cfg.gate.aws.account != null) [
+              "--backend" "aws"
+              "--aws-account" cfg.gate.aws.account
+              "--credentials-file" cfg.gate.aws.credentialsFile
+              "--profile" cfg.gate.aws.profile
+              "--region" cfg.gate.aws.region
+            ]
             ++ cfg.gate.extraArgs
           );
           Restart = "always";
           RestartSec = 1;
+          # 78 is a key of the wrong AWS account. Retrying cannot fix it.
+          RestartPreventExitStatus = 78;
           StateDirectory = "nbh-gate";
           StateDirectoryMode = "0700";
         };

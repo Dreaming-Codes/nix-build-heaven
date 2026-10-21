@@ -1,0 +1,2 @@
+/nix/store/77679wvbf0i742cfibskj9psdmqfsmak-nbh-gate-0.2.0/bin/nbh-gate run --listen 127.0.0.1:2222 --machines-file /run/nbh/machines --machines-entry 'ssh-ng://nbh@nbh-builder:2222 x86_64-linux /var/lib/nbh-gate/pki/ssh_client 192 1 big-parallel,benchmark - -' --backend aws --aws-account 845087560967 --credentials-file /run/secrets/nbh-gate-aws --profile nbh-gate --region eu-north-1
+RestartPreventExitStatus=78
