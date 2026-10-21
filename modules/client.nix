@@ -8,7 +8,6 @@
 }:
 let
   cfg = config.services.nbh;
-  cache = import ../nix/cache.nix;
   cc = cfg.cache;
   features = lib.concatStringsSep "," cfg.features;
   # The host key column stays "-": ssh_config below trusts the gate's host CA
@@ -47,28 +46,49 @@ in
     };
     cache = {
       enable = lib.mkEnableOption "the Nix Build Heaven S3 cache as a substituter, with this host's roots kept in it";
-      host = lib.mkOption {
-        type = lib.types.enum cache.hosts;
-        default = config.networking.hostName;
-        description = "Host name of the read key, and of the roots/<host> object only that key may write.";
+      account = lib.mkOption {
+        type = lib.types.strMatching "[0-9]{12}";
+        description = "AWS account that owns the bucket. nbh-cache refuses a key of any other account.";
       };
-      credentialsFile = lib.mkOption {
+      region = lib.mkOption {
         type = lib.types.str;
-        description = "AWS shared credentials file with the [nbh-cache-<host>] profile, readable by root only.";
+        example = "eu-north-1";
+        description = "AWS region of the bucket. Set it explicitly so every host resolves the same cache.";
       };
-      priority = lib.mkOption {
-        type = lib.types.int;
-        default = cache.priority;
-        description = "Substituter priority. cache.nixos.org is 40, so upstream wins for paths both serve.";
+      bucket = lib.mkOption {
+        type = lib.types.str;
+        description = "S3 bucket of the cache.";
       };
       publicKey = lib.mkOption {
         type = lib.types.str;
-        default = cache.publicKey;
+        description = "Public half of the key that signs the cache's narinfos.";
+      };
+      host = lib.mkOption {
+        type = lib.types.str;
+        default = config.networking.hostName;
+        defaultText = lib.literalExpression "config.networking.hostName";
+        description = "Host name of the read key, and of the roots/<host> object only that key may write.";
+      };
+      profile = lib.mkOption {
+        type = lib.types.str;
+        default = "nbh-cache-${cc.host}";
+        defaultText = lib.literalExpression ''"nbh-cache-''${config.services.nbh.cache.host}"'';
+        description = "Profile in credentialsFile that holds this host's key.";
+      };
+      credentialsFile = lib.mkOption {
+        type = lib.types.str;
+        description = "AWS shared credentials file with the profile named by `profile`, readable by root only.";
+      };
+      priority = lib.mkOption {
+        type = lib.types.int;
+        default = 50;
+        description = "Substituter priority. cache.nixos.org is 40, so upstream wins for paths both serve.";
       };
       url = lib.mkOption {
         type = lib.types.str;
         readOnly = true;
-        default = "s3://${cache.bucket}?region=${cache.region}&profile=nbh-cache-${cc.host}&priority=${toString cc.priority}";
+        default = "s3://${cc.bucket}?region=${cc.region}&profile=${cc.profile}&priority=${toString cc.priority}";
+        defaultText = lib.literalMD "the `s3://` URL built from bucket, region, profile and priority";
       };
       roots = lib.mkOption {
         type = lib.types.bool;
@@ -107,7 +127,8 @@ in
         };
         region = lib.mkOption {
           type = lib.types.str;
-          default = "eu-north-1";
+          example = "eu-north-1";
+          description = "AWS region the gate launches builders in. Required once account is set.";
         };
       };
       extraArgs = lib.mkOption {
@@ -135,11 +156,11 @@ in
             Type = "oneshot";
             ExecStart = lib.escapeShellArgs [
               (lib.getExe cc.package)
-              "--bucket" cache.bucket
-              "--region" cache.region
-              "--aws-account" cache.account
+              "--bucket" cc.bucket
+              "--region" cc.region
+              "--aws-account" cc.account
               "--credentials-file" cc.credentialsFile
-              "--profile" "nbh-cache-${cc.host}"
+              "--profile" cc.profile
               "roots"
               "--host" cc.host
               "/nix/var/nix/profiles/system"
