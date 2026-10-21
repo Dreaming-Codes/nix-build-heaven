@@ -4,6 +4,7 @@
   config,
   lib,
   pkgs,
+  utils,
   ...
 }:
 let
@@ -87,7 +88,7 @@ in
       url = lib.mkOption {
         type = lib.types.str;
         readOnly = true;
-        default = "s3://${cc.bucket}?region=${cc.region}&profile=${cc.profile}&priority=${toString cc.priority}";
+        default = "s3://${cc.bucket}?region=${cc.region}&profile=${lib.escapeURL cc.profile}&priority=${toString cc.priority}";
         defaultText = lib.literalMD "the `s3://` URL built from bucket, region, profile and priority";
       };
       roots = lib.mkOption {
@@ -154,7 +155,7 @@ in
           path = [ config.nix.package ];
           serviceConfig = {
             Type = "oneshot";
-            ExecStart = lib.escapeShellArgs [
+            ExecStart = utils.escapeSystemdExecArgs [
               (lib.getExe cc.package)
               "--bucket" cc.bucket
               "--region" cc.region
