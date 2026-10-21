@@ -148,6 +148,16 @@ in
       };
     };
 
+    # Fixed-output and __noChroot builds share the host network, so without
+    # this any build could take the nbh-builder role's cache-push credentials.
+    networking.firewall.extraCommands = ''
+      iptables -C OUTPUT -d 169.254.169.254 -m owner --gid-owner nixbld -j REJECT 2>/dev/null ||
+        iptables -I OUTPUT -d 169.254.169.254 -m owner --gid-owner nixbld -j REJECT
+    '';
+    networking.firewall.extraStopCommands = ''
+      iptables -D OUTPUT -d 169.254.169.254 -m owner --gid-owner nixbld -j REJECT 2>/dev/null || true
+    '';
+
     nix.settings = {
       substituters = [
         "https://install.determinate.systems?priority=20"
