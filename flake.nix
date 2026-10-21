@@ -133,9 +133,9 @@
             exec = config.systemd.services.nbh-cache-roots.serviceConfig.ExecStart;
             fails = attrs: !(builtins.tryEval (hostWith attrs).config.system.build.toplevel.drvPath).success;
           in
-          assert lib.assertMsg (url == "s3://example-cache?region=us-east-1&profile=nbh-cache-example&priority=50") "cache url: ${url}";
+          assert lib.assertMsg (url == "s3://example-cache?region=us-east-1&profile=nbh-cache-client&priority=50") "cache url: ${url}";
           assert lib.assertMsg (lib.elem "example-cache-1:AAAA" config.nix.settings.extra-trusted-public-keys) "cache key missing from trusted-public-keys";
-          assert lib.assertMsg (lib.hasSuffix ''"--bucket" "example-cache" "--region" "us-east-1" "--aws-account" "123456789012" "--credentials-file" "/run/secrets/nbh-cache" "--profile" "nbh-cache-example" "roots" "--host" "example" "/nix/var/nix/profiles/system" "/run/current-system" "/run/booted-system"'' exec) "nbh-cache-roots ExecStart: ${exec}";
+          assert lib.assertMsg (lib.hasSuffix ''"--bucket" "example-cache" "--region" "us-east-1" "--aws-account" "123456789012" "--credentials-file" "/run/secrets/nbh-cache" "--profile" "nbh-cache-client" "roots" "--host" "example" "/nix/var/nix/profiles/system" "/run/current-system" "/run/booted-system"'' exec) "nbh-cache-roots ExecStart: ${exec}";
           assert lib.assertMsg (lib.all (n: fails (removeAttrs values [ n ])) (lib.attrNames values)) "a cache without account, region, bucket or publicKey still evaluated";
           pkgs.writeText "client-cache" "${url}\n${exec}\n";
       };

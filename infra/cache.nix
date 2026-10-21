@@ -23,12 +23,11 @@ let
     { Sid = "Upload"; Effect = "Allow"; Action = [ "s3:PutObject" "s3:AbortMultipartUpload" ]; Resource = cacheObjects; }
     noRoots
   ];
-  identities = lib.listToAttrs (map (h: {
-    name = h;
-    value = readStatements ++ [
-      { Sid = "OwnRoot"; Effect = "Allow"; Action = "s3:PutObject"; Resource = "${arn}/roots/${h}"; }
+  identities = {
+    # One key shared by every host. Any host can rewrite any root.
+    client = readStatements ++ [
+      { Sid = "Roots"; Effect = "Allow"; Action = "s3:PutObject"; Resource = "${arn}/roots/*"; }
     ];
-  }) c.hosts) // {
     # Signs on the box. Only rewrites narinfos; nars come from the builder role.
     signer = [
       { Sid = "List"; Effect = "Allow"; Action = "s3:ListBucket"; Resource = arn; }

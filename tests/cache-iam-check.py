@@ -28,13 +28,11 @@ def attempt(s3, op, **kw):
 nonce = sys.argv[1]
 probe = f"iam-probe-{nonce}"
 cases = [
-    ("DreamingDesk", "put_object", {"Key": f"nar/{probe}.nar.zst", "Body": b"x"}, "AccessDenied"),
-    ("DreamingDesk", "put_object", {"Key": f"{'0' * 32}.narinfo", "Body": b"x"}, "AccessDenied"),
-    ("DreamingDesk", "delete_object", {"Key": "nix-cache-info"}, "AccessDenied"),
-    ("DreamingDesk", "put_object", {"Key": "roots/DreamingBlade", "Body": b"x"}, "AccessDenied"),
-    ("DreamingBlade", "put_object", {"Key": "roots/DreamingDesk", "Body": b"x"}, "AccessDenied"),
-    ("DreamingDesk", "get_object", {"Key": "nix-cache-info"}, "allowed"),
-    ("DreamingDesk", "head_object", {"Key": f"{'0' * 32}.narinfo"}, "404"),
+    ("client", "put_object", {"Key": f"nar/{probe}.nar.zst", "Body": b"x"}, "AccessDenied"),
+    ("client", "put_object", {"Key": f"{'0' * 32}.narinfo", "Body": b"x"}, "AccessDenied"),
+    ("client", "delete_object", {"Key": "nix-cache-info"}, "AccessDenied"),
+    ("client", "get_object", {"Key": "nix-cache-info"}, "allowed"),
+    ("client", "head_object", {"Key": f"{'0' * 32}.narinfo"}, "404"),
     ("signer", "delete_object", {"Key": "nix-cache-info"}, "AccessDenied"),
     ("signer", "put_object", {"Key": f"nar/{probe}.nar.zst", "Body": b"x"}, "AccessDenied"),
     ("signer", "put_object", {"Key": "roots/DreamingDesk", "Body": b"x"}, "AccessDenied"),

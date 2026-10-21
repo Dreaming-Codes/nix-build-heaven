@@ -68,13 +68,12 @@ in
         type = lib.types.str;
         default = config.networking.hostName;
         defaultText = lib.literalExpression "config.networking.hostName";
-        description = "Host name of the read key, and of the roots/<host> object only that key may write.";
+        description = "Host name of the roots/<host> object this host writes.";
       };
       profile = lib.mkOption {
         type = lib.types.str;
-        default = "nbh-cache-${cc.host}";
-        defaultText = lib.literalExpression ''"nbh-cache-''${config.services.nbh.cache.host}"'';
-        description = "Profile in credentialsFile that holds this host's key.";
+        default = "nbh-cache-client";
+        description = "Profile in credentialsFile that holds the read key every host shares.";
       };
       credentialsFile = lib.mkOption {
         type = lib.types.str;
