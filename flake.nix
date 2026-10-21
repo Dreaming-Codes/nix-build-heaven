@@ -76,6 +76,28 @@
             };
           in
           pkgs.writeText "client-imported-twice" host.config.systemd.services.nbh-gate.serviceConfig.ExecStart;
+
+        # The gate reads the CA from --pki, so a moved pkiDir must reach it too.
+        client-pki-dir =
+          let
+            host = nixpkgs.lib.nixosSystem {
+              inherit system;
+              modules = [
+                self.nixosModules.client
+                {
+                  boot.loader.grub.enable = false;
+                  fileSystems."/" = { device = "none"; fsType = "tmpfs"; };
+                  system.stateVersion = "26.05";
+                  services.nbh.enable = true;
+                  services.nbh.pkiDir = "/run/secrets/nbh-pki";
+                }
+              ];
+            };
+            exec = host.config.systemd.services.nbh-gate.serviceConfig.ExecStart;
+          in
+          assert nixpkgs.lib.assertMsg (nixpkgs.lib.hasInfix "--pki /run/secrets/nbh-pki " exec)
+            "nbh-gate ExecStart lacks --pki for a moved pkiDir: ${exec}";
+          pkgs.writeText "client-pki-dir" exec;
       };
     };
 }

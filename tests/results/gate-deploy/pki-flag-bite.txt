@@ -1,0 +1,20 @@
+warning: Git tree '/workspace/nbh/nix-build-heaven' has uncommitted changes
+error:
+       … in the condition of the assert statement
+         at /workspace/nbh/nix-build-heaven/flake.nix:98:11:
+           97|           in
+           98|           assert nixpkgs.lib.assertMsg (nixpkgs.lib.hasInfix "--pki /run/secrets/nbh-pki " exec)
+             |           ^
+           99|             "nbh-gate ExecStart lacks --pki for a moved pkiDir: ${exec}";
+
+       … in the right operand of the OR (||) operator
+         at «github:NixOS/nixpkgs/6aa7ad7»/lib/asserts.nix:53:31:
+           52|   # TODO(Profpatsch): add tests that check stderr
+           53|   assertMsg = pred: msg: pred || throw msg;
+             |                               ^
+           54|
+
+       (stack trace truncated; use '--show-trace' to show the full, detailed trace)
+
+       error: nbh-gate ExecStart lacks --pki for a moved pkiDir: /nix/store/gcxffa8j8vxm8hmhhshc3vz767cvfqv1-nbh-gate-0.2.0/bin/nbh-gate run --listen 127.0.0.1:2222 --machines-file /run/nbh/machines --machines-entry 'ssh-ng://nbh@nbh-builder:2222 x86_64-linux /run/secrets/nbh-pki/ssh_client 192 1 big-parallel,benchmark - -'
+bite (no --pki) rc=1

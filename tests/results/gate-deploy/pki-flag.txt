@@ -1,0 +1,6 @@
+warning: Git tree '/workspace/nbh/nix-build-heaven' has uncommitted changes
+this derivation will be built:
+  /nix/store/xy64mpg5fc3z8qb6kipbhmd29wjfl1k1-client-pki-dir.drv
+building '/nix/store/xy64mpg5fc3z8qb6kipbhmd29wjfl1k1-client-pki-dir.drv'...
+/nix/store/j3i9p3ppb3x4q1kxkzhv3vh1v38xjcdz-client-pki-dir
+with fix rc=0
