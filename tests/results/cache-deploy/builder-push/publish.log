@@ -1,0 +1,30 @@
+{
+ "closure": 1,
+ "upstream": 0,
+ "refreshed": [],
+ "uploaded": [
+  "/nix/store/lpijdvm4ddki7chq0mcn14rdb8w493ys-nbh-proof-builder-1792552936"
+ ],
+ "bytes": 100
+}
+{
+ "signed": [
+  "/nix/store/lpijdvm4ddki7chq0mcn14rdb8w493ys-nbh-proof-builder-1792552936"
+ ],
+ "already": 0,
+ "unexpected": [],
+ "rejected": {}
+}
+{
+ "now": "2026-10-21T03:24:11.231790+00:00",
+ "grace_days": 14,
+ "objects": 3,
+ "roots": 0,
+ "narinfos": 1,
+ "live": 1,
+ "recent": 1,
+ "deleted_narinfos": [],
+ "deleted_nars": [],
+ "kept_bytes": 696,
+ "dry_run": false
+}

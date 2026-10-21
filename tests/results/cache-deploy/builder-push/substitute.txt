@@ -1,0 +1,14 @@
+== box store has the path before substitution?
+error: path '/nix/store/lpijdvm4ddki7chq0mcn14rdb8w493ys-nbh-proof-builder-1792552936' is not valid
+== builder keeps no writer key
+0
+systemd-private-443eda308f8642e49cc32f724483ba54-dbus-broker.service-WeEs7m
+systemd-private-443eda308f8642e49cc32f724483ba54-dhcpcd.service-RuCoeH
+systemd-private-443eda308f8642e49cc32f724483ba54-nscd.service-TadRcy
+systemd-private-443eda308f8642e49cc32f724483ba54-systemd-logind.service-JUzpcZ
+== substitute into a clean store with the Blade key
+this path will be fetched (0.1 KiB download, 0.1 KiB unpacked):
+  /nix/store/lpijdvm4ddki7chq0mcn14rdb8w493ys-nbh-proof-builder-1792552936
+copying path '/nix/store/lpijdvm4ddki7chq0mcn14rdb8w493ys-nbh-proof-builder-1792552936' from 's3://nbh-cache-845087560967?profile=nbh-cache-DreamingBlade&region=eu-north-1'...
+/nix/store/lpijdvm4ddki7chq0mcn14rdb8w493ys-nbh-proof-builder-1792552936
+built on localhost

@@ -1,0 +1,3 @@
+deleted lpijdvm4ddki7chq0mcn14rdb8w493ys.narinfo
+deleted nar/04cgv21p79xp2k9faxdigfr5a09jp55nss5ajrah4qd30rzpzknn.nar.zst
+nix-cache-info
