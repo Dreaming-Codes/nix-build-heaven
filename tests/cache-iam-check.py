@@ -35,13 +35,13 @@ cases = [
     ("client", "head_object", {"Key": f"{'0' * 32}.narinfo"}, "404"),
     ("signer", "delete_object", {"Key": "nix-cache-info"}, "AccessDenied"),
     ("signer", "put_object", {"Key": f"nar/{probe}.nar.zst", "Body": b"x"}, "AccessDenied"),
-    ("signer", "put_object", {"Key": "roots/DreamingDesk", "Body": b"x"}, "AccessDenied"),
+    ("signer", "put_object", {"Key": f"roots/{'0' * 32}", "Body": b"x"}, "AccessDenied"),
     ("signer", "put_object", {"Key": "roots/x.narinfo", "Body": b"x"}, "AccessDenied"),
     ("signer", "put_object", {"Key": "nix-cache-info", "Body": b"x"}, "AccessDenied"),
     ("signer", "head_object", {"Key": f"{'0' * 32}.narinfo"}, "404"),
     ("gc", "put_object", {"Key": f"nar/{probe}.nar.zst", "Body": b"x"}, "AccessDenied"),
-    ("gc", "delete_object", {"Key": "roots/DreamingDesk"}, "AccessDenied"),
     ("gc", "delete_object", {"Key": "nix-cache-info"}, "AccessDenied"),
+    ("gc", "delete_object", {"Key": f"roots/{'0' * 32}"}, "allowed"),
 ]
 results, ok = [], True
 for identity, op, kw, want in cases:

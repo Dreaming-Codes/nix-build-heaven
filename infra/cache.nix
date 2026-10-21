@@ -40,7 +40,7 @@ let
         Sid = "Sweep";
         Effect = "Allow";
         Action = "s3:DeleteObject";
-        Resource = [ "${arn}/*.narinfo" "${arn}/*.ls" "${arn}/nar/*" ];
+        Resource = [ "${arn}/*.narinfo" "${arn}/*.ls" "${arn}/nar/*" "${arn}/roots/*" ];
       }
     ];
   };

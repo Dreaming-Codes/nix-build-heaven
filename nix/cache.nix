@@ -5,6 +5,7 @@
   bucket = "nbh-cache-845087560967";
   publicKey = "nbh-cache-845087560967-1:ncBMB14sruhdtGhlkrHt3tLw8xGBwq33QiQUM/760Rc=";
   graceDays = 14;
+  rootsDays = 30;
   priority = 50;
   upstream = [
     "https://install.determinate.systems"

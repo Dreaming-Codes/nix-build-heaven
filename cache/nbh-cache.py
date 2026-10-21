@@ -277,20 +277,36 @@ def cmd_sign(cache, args):
     print(json.dumps(report, indent=1))
 
 
+def requisites(path):
+    return subprocess.run(["nix-store", "--query", "--requisites", path], check=True, capture_output=True, text=True).stdout
+
+
 def cmd_roots(cache, args):
-    paths = [p for p in args.paths if os.path.exists(p)]
-    closure = subprocess.run(["nix-store", "--query", "--requisites"] + paths, check=True, capture_output=True, text=True).stdout
-    cache.put(f"roots/{args.host}", closure, "text/plain")
-    print(json.dumps({"root": f"roots/{args.host}", "paths": len(closure.split())}))
+    # Keyed by the store hash, so one closure is one root wherever it runs.
+    # Every run rewrites it, which keeps LastModified inside the roots window.
+    stores = sorted({os.path.realpath(p) for p in args.paths if os.path.lexists(p)})
+    written = {}
+    for path in stores:
+        m = STORE_PATH.match(path)
+        if not m:
+            sys.exit(f"{path} is not a store path")
+        closure = requisites(path)
+        cache.put(f"roots/{m.group(1)}", closure, "text/plain")
+        written[f"roots/{m.group(1)}"] = len(closure.split())
+    print(json.dumps(written))
 
 
-def read_roots(cache, objects):
-    roots, etags = set(), {}
+def read_roots(cache, objects, cutoff):
+    roots, seen, expired = set(), {}, set()
     for key, o in objects.items():
-        if key.startswith("roots/"):
-            etags[key] = o["ETag"]
-            roots.update(STORE_PATH.findall(cache.get(key) or ""))
-    return roots, etags
+        if not key.startswith("roots/"):
+            continue
+        if o["LastModified"] < cutoff:
+            expired.add(key)
+            continue
+        seen[key] = (o["ETag"], o["LastModified"])
+        roots.update(STORE_PATH.findall(cache.get(key) or ""))
+    return roots, seen, expired
 
 
 def mark(cache, objects, seeds, narinfos):
@@ -322,20 +338,21 @@ def cmd_gc(cache, args):
         return
     now = datetime.fromisoformat(args.now) if args.now else datetime.now(timezone.utc)
     cutoff = now - timedelta(days=args.grace_days)
+    roots_cutoff = now - timedelta(days=args.roots_days)
     objects = cache.list()
     hashes = {k[:-8] for k in objects if k.endswith(".narinfo") and HASH.match(k[:-8])}
     recent = {h for h in hashes if objects[f"{h}.narinfo"]["LastModified"] >= cutoff}
     narinfos = {}
-    roots, etags = read_roots(cache, objects)
+    roots, seen, expired = read_roots(cache, objects, roots_cutoff)
     live = mark(cache, objects, roots | recent, narinfos)
 
     for _ in range(5):
-        fresh = cache.list()
-        _, fresh_etags = read_roots(cache, {k: v for k, v in fresh.items() if k.startswith("roots/")})
-        if fresh_etags == etags:
+        fresh = cache.list("roots/")
+        if {k: (o["ETag"], o["LastModified"]) for k, o in fresh.items() if o["LastModified"] >= roots_cutoff} == seen:
             break
+        fresh = cache.list()
         objects.update(fresh)
-        roots, etags = read_roots(cache, fresh)
+        roots, seen, expired = read_roots(cache, fresh, roots_cutoff)
         newer = {k[:-8] for k, o in fresh.items() if k.endswith(".narinfo") and HASH.match(k[:-8]) and o["LastModified"] >= cutoff}
         live = mark(cache, objects, roots | recent | newer, narinfos)
     else:
@@ -349,6 +366,7 @@ def cmd_gc(cache, args):
     if not args.dry_run:
         cache.delete(dead_narinfos | dead_listings)
         cache.delete(dead_nars)
+        cache.delete(expired)
         if args.stamp:
             os.makedirs(os.path.dirname(args.stamp) or ".", exist_ok=True)
             open(args.stamp, "w").close()
@@ -356,6 +374,7 @@ def cmd_gc(cache, args):
     print(json.dumps({
         "now": now.isoformat(), "grace_days": args.grace_days, "objects": len(objects), "roots": len(roots),
         "narinfos": len(hashes), "live": len(live), "recent": len(recent),
+        "roots_days": args.roots_days, "deleted_roots": sorted(expired),
         "deleted_narinfos": sorted(dead_narinfos), "deleted_nars": sorted(dead_nars),
         "kept_bytes": sum(o["Size"] for k, o in objects.items() if k not in gone), "dry_run": args.dry_run,
     }, indent=1))
@@ -380,12 +399,12 @@ def main():
     p.add_argument("--secret-key-file", required=True)
     p.add_argument("--expect", required=True, help="file of store paths allowed to be signed, one per line")
 
-    p = sub.add_parser("roots", help="write roots/HOST with the closure of PATHS")
-    p.add_argument("--host", required=True)
+    p = sub.add_parser("roots", help="write roots/HASH with the closure of each store path PATHS resolve to")
     p.add_argument("paths", nargs="+")
 
-    p = sub.add_parser("gc", help="mark from roots/* and narinfos newer than the grace window, sweep the rest")
+    p = sub.add_parser("gc", help="mark from roots/* newer than the roots window and narinfos newer than the grace window, sweep the rest")
     p.add_argument("--grace-days", type=float, default=14)
+    p.add_argument("--roots-days", type=float, default=30, help="a root not rewritten for this long is deleted")
     p.add_argument("--now", help="ISO 8601 clock override, for tests")
     p.add_argument("--dry-run", action="store_true")
     p.add_argument("--stamp", help="file touched after a real run")

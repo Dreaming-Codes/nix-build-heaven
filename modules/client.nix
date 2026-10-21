@@ -46,7 +46,7 @@ in
       default = entry;
     };
     cache = {
-      enable = lib.mkEnableOption "the Nix Build Heaven S3 cache as a substituter, with this host's roots kept in it";
+      enable = lib.mkEnableOption "the Nix Build Heaven S3 cache as a substituter, with this system's closure kept in it";
       account = lib.mkOption {
         type = lib.types.strMatching "[0-9]{12}";
         description = "AWS account that owns the bucket. nbh-cache refuses a key of any other account.";
@@ -63,12 +63,6 @@ in
       publicKey = lib.mkOption {
         type = lib.types.str;
         description = "Public half of the key that signs the cache's narinfos.";
-      };
-      host = lib.mkOption {
-        type = lib.types.str;
-        default = config.networking.hostName;
-        defaultText = lib.literalExpression "config.networking.hostName";
-        description = "Host name of the roots/<host> object this host writes.";
       };
       profile = lib.mkOption {
         type = lib.types.str;
@@ -93,7 +87,7 @@ in
       roots = lib.mkOption {
         type = lib.types.bool;
         default = true;
-        description = "Write this host's system closure to roots/<host> whenever the system profile changes, so the cache GC keeps it.";
+        description = "Write the system closure to roots/<hash> at boot and whenever the system profile changes, so the cache GC keeps it while it is in use.";
       };
       package = lib.mkOption {
         type = lib.types.package;
@@ -147,7 +141,7 @@ in
       }
       (lib.mkIf cc.roots {
         systemd.services.nbh-cache-roots = {
-          description = "Write this host's system closure to the Nix Build Heaven cache roots";
+          description = "Write the system closure to the Nix Build Heaven cache roots";
           wantedBy = [ "multi-user.target" ];
           after = [ "network-online.target" ];
           wants = [ "network-online.target" ];
@@ -162,7 +156,6 @@ in
               "--credentials-file" cc.credentialsFile
               "--profile" cc.profile
               "roots"
-              "--host" cc.host
               "/nix/var/nix/profiles/system"
               "/run/current-system"
               "/run/booted-system"
@@ -212,7 +205,7 @@ in
         after = [ "network-online.target" ];
         wants = [ "network-online.target" ];
         serviceConfig = {
-          ExecStartPre = "${lib.getExe cfg.gate.package} pki-init ${cfg.pkiDir} ${config.networking.hostName}";
+          ExecStartPre = "${lib.getExe cfg.gate.package} pki-init ${cfg.pkiDir}";
           ExecStart = lib.escapeShellArgs (
             [
               (lib.getExe cfg.gate.package)
